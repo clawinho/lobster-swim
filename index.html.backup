@@ -60,7 +60,7 @@
     <button id="music-btn" onclick="toggleMusic()" style="position: fixed; bottom: 10px; left: 10px; background: #001820; border: 1px solid #ff4500; color: #ff4500; padding: 6px 10px; cursor: pointer; font-family: monospace; font-size: 12px; z-index: 50; opacity: 0.8;">🎵</button>
     <button id="sfx-btn" onclick="toggleSfx()" style="position: fixed; bottom: 10px; left: 60px; background: #002010; border: 1px solid #ff4500; color: #ff4500; padding: 6px 10px; cursor: pointer; font-family: monospace; font-size: 12px; z-index: 50; opacity: 0.8;">💥</button>
     <div id="bottom-nav" style="position: fixed; bottom: 10px; right: 15px; display: flex; align-items: center; gap: 10px;">
-        <div id="version" onclick="toggleDevMode()" style="cursor: pointer; font-size: 10px; color: #ff4500aa;">v0.9.0</div>
+        <div id="version" onclick="toggleDevMode()" style="cursor: pointer; font-size: 10px; color: #ff4500aa;">v0.8.3</div>
         <div style="display: flex; gap: 8px; align-items: center;">
             <a href="/commits.html" target="_blank" style="color: #4488ff; text-decoration: none; background: #001828; border: 1px solid #4488ff44; padding: 6px 12px; border-radius: 4px; font-size: 15px;">commits</a>
             <a href="/assets.html" target="_blank" style="color: #ffaa00; text-decoration: none; background: #1a1000; border: 1px solid #ffaa0044; padding: 6px 12px; border-radius: 4px; font-size: 15px;">assets</a>
@@ -85,9 +85,6 @@
             <button onclick="toggleDevMode()" style="background: #333; color: #888; border: 1px solid #555; padding: 5px;">Close</button>
         </div>
     </div>
-    <script src="js/config.js"></script>
-    <script src="js/sprites.js"></script>
-    <script src="js/audio.js"></script>
     <script>
         // Music control - level-based tracks
         let musicPlaying = false;
@@ -1017,38 +1014,28 @@
             ctx.fill();
             
             let clawWave = Math.sin(Date.now() / 200) * 0.15;
-            
-            // Upper claw (bigger with pincer)
+            ctx.fillStyle = '#ff5500';
             ctx.save();
-            ctx.rotate(-0.5 + clawWave);
-            ctx.fillStyle = '#ff4500';
+            ctx.translate(size * 0.6, -size * 0.35);
+            ctx.rotate(0.4 + clawWave);
             ctx.beginPath();
-            ctx.ellipse(size * 0.9, -size * 0.1, size * 0.5, size * 0.25, 0.3, 0, Math.PI * 2);
+            ctx.ellipse(8, 0, 10, 4, 0, 0, Math.PI * 2);
             ctx.fill();
-            // Pincer triangle
-            ctx.fillStyle = '#cc3300';
             ctx.beginPath();
-            ctx.moveTo(size * 1.3, -size * 0.2);
-            ctx.lineTo(size * 1.6, -size * 0.4);
-            ctx.lineTo(size * 1.6, 0);
-            ctx.closePath();
+            ctx.ellipse(16, -2, 5, 2, 0, 0, Math.PI * 2);
+            ctx.ellipse(16, 2, 5, 2, 0, 0, Math.PI * 2);
             ctx.fill();
             ctx.restore();
             
-            // Lower claw (bigger with pincer)
             ctx.save();
-            ctx.rotate(0.5 - clawWave);
-            ctx.fillStyle = '#ff4500';
+            ctx.translate(size * 0.6, size * 0.35);
+            ctx.rotate(-0.4 - clawWave);
             ctx.beginPath();
-            ctx.ellipse(size * 0.9, size * 0.1, size * 0.5, size * 0.25, -0.3, 0, Math.PI * 2);
+            ctx.ellipse(8, 0, 10, 4, 0, 0, Math.PI * 2);
             ctx.fill();
-            // Pincer triangle
-            ctx.fillStyle = '#cc3300';
             ctx.beginPath();
-            ctx.moveTo(size * 1.3, size * 0.2);
-            ctx.lineTo(size * 1.6, size * 0.4);
-            ctx.lineTo(size * 1.6, 0);
-            ctx.closePath();
+            ctx.ellipse(16, -2, 5, 2, 0, 0, Math.PI * 2);
+            ctx.ellipse(16, 2, 5, 2, 0, 0, Math.PI * 2);
             ctx.fill();
             ctx.restore();
             
@@ -1065,17 +1052,16 @@
             ctx.arc(size * 0.42, size * 0.23, 1.5, 0, Math.PI * 2);
             ctx.fill();
             
-            // Antennae (wavy)
             ctx.strokeStyle = '#ff6600';
             ctx.lineWidth = 2;
-            let antWave = Math.sin(Date.now() / 150) * 5;
+            let wave = Math.sin(Date.now() / 150) * 3;
             ctx.beginPath();
-            ctx.moveTo(size * 0.5, -size * 0.3);
-            ctx.quadraticCurveTo(size * 0.8, -size * 0.8 + antWave, size * 1.2, -size * 0.6 + antWave);
+            ctx.moveTo(size * 0.5, -size * 0.2);
+            ctx.quadraticCurveTo(size + 5, -size * 0.4 + wave, size + 15, -size * 0.1 + wave);
             ctx.stroke();
             ctx.beginPath();
-            ctx.moveTo(size * 0.5, size * 0.3);
-            ctx.quadraticCurveTo(size * 0.8, size * 0.8 - antWave, size * 1.2, size * 0.6 - antWave);
+            ctx.moveTo(size * 0.5, size * 0.2);
+            ctx.quadraticCurveTo(size + 5, size * 0.4 - wave, size + 15, size * 0.1 - wave);
             ctx.stroke();
             ctx.lineWidth = 1;
             
