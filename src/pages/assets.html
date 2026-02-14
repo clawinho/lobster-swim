@@ -130,6 +130,24 @@
                     </div>
                 </div>
             </div>
+            <div class="asset-card">
+                <div class="asset-preview"><canvas id="net-canvas" width="200" height="150"></canvas></div>
+                <div class="asset-info">
+                    <h3>Net</h3><p>Level 2 sweeping hazard.</p>
+                    <div class="controls">
+                        <div class="control-row"><label>Width</label><input type="range" id="net-width" min="40" max="120" value="80"><span class="value">80</span></div>
+                    </div>
+                </div>
+            </div>
+            <div class="asset-card">
+                <div class="asset-preview"><canvas id="fork-canvas" width="200" height="150"></canvas></div>
+                <div class="asset-info">
+                    <h3>Fork</h3><p>Level 3 falling hazard.</p>
+                    <div class="controls">
+                        <div class="control-row"><label>Size</label><input type="range" id="fork-size" min="20" max="60" value="40"><span class="value">40</span></div>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
     
@@ -441,27 +459,7 @@
             if (!compareItems.length) { panel.classList.remove('active'); return; }
             panel.classList.add('active');
             grid.innerHTML = compareItems.map((item,i) => `<div class="compare-item"><canvas id="compare-canvas-${i}" width="180" height="120"></canvas><div class="label">${item.asset} v${item.version}</div><div class="desc">${item.desc}</div></div>`).join('');
-            <div class="asset-card">
-                <div class="asset-preview"><canvas id="net-canvas" width="200" height="150"></canvas></div>
-                <div class="asset-info">
-                    <h3>Net</h3><p>Level 2 sweeping hazard.</p>
-                    <div class="controls">
-                        <div class="control-row"><label>Width</label><input type="range" id="net-width" min="40" max="120" value="80"><span class="value">80</span></div>
-                    </div>
-                    <div class="asset-meta"><span class="tag">enemy</span><span class="tag level">tank</span></div>
-                </div>
-            </div>
-            <div class="asset-card">
-                <div class="asset-preview"><canvas id="fork-canvas" width="200" height="150"></canvas></div>
-                <div class="asset-info">
-                    <h3>Fork</h3><p>Level 3 falling hazard.</p>
-                    <div class="controls">
-                        <div class="control-row"><label>Size</label><input type="range" id="fork-size" min="20" max="60" value="40"><span class="value">40</span></div>
-                    </div>
-                    <div class="asset-meta"><span class="tag">enemy</span><span class="tag level">kitchen</span></div>
-                </div>
-            </div>
-            document.querySelectorAll('.version').forEach(t => t.classList.toggle('in-compare', compareItems.some(i => i.key === `${t.dataset.asset}-${t.dataset.version}`)));
+document.querySelectorAll('.version').forEach(t => t.classList.toggle('in-compare', compareItems.some(i => i.key === `${t.dataset.asset}-${t.dataset.version}`)));
         }
         function toast(m) { const t = document.getElementById('toast'); t.textContent = m; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2000); }
         
