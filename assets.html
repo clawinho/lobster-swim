@@ -247,6 +247,9 @@
             margin-left: auto;
         }
         
+        .audio-btn { background: #ff4500; border: none; color: #000; padding: 10px 25px; border-radius: 20px; cursor: pointer; font-weight: bold; font-size: 14px; transition: all 0.2s; }
+        .audio-btn:hover { transform: scale(1.1); background: #ff6633; }
+        .music-track { text-align: center; padding: 10px; background: #001020; border-radius: 8px; }
         #bottom-nav {
             position: fixed;
             bottom: 15px;
@@ -311,6 +314,7 @@
         <a href="#items">Items</a>
         <a href="#environments">Environments</a>
         <a href="#mechanics">Mechanics</a>
+        <a href="#audio">Audio</a>
     </nav>
     
     <!-- CHARACTERS -->
@@ -636,6 +640,251 @@
         </div>
     </section>
     
+
+    <!-- AUDIO -->
+    <section class="section" id="audio">
+        <h2>🔊 Audio</h2>
+        <div class="asset-grid">
+            <!-- Sound Effects -->
+            <div class="asset-card">
+                <div class="asset-preview" style="flex-direction: column; gap: 10px;">
+                    <div style="font-size: 48px;">🫧</div>
+                    <button onclick="Audio.playBloop()" class="audio-btn">▶ Play</button>
+                </div>
+                <div class="asset-info">
+                    <h3>Bubble Collect</h3>
+                    <p>Satisfying bloop when collecting bubbles. Rising pitch sweep.</p>
+                    <div class="asset-meta">
+                        <span class="tag">SFX</span>
+                        <span class="tag mechanic">Web Audio</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="asset-card">
+                <div class="asset-preview" style="flex-direction: column; gap: 10px;">
+                    <div style="font-size: 48px;">💥</div>
+                    <button onclick="Audio.playHit()" class="audio-btn">▶ Play</button>
+                </div>
+                <div class="asset-info">
+                    <h3>Hit / Damage</h3>
+                    <p>Sawtooth wave descending. Plays when lobster takes damage.</p>
+                    <div class="asset-meta">
+                        <span class="tag">SFX</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="asset-card">
+                <div class="asset-preview" style="flex-direction: column; gap: 10px;">
+                    <div style="font-size: 48px;">💀</div>
+                    <button onclick="Audio.playDeath()" class="audio-btn">▶ Play</button>
+                </div>
+                <div class="asset-info">
+                    <h3>Death</h3>
+                    <p>Dramatic descending tone when game over. Longer and more intense than hit.</p>
+                    <div class="asset-meta">
+                        <span class="tag">SFX</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="asset-card">
+                <div class="asset-preview" style="flex-direction: column; gap: 10px;">
+                    <div style="font-size: 48px;">❤️</div>
+                    <button onclick="Audio.playExtraLife()" class="audio-btn">▶ Play</button>
+                </div>
+                <div class="asset-info">
+                    <h3>Extra Life</h3>
+                    <p>Ascending arpeggio (C-E-G-C). Plays when catching golden fish.</p>
+                    <div class="asset-meta">
+                        <span class="tag">SFX</span>
+                        <span class="tag mechanic">+1 life</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="asset-card">
+                <div class="asset-preview" style="flex-direction: column; gap: 10px;">
+                    <div style="font-size: 48px;">🪝</div>
+                    <button onclick="Audio.playHooked()" class="audio-btn">▶ Play</button>
+                </div>
+                <div class="asset-info">
+                    <h3>Hooked</h3>
+                    <p>Triangle wave sweep down. Plays during the hook catch animation.</p>
+                    <div class="asset-meta">
+                        <span class="tag">SFX</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="asset-card">
+                <div class="asset-preview" style="flex-direction: column; gap: 10px;">
+                    <div style="font-size: 48px;">⬆️</div>
+                    <button onclick="Audio.playLevelUp()" class="audio-btn">▶ Play</button>
+                </div>
+                <div class="asset-info">
+                    <h3>Level Up</h3>
+                    <p>Triumphant arpeggio (G-B-D-G). Plays on level transitions.</p>
+                    <div class="asset-meta">
+                        <span class="tag">SFX</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Music Tracks -->
+            <div class="asset-card" style="grid-column: span 2;">
+                <div class="asset-preview" style="flex-direction: column; gap: 10px; height: auto; padding: 20px;">
+                    <div style="font-size: 36px;">🎵 Music Tracks</div>
+                    <div style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: center;">
+                        <div class="music-track">
+                            <div style="color: #4488ff;">🌊 Ocean</div>
+                            <audio controls src="music_ocean.mp3" style="width: 200px; height: 30px;"></audio>
+                        </div>
+                        <div class="music-track">
+                            <div style="color: #88ffff;">🐟 Tank</div>
+                            <audio controls src="music_tank.mp3" style="width: 200px; height: 30px;"></audio>
+                        </div>
+                        <div class="music-track">
+                            <div style="color: #ff8844;">🍳 Kitchen</div>
+                            <audio controls src="music_kitchen.mp3" style="width: 200px; height: 30px;"></audio>
+                        </div>
+                    </div>
+                </div>
+                <div class="asset-info">
+                    <h3>Level Music</h3>
+                    <p>Transport Tycoon style ragtime tracks. Each level has unique music that auto-switches on level transition.</p>
+                    <div class="asset-meta">
+                        <span class="tag">Music</span>
+                        <span class="tag level">per-level</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- AUDIO -->
+    <section class="section" id="audio">
+        <h2>🔊 Audio</h2>
+        <div class="asset-grid">
+            <!-- Sound Effects -->
+            <div class="asset-card">
+                <div class="asset-preview" style="flex-direction: column; gap: 10px;">
+                    <div style="font-size: 48px;">🫧</div>
+                    <button onclick="Audio.playBloop()" class="audio-btn">▶ Play</button>
+                </div>
+                <div class="asset-info">
+                    <h3>Bubble Collect</h3>
+                    <p>Satisfying bloop when collecting bubbles. Rising pitch sweep.</p>
+                    <div class="asset-meta">
+                        <span class="tag">SFX</span>
+                        <span class="tag mechanic">Web Audio</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="asset-card">
+                <div class="asset-preview" style="flex-direction: column; gap: 10px;">
+                    <div style="font-size: 48px;">💥</div>
+                    <button onclick="Audio.playHit()" class="audio-btn">▶ Play</button>
+                </div>
+                <div class="asset-info">
+                    <h3>Hit / Damage</h3>
+                    <p>Sawtooth wave descending. Plays when lobster takes damage.</p>
+                    <div class="asset-meta">
+                        <span class="tag">SFX</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="asset-card">
+                <div class="asset-preview" style="flex-direction: column; gap: 10px;">
+                    <div style="font-size: 48px;">💀</div>
+                    <button onclick="Audio.playDeath()" class="audio-btn">▶ Play</button>
+                </div>
+                <div class="asset-info">
+                    <h3>Death</h3>
+                    <p>Dramatic descending tone when game over. Longer and more intense than hit.</p>
+                    <div class="asset-meta">
+                        <span class="tag">SFX</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="asset-card">
+                <div class="asset-preview" style="flex-direction: column; gap: 10px;">
+                    <div style="font-size: 48px;">❤️</div>
+                    <button onclick="Audio.playExtraLife()" class="audio-btn">▶ Play</button>
+                </div>
+                <div class="asset-info">
+                    <h3>Extra Life</h3>
+                    <p>Ascending arpeggio (C-E-G-C). Plays when catching golden fish.</p>
+                    <div class="asset-meta">
+                        <span class="tag">SFX</span>
+                        <span class="tag mechanic">+1 life</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="asset-card">
+                <div class="asset-preview" style="flex-direction: column; gap: 10px;">
+                    <div style="font-size: 48px;">🪝</div>
+                    <button onclick="Audio.playHooked()" class="audio-btn">▶ Play</button>
+                </div>
+                <div class="asset-info">
+                    <h3>Hooked</h3>
+                    <p>Triangle wave sweep down. Plays during the hook catch animation.</p>
+                    <div class="asset-meta">
+                        <span class="tag">SFX</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="asset-card">
+                <div class="asset-preview" style="flex-direction: column; gap: 10px;">
+                    <div style="font-size: 48px;">⬆️</div>
+                    <button onclick="Audio.playLevelUp()" class="audio-btn">▶ Play</button>
+                </div>
+                <div class="asset-info">
+                    <h3>Level Up</h3>
+                    <p>Triumphant arpeggio (G-B-D-G). Plays on level transitions.</p>
+                    <div class="asset-meta">
+                        <span class="tag">SFX</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Music Tracks -->
+            <div class="asset-card" style="grid-column: span 2;">
+                <div class="asset-preview" style="flex-direction: column; gap: 10px; height: auto; padding: 20px;">
+                    <div style="font-size: 36px;">🎵 Music Tracks</div>
+                    <div style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: center;">
+                        <div class="music-track">
+                            <div style="color: #4488ff;">🌊 Ocean</div>
+                            <audio controls src="music_ocean.mp3" style="width: 200px; height: 30px;"></audio>
+                        </div>
+                        <div class="music-track">
+                            <div style="color: #88ffff;">🐟 Tank</div>
+                            <audio controls src="music_tank.mp3" style="width: 200px; height: 30px;"></audio>
+                        </div>
+                        <div class="music-track">
+                            <div style="color: #ff8844;">🍳 Kitchen</div>
+                            <audio controls src="music_kitchen.mp3" style="width: 200px; height: 30px;"></audio>
+                        </div>
+                    </div>
+                </div>
+                <div class="asset-info">
+                    <h3>Level Music</h3>
+                    <p>Transport Tycoon style ragtime tracks. Each level has unique music that auto-switches on level transition.</p>
+                    <div class="asset-meta">
+                        <span class="tag">Music</span>
+                        <span class="tag level">per-level</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <div id="bottom-nav">
         <a href="/" class="game">🦞 Play Game</a>
         <a href="/commits.html" target="_blank">commits</a>
@@ -646,6 +895,7 @@
     
     <script src="js/config.js"></script>
     <script src="js/sprites.js"></script>
+    <script src="js/audio.js"></script>
     <script>
         // Animation frame counter
         let frame = 0;
