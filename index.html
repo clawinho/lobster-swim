@@ -44,37 +44,39 @@
         <p id="mobile-hint">Touch & drag to swim!</p>
     </div>
     <canvas id="game" width="800" height="600"></canvas>
-    <div id="version">v0.1.6 - fish only</div>
+    <div id="version">v0.1.7 - music fix</div>
     <script>
         // Music control
         let musicPlaying = false;
-        const bgm = document.getElementById('bgm');
-        bgm.volume = 0.4;
+        let bgm = null;
+        
+        function initMusic() {
+            bgm = document.getElementById('bgm');
+            if (bgm) {
+                bgm.volume = 0.4;
+            }
+        }
         
         function toggleMusic() {
+            if (!bgm) initMusic();
+            if (!bgm) return;
+            
             if (musicPlaying) {
                 bgm.pause();
                 document.getElementById('music-btn').textContent = '🔇 Music';
+                musicPlaying = false;
             } else {
-                bgm.play();
-                document.getElementById('music-btn').textContent = '🔊 Music';
+                bgm.play().then(() => {
+                    document.getElementById('music-btn').textContent = '🔊 Music';
+                    musicPlaying = true;
+                }).catch(e => {
+                    console.log('Music play failed:', e);
+                });
             }
-            musicPlaying = !musicPlaying;
         }
         
-        // Auto-start music on first interaction
-        function startMusicOnInteraction() {
-            if (!musicPlaying) {
-                bgm.play().then(() => {
-                    musicPlaying = true;
-                    document.getElementById('music-btn').textContent = '🔊 Music';
-                }).catch(() => {});
-            }
-            document.removeEventListener('click', startMusicOnInteraction);
-            document.removeEventListener('touchstart', startMusicOnInteraction);
-        }
-        document.addEventListener('click', startMusicOnInteraction);
-        document.addEventListener('touchstart', startMusicOnInteraction);
+        // Initialize on load
+        window.addEventListener('load', initMusic);
 
         // Leaderboard functions
         let finalScore = 0;
