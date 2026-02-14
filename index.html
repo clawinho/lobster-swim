@@ -25,7 +25,7 @@
         <p id="mobile-hint">Touch & drag to swim!</p>
     </div>
     <canvas id="game" width="800" height="600"></canvas>
-    <div id="version">v0.4.1 - rotation fix</div>
+    <div id="version">v0.4.0 - animated lobster</div>
     <script>
         const canvas = document.getElementById('game');
         const ctx = canvas.getContext('2d');
@@ -167,120 +167,30 @@
                 ctx.globalAlpha = 0.4;
             }
             
-            // Calculate movement direction
-            let dx = x - (lobster.prevX || x);
-            let dy = y - (lobster.prevY || y);
-            let speed = Math.sqrt(dx*dx + dy*dy);
-            
-            if (speed > 0.5) {
-                let targetAngle = Math.atan2(dy, dx);
-                let angleDiff = targetAngle - lobster.angle;
-                while (angleDiff > Math.PI) angleDiff -= Math.PI * 2;
-                while (angleDiff < -Math.PI) angleDiff += Math.PI * 2;
-                lobster.angle += angleDiff * 0.15;
-            }
-            
-            // Update tail
-            if (!lobster.tail) lobster.tail = [{x:x, y:y}, {x:x, y:y}, {x:x, y:y}];
-            let tailTarget = {x: x, y: y};
-            for (let i = 0; i < lobster.tail.length; i++) {
-                let seg = lobster.tail[i];
-                seg.x += (tailTarget.x - seg.x) * 0.15;
-                seg.y += (tailTarget.y - seg.y) * 0.15;
-                tailTarget = {x: seg.x, y: seg.y};
-            }
-            
-            ctx.save();
-            ctx.translate(x, y);
-            ctx.rotate(lobster.angle);
-            
-            // Tail segments
-            ctx.fillStyle = '#cc3300';
-            for (let i = 0; i < lobster.tail.length; i++) {
-                let seg = lobster.tail[i];
-                let rx = (seg.x - x) * Math.cos(-lobster.angle) - (seg.y - y) * Math.sin(-lobster.angle);
-                let ry = (seg.x - x) * Math.sin(-lobster.angle) + (seg.y - y) * Math.cos(-lobster.angle);
-                ctx.beginPath();
-                ctx.ellipse(rx, ry, size * (0.4 - i*0.08), size * (0.3 - i*0.05), 0, 0, Math.PI * 2);
-                ctx.fill();
-            }
-            
-            // Tail fan
-            let last = lobster.tail[2];
-            let fx = (last.x - x) * Math.cos(-lobster.angle) - (last.y - y) * Math.sin(-lobster.angle);
-            let fy = (last.x - x) * Math.sin(-lobster.angle) + (last.y - y) * Math.cos(-lobster.angle);
-            ctx.fillStyle = '#ff4500';
-            for (let i = -2; i <= 2; i++) {
-                ctx.beginPath();
-                ctx.ellipse(fx - 6, fy + i*3, 6, 2, 0, 0, Math.PI * 2);
-                ctx.fill();
-            }
-            
-            // Body
             ctx.fillStyle = '#ff4500';
             ctx.beginPath();
-            ctx.ellipse(0, 0, size, size * 0.6, 0, 0, Math.PI * 2);
-            ctx.fill();
-            
-            // Claws
-            let clawAnim = Math.sin(Date.now() / 200) * 0.2;
-            ctx.fillStyle = '#ff5500';
-            ctx.save();
-            ctx.translate(size * 0.7, -size * 0.4);
-            ctx.rotate(0.3 + clawAnim);
-            ctx.beginPath();
-            ctx.ellipse(10, 0, 12, 5, 0, 0, Math.PI * 2);
+            ctx.ellipse(x, y, size, size * 0.6, 0, 0, Math.PI * 2);
             ctx.fill();
             ctx.beginPath();
-            ctx.ellipse(20, -3, 5, 2, -0.2, 0, Math.PI * 2);
-            ctx.ellipse(20, 3, 5, 2, 0.2, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.restore();
-            
-            ctx.save();
-            ctx.translate(size * 0.7, size * 0.4);
-            ctx.rotate(-0.3 - clawAnim);
-            ctx.beginPath();
-            ctx.ellipse(10, 0, 12, 5, 0, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.beginPath();
-            ctx.ellipse(20, -3, 5, 2, -0.2, 0, Math.PI * 2);
-            ctx.ellipse(20, 3, 5, 2, 0.2, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.restore();
-            
-            // Eyes
-            ctx.fillStyle = '#ff6600';
-            ctx.beginPath();
-            ctx.ellipse(size * 0.5, -size * 0.45, 3, 5, -0.3, 0, 0, Math.PI * 2);
-            ctx.ellipse(size * 0.5, size * 0.45, 3, 5, 0.3, 0, 0, Math.PI * 2);
+            ctx.ellipse(x - size * 0.8, y - size * 0.3, size * 0.4, size * 0.2, -0.5, 0, Math.PI * 2);
+            ctx.ellipse(x - size * 0.8, y + size * 0.3, size * 0.4, size * 0.2, 0.5, 0, Math.PI * 2);
             ctx.fill();
             ctx.fillStyle = '#000';
             ctx.beginPath();
-            ctx.arc(size * 0.58, -size * 0.45, 2, 0, Math.PI * 2);
-            ctx.arc(size * 0.58, size * 0.45, 2, 0, Math.PI * 2);
+            ctx.arc(x + size * 0.3, y - size * 0.2, 3, 0, Math.PI * 2);
+            ctx.arc(x + size * 0.3, y + size * 0.2, 3, 0, Math.PI * 2);
             ctx.fill();
             
-            // Antennae
-            ctx.strokeStyle = '#ff4500';
-            ctx.lineWidth = 1.5;
-            let wave = Math.sin(Date.now() / 150) * 4;
-            ctx.beginPath();
-            ctx.moveTo(size * 0.6, -size * 0.3);
-            ctx.quadraticCurveTo(size + 10, -size * 0.5 + wave, size + 20, -size * 0.2 + wave);
-            ctx.stroke();
-            ctx.beginPath();
-            ctx.moveTo(size * 0.6, size * 0.3);
-            ctx.quadraticCurveTo(size + 10, size * 0.5 - wave, size + 20, size * 0.2 - wave);
-            ctx.stroke();
-            ctx.lineWidth = 1;
-            
-            ctx.restore();
-            
-            lobster.prevX = x;
-            lobster.prevY = y;
             ctx.globalAlpha = 1;
-        }
+            
+            if (invincible) {
+                ctx.strokeStyle = '#ffff0066';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.arc(x, y, size + 10, 0, Math.PI * 2);
+                ctx.stroke();
+                ctx.lineWidth = 1;
+            }
         }
         
         function drawHook(hook) {
