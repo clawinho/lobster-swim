@@ -594,3 +594,49 @@ function escapeHtml(text) {
 
 // Start when DOM ready
 document.addEventListener('DOMContentLoaded', init);
+
+// Dev mode functions - exposed to window for dev panel
+let godMode = false;
+
+window.gameDevSetLevel = (lvl) => {
+    if (!gameStarted) return;
+    currentLevel = lvl;
+    const level = LEVELS[lvl];
+    if (level) {
+        document.body.style.background = level.background;
+        document.getElementById('level-name').textContent = level.name;
+        if (lvl >= 2 && nets.length === 0) nets = Net.create(2, CANVAS_WIDTH, CANVAS_HEIGHT);
+        if (lvl >= 3 && forks.length === 0) forks = Fork.create(3, CANVAS_WIDTH, CANVAS_HEIGHT);
+        audio.startLevelMusic(lvl);
+    }
+};
+
+window.gameDevAddScore = (pts) => {
+    if (!gameStarted) return;
+    score += pts;
+    updateScore();
+    checkLevelUp();
+};
+
+window.gameDevToggleGod = () => {
+    godMode = !godMode;
+    invincible = godMode;
+    if (godMode) invincibleTimer = 999999;
+    return godMode;
+};
+
+window.gameDevSpawnFish = () => {
+    if (!gameStarted) return;
+    fish = new GoldenFish(CANVAS_WIDTH);
+};
+
+window.gameDevAddLife = () => {
+    if (!gameStarted) return;
+    lives++;
+    updateLives();
+};
+
+window.gameDevRemoveLife = () => {
+    if (!gameStarted) return;
+    loseLife();
+};

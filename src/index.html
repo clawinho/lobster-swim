@@ -60,8 +60,51 @@
     <button id="music-btn">🎵</button>
     <button id="sfx-btn">💥</button>
 
+    <!-- DEV PANEL -->
+    <div id="dev-panel" style="position: fixed; top: 10px; left: 10px; background: #001820ee; border: 2px solid #ff4500; padding: 15px; display: none; z-index: 100; font-size: 12px; font-family: monospace;">
+        <div style="color: #ff4500; font-weight: bold; margin-bottom: 10px;">🔧 DEV MODE</div>
+        <div style="display: flex; flex-direction: column; gap: 5px;">
+            <button onclick="devSetLevel(1)" style="background: #224; color: #fff; border: 1px solid #448; padding: 5px; cursor: pointer;">Level 1: Ocean</button>
+            <button onclick="devSetLevel(2)" style="background: #224; color: #fff; border: 1px solid #448; padding: 5px; cursor: pointer;">Level 2: Tank</button>
+            <button onclick="devSetLevel(3)" style="background: #224; color: #fff; border: 1px solid #448; padding: 5px; cursor: pointer;">Level 3: Kitchen</button>
+            <hr style="border-color: #333; margin: 5px 0;">
+            <button onclick="devAddScore(100)" style="background: #242; color: #fff; border: 1px solid #484; padding: 5px; cursor: pointer;">+100 Score</button>
+            <button onclick="devAddScore(500)" style="background: #242; color: #fff; border: 1px solid #484; padding: 5px; cursor: pointer;">+500 Score</button>
+            <hr style="border-color: #333; margin: 5px 0;">
+            <button onclick="devToggleGod()" id="god-btn" style="background: #422; color: #fff; border: 1px solid #844; padding: 5px; cursor: pointer;">God Mode: OFF</button>
+            <button onclick="devSpawnFish()" style="background: #442; color: #fff; border: 1px solid #884; padding: 5px; cursor: pointer;">Spawn Fish 🐟</button>
+            <button onclick="devAddLife()" style="background: #442; color: #fff; border: 1px solid #884; padding: 5px; cursor: pointer;">+1 Life ❤️</button>
+            <button onclick="devRemoveLife()" style="background: #442; color: #fff; border: 1px solid #884; padding: 5px; cursor: pointer;">-1 Life 💔</button>
+            <hr style="border-color: #333; margin: 5px 0;">
+            <button onclick="toggleDevPanel()" style="background: #333; color: #888; border: 1px solid #555; padding: 5px; cursor: pointer;">Close</button>
+        </div>
+    </div>
+
     <!-- BOTTOM NAV -->
     <bottom-nav version="1.0.5"></bottom-nav>
+
+    <!-- Dev panel toggle -->
+    <script>
+        let devPanelOpen = false;
+        function toggleDevPanel() {
+            devPanelOpen = !devPanelOpen;
+            document.getElementById('dev-panel').style.display = devPanelOpen ? 'block' : 'none';
+        }
+        
+        // Listen for version click from bottom-nav component
+        document.addEventListener('version-click', toggleDevPanel);
+        
+        // Dev functions - these call into the game module
+        function devSetLevel(lvl) { window.gameDevSetLevel?.(lvl); }
+        function devAddScore(pts) { window.gameDevAddScore?.(pts); }
+        function devToggleGod() { 
+            const isGod = window.gameDevToggleGod?.();
+            document.getElementById('god-btn').textContent = 'God Mode: ' + (isGod ? 'ON' : 'OFF');
+        }
+        function devSpawnFish() { window.gameDevSpawnFish?.(); }
+        function devAddLife() { window.gameDevAddLife?.(); }
+        function devRemoveLife() { window.gameDevRemoveLife?.(); }
+    </script>
 
     <!-- Load components and game -->
     <script type="module" src="js/components/BottomNav.js"></script>

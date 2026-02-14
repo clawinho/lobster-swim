@@ -146,7 +146,7 @@ class BottomNav extends HTMLElement {
                 }
             </style>
             
-            <div class="version">v${version}</div>
+            <div class="version" id="version-click">v${version}</div>
             <div class="nav-links">
                 <a href="/" class="game ${isGame ? 'active' : ''}">🦞 play</a>
                 <a href="/pages/commits.html" class="commits ${isCommits ? 'active' : ''}">commits</a>
@@ -154,6 +154,11 @@ class BottomNav extends HTMLElement {
                 <a href="/pages/roadmap.html" class="roadmap ${isRoadmap ? 'active' : ''}">roadmap</a>
             </div>
         `;
+        
+        // Dispatch custom event when version is clicked
+        this.shadowRoot.querySelector('.version').addEventListener('click', () => {
+            this.dispatchEvent(new CustomEvent('version-click', { bubbles: true, composed: true }));
+        });
     }
 }
 
