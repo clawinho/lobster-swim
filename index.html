@@ -40,11 +40,11 @@
     </div>
     <div id="ui">
         <h1>🦞 Lobster Swim</h1>
-        <p>Score: <span id="score">0</span> | <span id="lives">❤️❤️❤️</span><span id="difficulty"></span></p>
+        <p>Score: <span id="score">0</span> | <span id="lives">❤️❤️❤️</span><span id="difficulty"></span> <span id="level-name" style="color: #88ffff;"></span></p>
         <p id="mobile-hint">Touch & drag to swim!</p>
     </div>
     <canvas id="game" width="800" height="600"></canvas>
-    <div id="version">v0.1.7 - music fix</div>
+    <div id="version">v0.2.0 - LEVELS!</div>
     <script>
         // Music control
         let musicPlaying = false;
@@ -514,6 +514,11 @@ let dangers = [];
             gameOver = false;
             fish = null;
             fishSpawnTimer = 0;
+            currentLevel = 1;
+            nets = [];
+            forks = [];
+            document.body.style.background = LEVELS[1].background;
+            document.getElementById('level-name').textContent = LEVELS[1].name;
             caught = false;
             lastHookThreshold = 0;
             lobster.x = 400;
@@ -715,7 +720,7 @@ let dangers = [];
                 
                 if (dist < lobster.size + b.size) {
                     score += 10;
-                    document.getElementById('score').textContent = score;
+                    document.getElementById('score').textContent = score; document.getElementById('level-name').textContent = LEVELS[currentLevel].name;
                     bubbles[i] = spawnBubble();
                     checkDifficultyScaling();
                 }
@@ -767,12 +772,74 @@ let dangers = [];
                         lives++;
                         updateLivesDisplay();
                         score += 50;
-                        document.getElementById('score').textContent = score;
+                        document.getElementById('score').textContent = score; document.getElementById('level-name').textContent = LEVELS[currentLevel].name;
                         fish = null;
                     }
                 }
             }
 
+
+            // Level-specific enemies
+            checkLevelUp();
+            
+            if (currentLevel >= 2) {
+                // Nets (level 2+)
+                nets.forEach(n => {
+                    n.x += n.speed;
+                    // Bounce or wrap
+                    if (n.x < -100) { n.x = 900; n.y = Math.random() * 400 + 100; }
+                    if (n.x > 900) { n.x = -100; n.y = Math.random() * 400 + 100; }
+                    
+                    drawNet(n);
+                    
+                    // Collision
+                    if (!invincible && 
+                        lobster.x > n.x && lobster.x < n.x + n.width &&
+                        lobster.y > n.y && lobster.y < n.y + n.height) {
+                        loseLife();
+                    }
+                });
+            }
+            
+            if (currentLevel >= 3) {
+                // Forks (level 3)
+                forks.forEach(f => {
+                    if (f.stabbing) {
+                        f.y += f.speed;
+                        if (f.y >= f.targetY) {
+                            f.stabbing = false;
+                            f.waitTimer = 60;
+                        }
+                    } else {
+                        f.waitTimer--;
+                        if (f.waitTimer <= 0) {
+                            f.y -= f.speed * 0.5;
+                            if (f.y < -50) {
+                                f.x = Math.random() * 600 + 100;
+                                f.targetY = Math.random() * 400 + 100;
+                                f.stabbing = true;
+                            }
+                        }
+                    }
+                    
+                    drawFork(f);
+                    
+                    // Collision with prongs
+                    if (!invincible) {
+                        for(let i = -1; i <= 1; i++) {
+                            let px = f.x + i * 12;
+                            let py = f.y + 30;
+                            let dx = lobster.x - px;
+                            let dy = lobster.y - py;
+                            if (Math.sqrt(dx*dx + dy*dy) < lobster.size + 8) {
+                                loseLife();
+                                break;
+                            }
+                        }
+                    }
+                });
+            }
+            
             // Lobster traps - speed scales with difficulty!
             dangers.forEach(d => {
                 drawCage(d.x, d.y, d.size);
