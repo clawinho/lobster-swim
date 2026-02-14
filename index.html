@@ -22,7 +22,7 @@
         <audio id="bgm" loop preload="auto">
         <source src="lobster_jazz.mp3" type="audio/mpeg">
     </audio>
-    <button id="music-btn" onclick="alert('clicked!'); toggleMusic();" style="position: fixed; top: 10px; left: 10px; background: #ff4500; color: #000; padding: 12px 16px; cursor: pointer; z-index: 9999; font-family: monospace; font-weight: bold; font-size: 16px;">🎵 MUSIC</button>
+    
     <div id="leaderboard" style="position: fixed; top: 10px; right: 10px; background: #001820; border: 2px solid #ff4500; padding: 10px; min-width: 150px; z-index: 50;">
         <div style="color: #ff4500; font-weight: bold; margin-bottom: 8px;">🏆 TOP SCORES</div>
         <div id="scores-list" style="color: #fff; font-size: 12px;">Loading...</div>
@@ -44,34 +44,42 @@
         <p id="mobile-hint">Touch & drag to swim!</p>
     </div>
     <canvas id="game" width="800" height="600"></canvas>
-    <div id="version">v0.2.3 - button test</div>
+    <button id="music-btn" style="display: block; margin: 10px auto; background: #ff4500; color: #000; padding: 15px 30px; cursor: pointer; font-family: monospace; font-weight: bold; font-size: 18px; border: 3px solid #fff;">🎵 TAP FOR MUSIC 🎵</button>
+    <div id="version">v0.2.4 - music retry</div>
     <script>
-        // Music control - simple and robust
+        // Music control
         let musicPlaying = false;
         
-        function toggleMusic() {
-            const audio = document.getElementById('bgm');
+        document.addEventListener('DOMContentLoaded', function() {
             const btn = document.getElementById('music-btn');
-            if (!audio) { alert('No audio element!'); return; }
+            const audio = document.getElementById('bgm');
             
-            if (musicPlaying) {
-                audio.pause();
-                btn.textContent = '🔇 Music';
-                musicPlaying = false;
-            } else {
-                audio.volume = 0.4;
-                const playPromise = audio.play();
-                if (playPromise !== undefined) {
-                    playPromise.then(() => {
-                        btn.textContent = '🔊 Music';
-                        musicPlaying = true;
-                    }).catch(err => {
-                        btn.textContent = '❌ Error';
-                        alert('Music error: ' + err.message);
-                    });
-                }
+            if (btn) {
+                btn.addEventListener('click', function() {
+                    if (!audio) { 
+                        this.textContent = '❌ No audio!'; 
+                        return; 
+                    }
+                    
+                    if (musicPlaying) {
+                        audio.pause();
+                        this.textContent = '🎵 TAP FOR MUSIC 🎵';
+                        musicPlaying = false;
+                    } else {
+                        audio.volume = 0.4;
+                        audio.play().then(() => {
+                            this.textContent = '🔊 MUSIC ON 🔊';
+                            this.style.background = '#00aa00';
+                            musicPlaying = true;
+                        }).catch(err => {
+                            this.textContent = '❌ ' + err.message;
+                        });
+                    }
+                });
             }
-        }
+        });
+        
+        function toggleMusic() {} // dummy for old onclick
 
         // Leaderboard functions
         let finalScore = 0;
