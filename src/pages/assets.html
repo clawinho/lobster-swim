@@ -49,6 +49,8 @@
         #bottom-nav a.game { color: #ff4500; border-color: #ff450044; }
         #toast { position: fixed; bottom: 70px; right: 20px; background: #00ff8833; border: 1px solid #00ff88; color: #00ff88; padding: 10px 20px; border-radius: 6px; opacity: 0; transition: opacity 0.3s; }
         #toast.show { opacity: 1; }
+        .audio-btn { background: #ff4500; border: none; color: #000; padding: 8px 20px; border-radius: 20px; cursor: pointer; font-weight: bold; font-size: 14px; }
+        .audio-btn:hover { background: #ff6633; transform: scale(1.05); }
     </style>
 </head>
 <body>
@@ -60,6 +62,7 @@
         <a href="#enemies">Enemies</a>
         <a href="#items">Items</a>
         <a href="#environments">Environments</a>
+        <a href="#audio">Audio</a>
     </nav>
     
     <section class="section active" id="characters">
@@ -152,9 +155,78 @@
         </div>
     </section>
 
+    
+    <section class="section" id="audio">
+        <h2>🔊 Audio</h2>
+        <div class="asset-grid">
+            <div class="asset-card">
+                <div class="asset-preview" style="flex-direction: column; gap: 10px;">
+                    <div style="font-size: 48px;">🫧</div>
+                    <button onclick="Audio.playBloop()" class="audio-btn">▶ Bloop</button>
+                </div>
+                <div class="asset-info"><h3>Bubble Collect</h3><p>Rising pitch sweep.</p></div>
+            </div>
+            <div class="asset-card">
+                <div class="asset-preview" style="flex-direction: column; gap: 10px;">
+                    <div style="font-size: 48px;">💥</div>
+                    <button onclick="Audio.playHit()" class="audio-btn">▶ Hit</button>
+                </div>
+                <div class="asset-info"><h3>Damage</h3><p>Sawtooth descend.</p></div>
+            </div>
+            <div class="asset-card">
+                <div class="asset-preview" style="flex-direction: column; gap: 10px;">
+                    <div style="font-size: 48px;">💀</div>
+                    <button onclick="Audio.playDeath()" class="audio-btn">▶ Death</button>
+                </div>
+                <div class="asset-info"><h3>Game Over</h3><p>Dramatic descend.</p></div>
+            </div>
+            <div class="asset-card">
+                <div class="asset-preview" style="flex-direction: column; gap: 10px;">
+                    <div style="font-size: 48px;">❤️</div>
+                    <button onclick="Audio.playExtraLife()" class="audio-btn">▶ Life</button>
+                </div>
+                <div class="asset-info"><h3>Extra Life</h3><p>Ascending arpeggio.</p></div>
+            </div>
+            <div class="asset-card">
+                <div class="asset-preview" style="flex-direction: column; gap: 10px;">
+                    <div style="font-size: 48px;">🪝</div>
+                    <button onclick="Audio.playHooked()" class="audio-btn">▶ Hooked</button>
+                </div>
+                <div class="asset-info"><h3>Hooked</h3><p>Triangle sweep down.</p></div>
+            </div>
+            <div class="asset-card">
+                <div class="asset-preview" style="flex-direction: column; gap: 10px;">
+                    <div style="font-size: 48px;">⬆️</div>
+                    <button onclick="Audio.playLevelUp()" class="audio-btn">▶ Level Up</button>
+                </div>
+                <div class="asset-info"><h3>Level Up</h3><p>Triumphant arpeggio.</p></div>
+            </div>
+            <div class="asset-card" style="grid-column: span 2;">
+                <div class="asset-preview" style="flex-direction: column; gap: 10px; height: auto; padding: 20px;">
+                    <div style="font-size: 36px;">🎵 Music Tracks</div>
+                    <div style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: center;">
+                        <div class="music-track" style="text-align:center;padding:10px;background:#001020;border-radius:8px;">
+                            <div style="color: #4488ff;">🌊 Ocean</div>
+                            <audio controls src="../assets/music/music_ocean.mp3" style="width: 150px; height: 30px;"></audio>
+                        </div>
+                        <div class="music-track" style="text-align:center;padding:10px;background:#001020;border-radius:8px;">
+                            <div style="color: #88ffff;">🐟 Tank</div>
+                            <audio controls src="../assets/music/music_tank.mp3" style="width: 150px; height: 30px;"></audio>
+                        </div>
+                        <div class="music-track" style="text-align:center;padding:10px;background:#001020;border-radius:8px;">
+                            <div style="color: #ff8844;">🍳 Kitchen</div>
+                            <audio controls src="../assets/music/music_kitchen.mp3" style="width: 150px; height: 30px;"></audio>
+                        </div>
+                    </div>
+                </div>
+                <div class="asset-info"><h3>Level Music</h3><p>Transport Tycoon style ragtime.</p></div>
+            </div>
+        </div>
+    </section>
     <div id="bottom-nav"><a href="/" class="game">🦞 Play</a></div>
     <div id="toast"></div>
     
+    <script src="../js/audio.js"></script>
     <script type="module">
         import { render as lobsterV001 } from '../js/entities/hero/versions/Lobster.v001.js';
         import { render as lobsterV002 } from '../js/entities/hero/versions/Lobster.v002.js';
