@@ -1,48 +1,57 @@
 /**
  * Fork.js - Kitchen fork enemy (Level 3)
- * Dangerous utensil that moves around the kitchen level
+ * Falls from sky like danger from above
  */
 
 export class Fork {
-    constructor(x, y) {
+    constructor(x, canvasHeight = 600) {
         this.x = x;
-        this.y = y;
-        this.speed = (Math.random() - 0.5) * 3;
-        this.ySpeed = (Math.random() - 0.5) * 2;
+        this.y = -50;  // Start above screen
+        this.fallSpeed = 2 + Math.random() * 2;  // Random fall speed
+        this.wobble = Math.random() * Math.PI * 2;
+        this.wobbleSpeed = 0.05 + Math.random() * 0.05;
+        this.canvasHeight = canvasHeight;
     }
 
     static create(count = 3, canvasWidth = 800, canvasHeight = 600) {
         const forks = [];
         for (let i = 0; i < count; i++) {
             const x = Math.random() * (canvasWidth - 100) + 50;
-            const y = Math.random() * (canvasHeight - 150) + 50;
-            forks.push(new Fork(x, y));
+            const fork = new Fork(x, canvasHeight);
+            // Stagger initial Y positions so they don't all fall at once
+            fork.y = -50 - (i * 150);
+            forks.push(fork);
         }
         return forks;
     }
 
     update(difficultyMult = 1, canvasWidth = 800, canvasHeight = 600) {
-        this.x += this.speed * difficultyMult;
-        this.y += this.ySpeed * difficultyMult;
+        // Fall down
+        this.y += this.fallSpeed * difficultyMult;
+        
+        // Wobble side to side
+        this.wobble += this.wobbleSpeed;
+        this.x += Math.sin(this.wobble) * 0.5;
 
-        // Bounce off walls
-        if (this.x < 50 || this.x > canvasWidth - 50) {
-            this.speed *= -1;
-        }
-        if (this.y < 50 || this.y > canvasHeight - 100) {
-            this.ySpeed *= -1;
+        // Respawn at top when off bottom
+        if (this.y > canvasHeight + 100) {
+            this.y = -50 - Math.random() * 100;
+            this.x = Math.random() * (canvasWidth - 100) + 50;
+            this.fallSpeed = 2 + Math.random() * 2;
         }
 
-        // Clamp position
+        // Keep X in bounds
         this.x = Math.max(50, Math.min(canvasWidth - 50, this.x));
-        this.y = Math.max(50, Math.min(canvasHeight - 100, this.y));
     }
 
     render(ctx) {
         // Handle
-        ctx.fillStyle = '#ccc';
+        ctx.fillStyle = '#8B4513';  // Brown wooden handle
         ctx.fillRect(this.x - 4, this.y - 50, 8, 50);
 
+        // Metal part
+        ctx.fillStyle = '#c0c0c0';
+        
         // Prongs
         for (let i = -1; i <= 1; i++) {
             ctx.beginPath();
@@ -53,6 +62,10 @@ export class Fork {
             ctx.closePath();
             ctx.fill();
         }
+        
+        // Add shine
+        ctx.fillStyle = '#ffffff44';
+        ctx.fillRect(this.x - 2, this.y, 2, 30);
     }
 
     getBounds() {

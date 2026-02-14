@@ -17,6 +17,9 @@ def save_scores(scores):
         json.dump(scores, f)
 
 class LeaderboardHandler(BaseHTTPRequestHandler):
+    def log_message(self, format, *args):
+        pass  # Suppress logging
+    
     def do_OPTIONS(self):
         self.send_response(200)
         self.send_header('Access-Control-Allow-Origin', '*')
@@ -26,8 +29,19 @@ class LeaderboardHandler(BaseHTTPRequestHandler):
     
     def do_GET(self):
         scores = load_scores()
-        scores.sort(key=lambda x: x['score'], reverse=True)
-        top10 = scores[:10]
+        
+        # Deduplicate: keep only highest score per name
+        best_scores = {}
+        for entry in scores:
+            name = entry['name']
+            score = entry['score']
+            if name not in best_scores or score > best_scores[name]:
+                best_scores[name] = score
+        
+        # Convert back to list and sort
+        deduped = [{'name': k, 'score': v} for k, v in best_scores.items()]
+        deduped.sort(key=lambda x: x['score'], reverse=True)
+        top10 = deduped[:10]
         
         self.send_response(200)
         self.send_header('Content-Type', 'application/json')
@@ -46,7 +60,22 @@ class LeaderboardHandler(BaseHTTPRequestHandler):
             
             if score > 0 and score < 1000000:  # Sanity check
                 scores = load_scores()
-                scores.append({'name': name, 'score': score})
+                
+                # Check if player exists
+                existing = None
+                for i, entry in enumerate(scores):
+                    if entry['name'] == name:
+                        existing = i
+                        break
+                
+                if existing is not None:
+                    # Only update if new score is higher
+                    if score > scores[existing]['score']:
+                        scores[existing]['score'] = score
+                else:
+                    # New player
+                    scores.append({'name': name, 'score': score})
+                
                 scores.sort(key=lambda x: x['score'], reverse=True)
                 scores = scores[:100]  # Keep top 100
                 save_scores(scores)

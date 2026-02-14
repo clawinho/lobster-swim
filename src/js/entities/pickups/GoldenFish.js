@@ -9,7 +9,7 @@ export class GoldenFish {
 
     constructor(canvasWidth = 800) {
         this.size = 15;
-        this.speed = 3;
+        this.speed = 2;  // Slowed from 3
         this.direction = Math.random() > 0.5 ? 1 : -1;
         this.x = this.direction > 0 ? -30 : canvasWidth + 30;
         this.y = Math.random() * 400 + 100;
@@ -21,10 +21,10 @@ export class GoldenFish {
         const dy = this.y - playerY;
         const dist = Math.sqrt(dx * dx + dy * dy);
 
-        // Flee from player when close
-        if (dist < 150) {
-            this.x += (dx / dist) * this.speed * 1.5;
-            this.y += (dy / dist) * this.speed * 0.8;
+        // Flee from player when close (reduced radius from 150 to 100)
+        if (dist < 100) {
+            this.x += (dx / dist) * this.speed * 1.2;  // Reduced from 1.5
+            this.y += (dy / dist) * this.speed * 0.6;  // Reduced from 0.8
             this.direction = dx > 0 ? 1 : -1;
         } else {
             // Normal swimming
