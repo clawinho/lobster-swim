@@ -62,6 +62,7 @@
         <a href="#enemies">Enemies</a>
         <a href="#items">Items</a>
         <a href="#environments">Environments</a>
+        <a href="#mechanics">Mechanics</a>
         <a href="#audio">Audio</a>
     </nav>
     
@@ -156,6 +157,36 @@
     </section>
 
     
+    <section class="section" id="mechanics">
+        <h2>⚙️ Mechanics</h2>
+        <div class="asset-grid">
+            <div class="asset-card">
+                <div class="asset-preview"><canvas id="magnet-canvas" width="200" height="150"></canvas></div>
+                <div class="asset-info">
+                    <h3>Bubble Magnetism</h3>
+                    <p>Bubbles attracted to lobster within radius.</p>
+                    <div class="asset-meta"><span class="tag">core</span></div>
+                </div>
+            </div>
+            <div class="asset-card">
+                <div class="asset-preview"><canvas id="invincibility-canvas" width="200" height="150"></canvas></div>
+                <div class="asset-info">
+                    <h3>Invincibility</h3>
+                    <p>Golden shield + flash on spawn/damage.</p>
+                    <div class="asset-meta"><span class="tag">defensive</span></div>
+                </div>
+            </div>
+            <div class="asset-card">
+                <div class="asset-preview"><canvas id="difficulty-canvas" width="200" height="150"></canvas></div>
+                <div class="asset-info">
+                    <h3>Difficulty Scaling</h3>
+                    <p>Speed and enemy count scale with score.</p>
+                    <div class="asset-meta"><span class="tag">progression</span></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <section class="section" id="audio">
         <h2>🔊 Audio</h2>
         <div class="asset-grid">
@@ -257,12 +288,59 @@
             'cage-002': (c,x,y,s) => cageV002(c,x,y,s),
         };
         
+        // Mechanics renderers
+        function renderMagnetDemo(ctx, w, h, t) {
+            ctx.fillStyle = "#000810"; ctx.fillRect(0,0,w,h);
+            const cx = w/2, cy = h/2;
+            ctx.strokeStyle = "rgba(100,200,255,0.3)"; ctx.setLineDash([5,5]);
+            ctx.beginPath(); ctx.arc(cx, cy, 60, 0, Math.PI*2); ctx.stroke();
+            ctx.setLineDash([]);
+            for (let i = 0; i < 5; i++) {
+                const angle = t * 0.02 + i * (Math.PI * 2 / 5);
+                const dist = 50 + Math.sin(t * 0.05 + i) * 15;
+                const bx = cx + Math.cos(angle) * dist;
+                const by = cy + Math.sin(angle) * dist;
+                ctx.fillStyle = "rgba(100,180,255,0.6)";
+                ctx.beginPath(); ctx.arc(bx, by, 8, 0, Math.PI*2); ctx.fill();
+                ctx.strokeStyle = "rgba(100,200,255,0.2)";
+                ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(bx,by); ctx.stroke();
+            }
+            ctx.fillStyle = "#ff4500"; ctx.beginPath(); ctx.arc(cx, cy, 12, 0, Math.PI*2); ctx.fill();
+        }
+        function renderInvincibilityDemo(ctx, w, h, t) {
+            ctx.fillStyle = "#000810"; ctx.fillRect(0,0,w,h);
+            const cx = w/2, cy = h/2;
+            const flash = Math.floor(t / 5) % 2;
+            ctx.globalAlpha = flash ? 1 : 0.4;
+            ctx.fillStyle = "#ff4500"; ctx.beginPath(); ctx.ellipse(cx, cy, 25, 15, 0, 0, Math.PI*2); ctx.fill();
+            ctx.globalAlpha = 1;
+            ctx.strokeStyle = "#ffff0066"; ctx.lineWidth = 3;
+            const pulse = 1 + Math.sin(t * 0.1) * 0.1;
+            ctx.beginPath(); ctx.arc(cx, cy, 35 * pulse, 0, Math.PI*2); ctx.stroke();
+            ctx.lineWidth = 1;
+        }
+        function renderDifficultyGraph(ctx, w, h) {
+            ctx.fillStyle = "#000810"; ctx.fillRect(0,0,w,h);
+            ctx.strokeStyle = "#444"; ctx.lineWidth = 1;
+            ctx.beginPath(); ctx.moveTo(30,20); ctx.lineTo(30,h-20); ctx.lineTo(w-20,h-20); ctx.stroke();
+            ctx.fillStyle = "#666"; ctx.font = "10px monospace";
+            ctx.fillText("diff", 35, 25); ctx.fillText("score", w-45, h-8);
+            ctx.strokeStyle = "#ff4500"; ctx.lineWidth = 2;
+            ctx.beginPath(); ctx.moveTo(30, h-25);
+            const pts = [[0,1],[100,1.2],[200,1.4],[500,1.6],[1000,2]];
+            pts.forEach(p => { const x = 30 + (p[0]/1000)*(w-50); const y = h-25-(p[1]-1)*(h-50); ctx.lineTo(x,y); });
+            ctx.stroke();
+        }
+        
         let frame = 0, compareItems = [], params = { lobsterSize: 30 };
         const canvases = {};
         ['lobster','fish','hook','cage','bubble'].forEach(id => canvases[id] = document.getElementById(id+'-canvas'));
         canvases.ocean = document.getElementById('ocean-bg');
         canvases.tank = document.getElementById('tank-bg');
         canvases.kitchen = document.getElementById('kitchen-bg');
+        canvases.magnet = document.getElementById('magnet-canvas');
+        canvases.invincibility = document.getElementById('invincibility-canvas');
+        canvases.difficulty = document.getElementById('difficulty-canvas');
         
         function animate() {
             frame++;
@@ -277,6 +355,10 @@
             if(c('ocean')) renderOceanPreview(c('ocean'), 200, 150, frame);
             if(c('tank')) renderTankPreview(c('tank'), 200, 150);
             if(c('kitchen')) renderKitchenPreview(c('kitchen'), 200, 150, frame);
+            if(c('magnet')) renderMagnetDemo(c('magnet'), 200, 150, frame);
+            if(c('invincibility')) renderInvincibilityDemo(c('invincibility'), 200, 150, frame);
+            if(c('difficulty')) renderDifficultyGraph(c('difficulty'), 200, 150);
+            // END MECHANICS(c('kitchen'), 200, 150, frame);
             
             compareItems.forEach((item, i) => {
                 const cv = document.getElementById(`compare-canvas-${i}`);
