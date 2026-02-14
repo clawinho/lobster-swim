@@ -118,8 +118,55 @@
         }
         initBubbles();
         
-        // Void dangers
-        let dangers = [];
+
+        // Draw lobster trap/cage
+        function drawCage(x, y, size) {
+            ctx.save();
+            ctx.translate(x, y);
+            
+            let w = size * 1.8;
+            let h = size * 1.2;
+            
+            // Dark interior
+            ctx.fillStyle = '#1a0a0066';
+            ctx.fillRect(-w/2, -h/2, w, h);
+            
+            // Cage frame - wooden/rope look
+            ctx.strokeStyle = '#8B4513';
+            ctx.lineWidth = 3;
+            ctx.strokeRect(-w/2, -h/2, w, h);
+            
+            // Wire mesh - vertical bars
+            ctx.lineWidth = 1.5;
+            ctx.strokeStyle = '#666';
+            for(let i = -w/2 + w/5; i < w/2; i += w/5) {
+                ctx.beginPath();
+                ctx.moveTo(i, -h/2);
+                ctx.lineTo(i, h/2);
+                ctx.stroke();
+            }
+            
+            // Horizontal bar
+            ctx.beginPath();
+            ctx.moveTo(-w/2, 0);
+            ctx.lineTo(w/2, 0);
+            ctx.stroke();
+            
+            // Funnel entrance (trap opening)
+            ctx.strokeStyle = '#8B4513';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(w/2, -h/3);
+            ctx.lineTo(w/4, 0);
+            ctx.lineTo(w/2, h/3);
+            ctx.stroke();
+            
+            ctx.restore();
+            return { width: w, height: h };
+        }
+        
+        // Lobster traps (formerly void dangers)
+let dangers = [];
         function initDangers() {
             dangers = [];
             for(let i = 0; i < 3; i++) {
@@ -450,16 +497,9 @@
                 }
             });
             
-            // Void dangers - speed scales with difficulty!
+            // Lobster traps - speed scales with difficulty!
             dangers.forEach(d => {
-                ctx.fillStyle = '#4400aa99';
-                ctx.beginPath();
-                ctx.arc(d.x, d.y, d.size, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.strokeStyle = '#8800ff';
-                ctx.lineWidth = 3;
-                ctx.stroke();
-                ctx.lineWidth = 1;
+                drawCage(d.x, d.y, d.size);
                 
                 // Apply difficulty multiplier to speed
                 d.x += d.baseDx * diff.speedMult; 
@@ -468,8 +508,13 @@
                 if (d.y < 0 || d.y > 600) d.baseDy *= -1;
                 
                 if (!invincible) {
-                    let dx = lobster.x - d.x, dy = lobster.y - d.y;
-                    if (Math.sqrt(dx*dx + dy*dy) < lobster.size + d.size) {
+                    // Rectangular collision for cage
+                    let cageW = d.size * 1.8 / 2;
+                    let cageH = d.size * 1.2 / 2;
+                    if (lobster.x > d.x - cageW - lobster.size/2 && 
+                        lobster.x < d.x + cageW + lobster.size/2 &&
+                        lobster.y > d.y - cageH - lobster.size/2 && 
+                        lobster.y < d.y + cageH + lobster.size/2) {
                         loseLife();
                     }
                 }
