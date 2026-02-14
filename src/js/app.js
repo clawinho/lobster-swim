@@ -3,6 +3,7 @@
  */
 
 import { Lobster, Hook, Cage, Bubble, GoldenFish, Net, Fork } from './entities/index.js';
+import { Particle } from './entities/effects/Particle.js';
 import { Audio } from './audio-module.js';
 
 // Constants
@@ -41,96 +42,6 @@ let caught = false, caughtY = 0, screenShake = 0;
 let keys = {}, joystickDx = 0, joystickDy = 0, hasTarget = false;
 let bgScrollX = 0, lastHookThreshold = 0, fishSpawnTimer = 0;
 let particles = [];
-
-// Particle system
-class Particle {
-    constructor(x, y, vx, vy, color, size, life, gravity = 0) {
-        this.x = x;
-        this.y = y;
-        this.vx = vx;
-        this.vy = vy;
-        this.color = color;
-        this.size = size;
-        this.life = life;
-        this.maxLife = life;
-        this.gravity = gravity;
-    }
-    
-    update() {
-        this.x += this.vx;
-        this.y += this.vy;
-        this.vy += this.gravity;
-        this.vx *= 0.98;
-        this.vy *= 0.98;
-        this.life--;
-        return this.life > 0;
-    }
-    
-    render(ctx) {
-        const alpha = this.life / this.maxLife;
-        ctx.save();
-        ctx.globalAlpha = alpha;
-        ctx.fillStyle = this.color;
-        ctx.shadowColor = this.color;
-        ctx.shadowBlur = 10;
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.size * alpha, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.restore();
-    }
-}
-
-function spawnBubbleParticles(x, y) {
-    const colors = ['#88ddff', '#aaeeff', '#ffffff', '#66ccff'];
-    for (let i = 0; i < 8; i++) {
-        const angle = (Math.PI * 2 * i) / 8 + Math.random() * 0.5;
-        const speed = 2 + Math.random() * 2;
-        particles.push(new Particle(
-            x, y,
-            Math.cos(angle) * speed,
-            Math.sin(angle) * speed - 1,
-            colors[Math.floor(Math.random() * colors.length)],
-            3 + Math.random() * 2,
-            30 + Math.random() * 20,
-            -0.05
-        ));
-    }
-}
-
-function spawnDeathParticles(x, y) {
-    const colors = ['#ff4500', '#ff6600', '#ff8800', '#ffaa00'];
-    for (let i = 0; i < 20; i++) {
-        const angle = Math.random() * Math.PI * 2;
-        const speed = 3 + Math.random() * 4;
-        particles.push(new Particle(
-            x, y,
-            Math.cos(angle) * speed,
-            Math.sin(angle) * speed,
-            colors[Math.floor(Math.random() * colors.length)],
-            4 + Math.random() * 3,
-            40 + Math.random() * 20,
-            0.1
-        ));
-    }
-}
-
-function spawnGoldenParticles(x, y) {
-    const colors = ['#ffd700', '#ffec00', '#fff8dc', '#fffacd'];
-    for (let i = 0; i < 12; i++) {
-        const angle = (Math.PI * 2 * i) / 12;
-        const speed = 2 + Math.random() * 3;
-        particles.push(new Particle(
-            x, y,
-            Math.cos(angle) * speed,
-            Math.sin(angle) * speed - 2,
-            colors[Math.floor(Math.random() * colors.length)],
-            4 + Math.random() * 2,
-            50 + Math.random() * 20,
-            -0.03
-        ));
-    }
-}
-
 // DOM Elements
 let titleScreen, playBtn, scoreDisplay, livesDisplay, levelDisplay, difficultyDisplay;
 let leaderboard, nameInput, finalScoreDisplay, playerNameInput, submitBtn, skipBtn;
@@ -341,7 +252,7 @@ function checkLevelUp() {
 }
 
 function loseLife() {
-    spawnDeathParticles(player.x, player.y);
+    particles.push(...Particle.spawnDeathParticles(player.x, player.y));
     screenShake = 12;
     lives--;
     updateLives();
@@ -412,7 +323,7 @@ function update() {
     bubbles.forEach(bubble => {
         bubble.update(player.x, player.y);
         if (bubble.checkCollision(player)) {
-            spawnBubbleParticles(bubble.x, bubble.y);
+            particles.push(...Particle.spawnBubbleParticles(bubble.x, bubble.y));
             audio.playBloop();
             score += 10;
             bubble.respawn(CANVAS_WIDTH, CANVAS_HEIGHT);
@@ -481,7 +392,7 @@ function update() {
         if (offScreen) {
             fish = null;
         } else if (fish.checkCollision(player)) {
-            spawnGoldenParticles(fish.x, fish.y);
+            particles.push(...Particle.spawnGoldenParticles(fish.x, fish.y));
             audio.playExtraLife();
             lives++;
             score += 50;

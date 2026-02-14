@@ -167,6 +167,23 @@
                     </div>
                 </div>
             </div>
+            <div class="asset-card">
+                <div class="asset-preview"><canvas id="particle-canvas" width="200" height="150"></canvas></div>
+                <div class="asset-info">
+                    <h3>Particles</h3><p>Visual effects for collect, death, bonus.</p>
+                    <div class="controls">
+                        <div class="control-row"><label>Type</label>
+                            <select id="particle-type" style="flex:1; background:#001020; color:#fff; border:1px solid #ff450044; padding:4px;">
+                                <option value="bubble">Bubble Collect</option>
+                                <option value="death">Death Splash</option>
+                                <option value="golden">Golden Fish</option>
+                            </select>
+                        </div>
+                        <div class="control-row"><label>Count</label><input type="range" id="particle-count" min="4" max="20" value="8"><span class="value">8</span></div>
+                    </div>
+                    <div class="asset-meta"><span class="tag">effects</span></div>
+                </div>
+            </div>
         </div>
     </section>
     
@@ -317,6 +334,7 @@
         import { render as renderMagnetism } from '../js/entities/mechanics/Magnetism.js';
         import { render as renderInvincibility } from '../js/entities/mechanics/Invincibility.js';
         import { render as renderDifficulty } from '../js/entities/mechanics/Difficulty.js';
+        import { render as renderParticle } from '../js/entities/effects/Particle.js';
         
         const renderers = {
             'lobster-001': (c,x,y,s,t) => lobsterV001(c,x,y,s),
@@ -342,7 +360,8 @@
             cageSize: 50, netWidth: 80, forkSize: 40,
             bubbleSize: 18,
             magnetRadius: 80, magnetStrength: 3,
-            invulnDur: 120
+            invulnDur: 120,
+            particleType: 'bubble', particleCount: 8
         };
         const canvases = {};
         ['lobster','fish','hook','cage','bubble'].forEach(id => canvases[id] = document.getElementById(id+'-canvas'));
@@ -354,6 +373,7 @@
         canvases.difficulty = document.getElementById('difficulty-canvas');
         canvases.net = document.getElementById('net-canvas');
         canvases.fork = document.getElementById('fork-canvas');
+        canvases.particle = document.getElementById('particle-canvas');
         
         function animate() {
             frame++;
@@ -362,12 +382,12 @@
             
             if(c('lobster')) lobsterV003(c('lobster'), 100, 80, params.lobsterSize, frame, params.lobsterWag);
             if(c('fish')) fishV002(c('fish'), 100, 75, frame, 15, 1, params.fishShimmer);
-            if(c('hook')) hookV002(c('hook'), 100, 100, frame, 10);
-            if(c('cage')) cageV002(c('cage'), 100, 75, 50);
-            if(c('net')) netV001(c('net'), 100, 75, 80);
-            if(c('fork')) forkV001(c('fork'), 100, 70, 40);
-            //ENEMIES(c('cage'), 100, 75, 50);
-            if(c('bubble')) bubbleV001(c('bubble'), 100, 75, 18, false);
+            if(c('hook')) hookV002(c('hook'), 100, params.hookLine, frame, params.hookSwing);
+            if(c('cage')) cageV002(c('cage'), 100, 75, params.cageSize);
+            if(c('net')) netV001(c('net'), 100, 75, params.netWidth);
+            if(c('fork')) forkV001(c('fork'), 100, 70, params.forkSize);
+            if(c('bubble')) bubbleV002(c('bubble'), 100, 75, params.bubbleSize, frame);
+            if(c('particle')) renderParticle(c('particle'), 200, 150, frame, params.particleType);
             if(c('ocean')) renderOceanPreview(c('ocean'), 200, 150, frame);
             if(c('tank')) renderTankPreview(c('tank'), 200, 150);
             if(c('kitchen')) renderKitchenPreview(c('kitchen'), 200, 150, frame);
@@ -420,7 +440,44 @@ document.querySelectorAll('.version').forEach(t => t.classList.toggle('in-compar
             document.querySelectorAll('.nav a').forEach(x => x.classList.remove('active'));
             a.classList.add('active');
         }));
-        document.getElementById('lobster-size')?.addEventListener('input', e => { params.lobsterSize = +e.target.value; e.target.nextElementSibling.textContent = e.target.value; });
+        // Wire up ALL sliders
+        const sliderConfig = [
+            ['lobster-size', 'lobsterSize'],
+            ['lobster-wag', 'lobsterWag'],
+            ['fish-shimmer', 'fishShimmer'],
+            ['hook-swing', 'hookSwing'],
+            ['hook-line', 'hookLine'],
+            ['cage-size', 'cageSize'],
+            ['net-width', 'netWidth'],
+            ['fork-size', 'forkSize'],
+            ['bubble-size', 'bubbleSize'],
+            ['magnet-radius', 'magnetRadius'],
+            ['magnet-strength', 'magnetStrength'],
+            ['invuln-dur', 'invulnDur'],
+            ['particle-count', 'particleCount'],
+        ];
+        
+        sliderConfig.forEach(([id, param]) => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.addEventListener('input', e => {
+                    params[param] = +e.target.value;
+                    const display = e.target.nextElementSibling;
+                    if (display) {
+                        if (id === 'invuln-dur') {
+                            display.textContent = (params[param] / 60).toFixed(1) + 's';
+                        } else {
+                            display.textContent = e.target.value;
+                        }
+                    }
+                });
+            }
+        });
+        
+        // Particle type selector
+        document.getElementById('particle-type')?.addEventListener('change', e => {
+            params.particleType = e.target.value;
+        });
         
         animate();
     </script>
