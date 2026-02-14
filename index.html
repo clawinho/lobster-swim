@@ -45,7 +45,8 @@
     </div>
     <canvas id="game" width="800" height="600"></canvas>
     <button id="music-btn" onclick="toggleMusic()" style="position: fixed; bottom: 10px; left: 10px; background: #001820; border: 1px solid #ff4500; color: #ff4500; padding: 6px 10px; cursor: pointer; font-family: monospace; font-size: 12px; z-index: 50; opacity: 0.8;">🎵</button>
-    <div id="version">v0.5.5 - auto-start music</div>
+    <button id="sfx-btn" onclick="toggleSfx()" style="position: fixed; bottom: 10px; left: 50px; background: #002010; border: 1px solid #ff4500; color: #ff4500; padding: 6px 10px; cursor: pointer; font-family: monospace; font-size: 12px; z-index: 50; opacity: 0.8;">🔊</button>
+    <div id="version">v0.6.0 - sound effects!</div>
     <script>
         // Music control - iOS workaround
         let musicPlaying = false;
@@ -101,6 +102,108 @@
                     alert('Tap again to enable audio (browser blocked autoplay)');
                 });
             }
+        }
+
+        // Sound effects system
+        let sfxEnabled = true;
+        let audioCtx = null;
+        
+        function toggleSfx() {
+            sfxEnabled = !sfxEnabled;
+            const btn = document.getElementById('sfx-btn');
+            btn.textContent = sfxEnabled ? '🔊' : '🔇';
+            btn.style.background = sfxEnabled ? '#002010' : '#001820';
+        }
+        
+        function initAudioCtx() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            return audioCtx;
+        }
+        
+        function playBloop() {
+            if (!sfxEnabled) return;
+            const ctx = initAudioCtx();
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(400, ctx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(800, ctx.currentTime + 0.1);
+            gain.gain.setValueAtTime(0.3, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.15);
+            osc.start(ctx.currentTime);
+            osc.stop(ctx.currentTime + 0.15);
+        }
+        
+        function playHit() {
+            if (!sfxEnabled) return;
+            const ctx = initAudioCtx();
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(150, ctx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(50, ctx.currentTime + 0.2);
+            gain.gain.setValueAtTime(0.4, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.25);
+            osc.start(ctx.currentTime);
+            osc.stop(ctx.currentTime + 0.25);
+        }
+        
+        function playDeath() {
+            if (!sfxEnabled) return;
+            const ctx = initAudioCtx();
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.type = 'square';
+            osc.frequency.setValueAtTime(300, ctx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(50, ctx.currentTime + 0.5);
+            gain.gain.setValueAtTime(0.3, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.6);
+            osc.start(ctx.currentTime);
+            osc.stop(ctx.currentTime + 0.6);
+        }
+        
+        function playExtraLife() {
+            if (!sfxEnabled) return;
+            const ctx = initAudioCtx();
+            // Ascending arpeggio
+            [400, 500, 600, 800].forEach((freq, i) => {
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.type = 'sine';
+                osc.frequency.value = freq;
+                gain.gain.setValueAtTime(0.2, ctx.currentTime + i * 0.08);
+                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + i * 0.08 + 0.15);
+                osc.start(ctx.currentTime + i * 0.08);
+                osc.stop(ctx.currentTime + i * 0.08 + 0.15);
+            });
+        }
+        
+        function playHooked() {
+            if (!sfxEnabled) return;
+            const ctx = initAudioCtx();
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(200, ctx.currentTime);
+            osc.frequency.linearRampToValueAtTime(600, ctx.currentTime + 0.1);
+            osc.frequency.linearRampToValueAtTime(100, ctx.currentTime + 0.3);
+            gain.gain.setValueAtTime(0.35, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.35);
+            osc.start(ctx.currentTime);
+            osc.stop(ctx.currentTime + 0.35);
         }
 
         // Leaderboard functions
@@ -785,6 +888,7 @@
             updateLivesDisplay();
             
             if (lives <= 0) {
+                playDeath();
                 gameOver = true;
                 showNameInput(score);
                 if (score > highScore) {
@@ -792,6 +896,7 @@
                     localStorage.setItem('lobsterHighScore', highScore.toString());
                 }
             } else {
+                playHit();
                 lobster.x = 400;
                 lobster.y = 300;
                 lobster.targetX = 400;
@@ -942,6 +1047,7 @@
                 dist = Math.sqrt(dx*dx + dy*dy);
                 
                 if (dist < lobster.size + b.size) {
+                    playBloop();
                     score += 10;
                     document.getElementById('score').textContent = score;
                     document.getElementById('level-name').textContent = LEVELS[currentLevel].name;
@@ -982,6 +1088,7 @@
                     drawFish(fish);
                     
                     if (fdist < lobster.size + fish.size) {
+                        playExtraLife();
                         lives++;
                         updateLivesDisplay();
                         score += 50;
@@ -1074,6 +1181,7 @@
                 if (!invincible) {
                     let dx = lobster.x - hookPos.x, dy = lobster.y - hookPos.y;
                     if (Math.sqrt(dx*dx + dy*dy) < lobster.size + hookPos.radius) {
+                        playHooked();
                         caught = true;
                         caughtY = lobster.y;
                         lobster.x = hookPos.x;
