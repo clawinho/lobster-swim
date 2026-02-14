@@ -76,8 +76,10 @@ class LobsterSwim {
     }
 
     setupCanvasEvents(canvas) {
-        // Click to move
-        canvas.addEventListener('click', (e) => {
+        // Mouse hold-down to move (tracks while dragging)
+        let mouseIsDown = false;
+        
+        const handleMouseMove = (e) => {
             if (!this.game.gameStarted) return;
             const rect = canvas.getBoundingClientRect();
             const scaleX = canvas.width / rect.width;
@@ -85,6 +87,19 @@ class LobsterSwim {
             const x = (e.clientX - rect.left) * scaleX;
             const y = (e.clientY - rect.top) * scaleY;
             this.game.setTarget(x, y);
+        };
+        
+        canvas.addEventListener('mousedown', (e) => {
+            mouseIsDown = true;
+            handleMouseMove(e);
+        });
+        
+        document.addEventListener('mouseup', () => {
+            mouseIsDown = false;
+        });
+        
+        canvas.addEventListener('mousemove', (e) => {
+            if (mouseIsDown) handleMouseMove(e);
         });
 
         // Touch to move
