@@ -45,7 +45,7 @@
     </div>
     <canvas id="game" width="800" height="600"></canvas>
     <button id="music-btn" onclick="toggleMusic()" style="position: fixed; bottom: 10px; left: 10px; background: #001820; border: 1px solid #ff4500; color: #ff4500; padding: 6px 10px; cursor: pointer; font-family: monospace; font-size: 12px; z-index: 50; opacity: 0.8;">🎵</button>
-    <div id="version">v0.5.0 - merged + touch fix</div>
+    <div id="version">v0.5.1 - trailing tail physics</div>
     <script>
         // Music control - iOS workaround
         let musicPlaying = false;
@@ -361,6 +361,13 @@
         }
 
         let lobster = { x: 400, y: 300, size: 30, speed: 5, targetX: 400, targetY: 300, angle: 0, prevX: 400, prevY: 300 };
+        // Tail segments for trailing animation
+        let tailSegments = [
+            { x: 400, y: 300, angle: 0 },
+            { x: 400, y: 300, angle: 0 },
+            { x: 400, y: 300, angle: 0 }
+        ];
+        const TAIL_FOLLOW_SPEED = 0.15; // How fast tail catches up (0-1)
         let score = 0;
         let lives = 3;
         let keys = {};
@@ -531,12 +538,13 @@
             document.getElementById('lives').textContent = '❤️'.repeat(lives) + '🖤'.repeat(3 - lives);
         }
         
-        // ANIMATED LOBSTER from v0.4.2
+        // ANIMATED LOBSTER with trailing tail physics
         function drawLobster(x, y, size) {
             if (invincible && Math.floor(invincibleTimer / 5) % 2 === 0) {
                 ctx.globalAlpha = 0.4;
             }
             
+            // Update body angle based on movement
             let dx = x - lobster.prevX;
             let dy = y - lobster.prevY;
             if (Math.abs(dx) > 0.5 || Math.abs(dy) > 0.5) {
@@ -549,6 +557,66 @@
             lobster.prevX = x;
             lobster.prevY = y;
             
+            // Update tail segments with trailing physics
+            // Each segment follows the one ahead with a delay
+            let leader = { x: x, y: y, angle: lobster.angle };
+            for (let i = 0; i < tailSegments.length; i++) {
+                let seg = tailSegments[i];
+                // Calculate target position behind the leader
+                let targetX = leader.x - Math.cos(leader.angle) * (size * 0.5);
+                let targetY = leader.y - Math.sin(leader.angle) * (size * 0.5);
+                
+                // Smooth follow with lag (this creates the trailing effect)
+                seg.x += (targetX - seg.x) * TAIL_FOLLOW_SPEED;
+                seg.y += (targetY - seg.y) * TAIL_FOLLOW_SPEED;
+                
+                // Angle toward the leader
+                let segDx = leader.x - seg.x;
+                let segDy = leader.y - seg.y;
+                if (Math.abs(segDx) > 0.1 || Math.abs(segDy) > 0.1) {
+                    let targetAngle = Math.atan2(segDy, segDx);
+                    let diff = targetAngle - seg.angle;
+                    while (diff > Math.PI) diff -= Math.PI * 2;
+                    while (diff < -Math.PI) diff += Math.PI * 2;
+                    seg.angle += diff * 0.2;
+                }
+                
+                leader = seg; // Next segment follows this one
+            }
+            
+            // Draw tail segments first (behind body)
+            ctx.fillStyle = '#cc3300';
+            // Segment 1 (closest to body)
+            ctx.save();
+            ctx.translate(tailSegments[0].x, tailSegments[0].y);
+            ctx.rotate(tailSegments[0].angle);
+            ctx.beginPath();
+            ctx.ellipse(0, 0, size * 0.5, size * 0.35, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+            
+            // Segment 2
+            ctx.save();
+            ctx.translate(tailSegments[1].x, tailSegments[1].y);
+            ctx.rotate(tailSegments[1].angle);
+            ctx.beginPath();
+            ctx.ellipse(0, 0, size * 0.35, size * 0.25, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+            
+            // Tail fan (segment 3)
+            ctx.fillStyle = '#ff4500';
+            ctx.save();
+            ctx.translate(tailSegments[2].x, tailSegments[2].y);
+            ctx.rotate(tailSegments[2].angle);
+            for (let i = -2; i <= 2; i++) {
+                ctx.beginPath();
+                ctx.ellipse(-8, i * 4, 8, 3, 0, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            ctx.restore();
+            
+            // Draw body
             ctx.save();
             ctx.translate(x, y);
             ctx.rotate(lobster.angle);
@@ -557,20 +625,6 @@
             ctx.beginPath();
             ctx.ellipse(0, 0, size, size * 0.6, 0, 0, Math.PI * 2);
             ctx.fill();
-            
-            ctx.fillStyle = '#cc3300';
-            ctx.beginPath();
-            ctx.ellipse(-size * 0.9, 0, size * 0.5, size * 0.35, 0, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.beginPath();
-            ctx.ellipse(-size * 1.4, 0, size * 0.35, size * 0.25, 0, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.fillStyle = '#ff4500';
-            for (let i = -2; i <= 2; i++) {
-                ctx.beginPath();
-                ctx.ellipse(-size * 1.8, i * 4, 8, 3, 0, 0, Math.PI * 2);
-                ctx.fill();
-            }
             
             let clawWave = Math.sin(Date.now() / 200) * 0.15;
             ctx.fillStyle = '#ff5500';
@@ -703,6 +757,8 @@
             lobster.angle = 0;
             lobster.prevX = 400;
             lobster.prevY = 300;
+            // Reset tail segments
+            tailSegments.forEach(seg => { seg.x = 400; seg.y = 300; seg.angle = 0; });
             hasTarget = false;
             invincible = true;
             invincibleTimer = INVINCIBLE_DURATION;
