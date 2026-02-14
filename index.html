@@ -19,6 +19,10 @@
     </style>
 </head>
 <body>
+        <audio id="bgm" loop preload="auto">
+        <source src="lobster_jazz.mp3" type="audio/mpeg">
+    </audio>
+    <button id="music-btn" onclick="toggleMusic()" style="position: fixed; top: 10px; left: 10px; background: #001820; border: 2px solid #ff4500; color: #ff4500; padding: 8px 12px; cursor: pointer; z-index: 50; font-family: monospace;">🔇 Music</button>
     <div id="leaderboard" style="position: fixed; top: 10px; right: 10px; background: #001820; border: 2px solid #ff4500; padding: 10px; min-width: 150px; z-index: 50;">
         <div style="color: #ff4500; font-weight: bold; margin-bottom: 8px;">🏆 TOP SCORES</div>
         <div id="scores-list" style="color: #fff; font-size: 12px;">Loading...</div>
@@ -36,8 +40,38 @@
         <p id="mobile-hint">Touch & drag to swim!</p>
     </div>
     <canvas id="game" width="800" height="600"></canvas>
-    <div id="version">v0.1.1 - leaderboard fix</div>
+    <div id="version">v0.1.2 - jazzy music</div>
     <script>
+        // Music control
+        let musicPlaying = false;
+        const bgm = document.getElementById('bgm');
+        bgm.volume = 0.4;
+        
+        function toggleMusic() {
+            if (musicPlaying) {
+                bgm.pause();
+                document.getElementById('music-btn').textContent = '🔇 Music';
+            } else {
+                bgm.play();
+                document.getElementById('music-btn').textContent = '🔊 Music';
+            }
+            musicPlaying = !musicPlaying;
+        }
+        
+        // Auto-start music on first interaction
+        function startMusicOnInteraction() {
+            if (!musicPlaying) {
+                bgm.play().then(() => {
+                    musicPlaying = true;
+                    document.getElementById('music-btn').textContent = '🔊 Music';
+                }).catch(() => {});
+            }
+            document.removeEventListener('click', startMusicOnInteraction);
+            document.removeEventListener('touchstart', startMusicOnInteraction);
+        }
+        document.addEventListener('click', startMusicOnInteraction);
+        document.addEventListener('touchstart', startMusicOnInteraction);
+
         // Leaderboard functions
         let finalScore = 0;
         
