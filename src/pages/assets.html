@@ -416,7 +416,7 @@
                 const r = renderers[`bubble-${selectedVersions.bubble}`];
                 if(r) r(c('bubble'), 100, 75, params.bubbleSize, frame);
             }
-            if(c('particle')) renderParticle(c('particle'), 200, 150, frame, params.particleType);
+            if(c('particle')) renderParticle(c('particle'), 200, 150, frame, params.particleType, params.particleCount);
             if(c('ocean')) renderOceanPreview(c('ocean'), 200, 150, frame);
             if(c('tank')) renderTankPreview(c('tank'), 200, 150);
             if(c('kitchen')) renderKitchenPreview(c('kitchen'), 200, 150, frame);

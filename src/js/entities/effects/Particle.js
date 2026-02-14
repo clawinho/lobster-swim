@@ -99,7 +99,7 @@ export class Particle {
 }
 
 // Preview renderer for assets page
-export function render(ctx, width, height, frame, type = 'bubble') {
+export function render(ctx, width, height, frame, type = 'bubble', count = 8) {
     ctx.fillStyle = '#000810';
     ctx.fillRect(0, 0, width, height);
     
@@ -114,7 +114,6 @@ export function render(ctx, width, height, frame, type = 'bubble') {
         const colors = type === 'bubble' ? ['#88ddff', '#aaeeff', '#ffffff'] :
                        type === 'death' ? ['#ff4500', '#ff6600', '#ff8800'] :
                        ['#ffd700', '#ffec00', '#fff8dc'];
-        const count = type === 'death' ? 12 : 8;
         const gravity = type === 'bubble' ? -0.05 : type === 'death' ? 0.1 : -0.03;
         
         for (let i = 0; i < count; i++) {
@@ -139,7 +138,6 @@ export function render(ctx, width, height, frame, type = 'bubble') {
         const colors = type === 'bubble' ? ['#88ddff', '#aaeeff', '#ffffff'] :
                        type === 'death' ? ['#ff4500', '#ff6600', '#ff8800'] :
                        ['#ffd700', '#ffec00', '#fff8dc'];
-        const count = type === 'death' ? 12 : 8;
         const gravity = type === 'bubble' ? -0.05 : type === 'death' ? 0.1 : -0.03;
         
         for (let i = 0; i < count; i++) {
