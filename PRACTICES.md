@@ -30,6 +30,100 @@ src/
     └── music/          # MP3 files for level music
 ```
 
+## Adding New Entities
+
+When adding something new to the game, **always follow the entity pattern**:
+
+### 1. Create versioned entity file
+```
+src/js/entities/<category>/versions/<Name>.v001.js
+```
+
+Categories: `hero`, `enemies`, `pickups`, `effects`, `mechanics`, `environments`
+
+### 2. Entity file structure
+```js
+/**
+ * <Name>.v001.js - Description
+ * @version 001
+ * @current true (if this is the active version)
+ */
+export function render(ctx, x, y, ...params) {
+    // Drawing code
+}
+
+export const meta = { 
+    version: "001", 
+    name: "Entity Name", 
+    current: true,
+    features: ["feature1", "feature2"] 
+};
+```
+
+### 3. Export from index
+Add to `src/js/entities/<category>/index.js` or create main `<Name>.js` that imports the current version.
+
+### 4. Add to assets library (REQUIRED)
+Every entity must be previewable in the assets page:
+
+a) Add canvas in HTML:
+```html
+<div class="asset-card" data-entity="name">
+    <div class="version-tabs">
+        <span class="version-tab active" data-version="001">v001<span class="star">★</span></span>
+    </div>
+    <div class="asset-preview"><canvas id="name-canvas" width="200" height="150"></canvas></div>
+    <div class="asset-info">
+        <h3>Name</h3><p>Description</p>
+        <div class="controls">
+            <div class="control-row"><label>Param</label><input type="range" id="name-param" min="0" max="100" value="50"><span class="value">50</span></div>
+        </div>
+    </div>
+</div>
+```
+
+b) Import renderer in assets.html:
+```js
+import { render as nameV001 } from '../js/entities/<category>/versions/<Name>.v001.js';
+```
+
+c) Add to renderers object:
+```js
+'name-001': (c,x,y,param) => nameV001(c,x,y,param),
+```
+
+d) Add to params and selectedVersions:
+```js
+params.nameParam = 50;
+selectedVersions.name = '001';
+```
+
+e) Add canvas to canvases object:
+```js
+canvases.name = document.getElementById('name-canvas');
+```
+
+f) Add render call in animate():
+```js
+if(c('name')) {
+    const r = renderers[`name-${selectedVersions.name}`];
+    if(r) r(c('name'), 100, 75, params.nameParam);
+}
+```
+
+g) Wire slider in sliderConfig:
+```js
+['name-param', 'nameParam'],
+```
+
+### 5. Version iteration
+When improving an entity:
+- Create `<Name>.v002.js` with improvements
+- Add new version tab to assets page
+- Update renderers object with new version
+- Test both versions work via tabs
+- Set `@current true` on new version when ready
+
 ## Critical Lessons Learned
 
 ### 1. ALWAYS check which file is the entry point
