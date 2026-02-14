@@ -7,10 +7,37 @@
     <link rel="stylesheet" href="css/game.css">
 </head>
 <body>
-    <!-- Web Components -->
-    <title-screen></title-screen>
-    <leader-board></leader-board>
-    <game-over></game-over>
+    <!-- TITLE SCREEN -->
+    <div id="title-screen">
+        <div id="title-content">
+            <div id="title-lobster">🦞</div>
+            <h1 id="title-name">LOBSTER SWIM</h1>
+            <p id="title-tagline">Escape the kitchen. Survive the void.</p>
+            <div id="title-highscore">High Score: <span id="title-hs">0</span></div>
+            <button id="play-btn">▶ PLAY</button>
+            <p id="title-hint">🎵 Arrow keys or touch to swim</p>
+        </div>
+    </div>
+
+    <!-- LEADERBOARD -->
+    <div id="leaderboard">
+        <div class="leaderboard-title">🏆 TOP SCORES</div>
+        <div id="scores-list">Loading...</div>
+    </div>
+
+    <!-- GAME OVER MODAL -->
+    <div id="name-input">
+        <div class="modal-icon">🦞💀</div>
+        <div class="modal-title">GAME OVER</div>
+        <div id="death-quote">"The void claims all eventually..."</div>
+        <div class="final-score">Final Score: <span id="final-score-display">0</span></div>
+        <div class="input-label">Enter your name:</div>
+        <input type="text" id="player-name" maxlength="15" placeholder="Your name">
+        <div class="modal-buttons">
+            <button id="submit-score-btn">SUBMIT</button>
+            <button id="skip-btn">SKIP</button>
+        </div>
+    </div>
 
     <!-- GAME UI -->
     <div id="ui">
@@ -35,7 +62,7 @@
 
     <!-- BOTTOM NAV -->
     <div id="bottom-nav">
-        <div id="version">v1.0.0-modular</div>
+        <div id="version">v1.0.0</div>
         <div class="nav-links">
             <a href="/pages/commits.html">commits</a>
             <a href="/pages/assets.html">assets</a>
@@ -44,6 +71,6 @@
     </div>
 
     <!-- Load game as ES6 module -->
-    <script type="module" src="js/main.js"></script>
+    <script type="module" src="js/app.js"></script>
 </body>
 </html>

@@ -1,0 +1,574 @@
+/**
+ * app.js - Main application (uses regular DOM, modular entities)
+ */
+
+import { Lobster, Hook, Cage, Bubble, GoldenFish, Net, Fork } from './entities/index.js';
+import { Audio } from './audio-module.js';
+
+// Constants
+const CANVAS_WIDTH = 800;
+const CANVAS_HEIGHT = 600;
+const INVINCIBLE_DURATION = 120;
+
+const LEVELS = {
+    1: { name: 'The Ocean', background: '#001020', scoreThreshold: 0 },
+    2: { name: 'Seafood Tank', background: '#002030', scoreThreshold: 200 },
+    3: { name: 'The Kitchen', background: '#1a0a05', scoreThreshold: 500 }
+};
+
+const DIFFICULTY = {
+    THRESHOLDS: [100, 200, 500, 1000],
+    SPEED_MULT: [1.0, 1.2, 1.4, 1.6, 2.0],
+    HOOK_COUNTS: [2, 2, 3, 3, 4],
+    TIER_NAMES: ['', 'WARM', 'MEDIUM', 'HARD', 'HELL']
+};
+
+const DEATH_QUOTES = [
+    "The void claims all eventually...",
+    "Even the mightiest lobster falls...",
+    "The kitchen always wins...",
+    "Butter and garlic await...",
+    "Another one for the pot..."
+];
+
+// Game state
+let canvas, ctx, audio;
+let player, bubbles, hooks, cages, nets, forks, fish;
+let score = 0, lives = 3, highScore = 0;
+let gameOver = false, gameStarted = false;
+let currentLevel = 1, invincible = true, invincibleTimer = INVINCIBLE_DURATION;
+let caught = false, caughtY = 0, screenShake = 0;
+let keys = {}, joystickDx = 0, joystickDy = 0, hasTarget = false;
+let bgScrollX = 0, lastHookThreshold = 0, fishSpawnTimer = 0;
+
+// DOM Elements
+let titleScreen, playBtn, scoreDisplay, livesDisplay, levelDisplay, difficultyDisplay;
+let leaderboard, nameInput, finalScoreDisplay, playerNameInput, submitBtn, skipBtn;
+
+// Initialize
+function init() {
+    canvas = document.getElementById('game');
+    ctx = canvas.getContext('2d');
+    audio = new Audio();
+    
+    // Get DOM elements
+    titleScreen = document.getElementById('title-screen');
+    playBtn = document.getElementById('play-btn');
+    scoreDisplay = document.getElementById('score');
+    livesDisplay = document.getElementById('lives');
+    levelDisplay = document.getElementById('level-name');
+    difficultyDisplay = document.getElementById('difficulty');
+    leaderboard = document.getElementById('scores-list');
+    nameInput = document.getElementById('name-input');
+    finalScoreDisplay = document.getElementById('final-score-display');
+    playerNameInput = document.getElementById('player-name');
+    submitBtn = document.getElementById('submit-score-btn');
+    skipBtn = document.getElementById('skip-btn');
+    
+    // Load high score
+    highScore = parseInt(localStorage.getItem('lobsterHighScore') || '0');
+    document.getElementById('title-hs').textContent = highScore;
+    
+    // Setup events
+    setupEvents();
+    
+    // Load leaderboard
+    fetchLeaderboard();
+    
+    console.log('🦞 Lobster Swim initialized');
+}
+
+function setupEvents() {
+    // Play button
+    playBtn.addEventListener('click', startGame);
+    
+    // Keyboard
+    document.addEventListener('keydown', e => keys[e.key] = true);
+    document.addEventListener('keyup', e => keys[e.key] = false);
+    
+    // Canvas click/touch
+    canvas.addEventListener('click', handleCanvasClick);
+    canvas.addEventListener('touchstart', handleCanvasTouch, { passive: false });
+    
+    // Joystick
+    setupJoystick();
+    
+    // Music/SFX toggles
+    document.getElementById('music-btn').addEventListener('click', () => {
+        const enabled = audio.toggleMusic();
+        document.getElementById('music-btn').style.opacity = enabled ? '0.8' : '0.4';
+    });
+    document.getElementById('sfx-btn').addEventListener('click', () => {
+        const enabled = audio.toggleSfx();
+        document.getElementById('sfx-btn').style.opacity = enabled ? '0.8' : '0.4';
+    });
+    
+    // Game over buttons
+    submitBtn.addEventListener('click', submitScore);
+    skipBtn.addEventListener('click', returnToTitle);
+    playerNameInput.addEventListener('keypress', e => {
+        if (e.key === 'Enter') submitScore();
+    });
+}
+
+function setupJoystick() {
+    const base = document.getElementById('joystick-base');
+    const knob = document.getElementById('joystick-knob');
+    if (!base || !knob) return;
+    
+    let active = false;
+    
+    const update = (clientX, clientY) => {
+        const rect = base.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+        const maxDist = rect.width / 2 - 25;
+        
+        let dx = clientX - centerX;
+        let dy = clientY - centerY;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        
+        if (dist > maxDist) {
+            dx = (dx / dist) * maxDist;
+            dy = (dy / dist) * maxDist;
+        }
+        
+        knob.style.transform = `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px))`;
+        joystickDx = dx / maxDist;
+        joystickDy = dy / maxDist;
+    };
+    
+    base.addEventListener('touchstart', e => {
+        e.preventDefault();
+        active = true;
+        update(e.touches[0].clientX, e.touches[0].clientY);
+    }, { passive: false });
+    
+    document.addEventListener('touchmove', e => {
+        if (active && e.touches.length > 0) {
+            update(e.touches[0].clientX, e.touches[0].clientY);
+        }
+    }, { passive: false });
+    
+    document.addEventListener('touchend', () => {
+        active = false;
+        knob.style.transform = 'translate(-50%, -50%)';
+        joystickDx = 0;
+        joystickDy = 0;
+    });
+}
+
+function handleCanvasClick(e) {
+    if (!gameStarted || gameOver) return;
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    player.targetX = (e.clientX - rect.left) * scaleX;
+    player.targetY = (e.clientY - rect.top) * scaleY;
+    hasTarget = true;
+}
+
+function handleCanvasTouch(e) {
+    if (!gameStarted || gameOver) return;
+    e.preventDefault();
+    const touch = e.touches[0];
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    player.targetX = (touch.clientX - rect.left) * scaleX;
+    player.targetY = (touch.clientY - rect.top) * scaleY;
+    hasTarget = true;
+}
+
+function startGame() {
+    titleScreen.classList.add('hidden');
+    audio.init();
+    audio.startLevelMusic(1);
+    
+    // Reset game state
+    score = 0;
+    lives = 3;
+    gameOver = false;
+    gameStarted = true;
+    currentLevel = 1;
+    invincible = true;
+    invincibleTimer = INVINCIBLE_DURATION;
+    caught = false;
+    lastHookThreshold = 0;
+    fishSpawnTimer = 0;
+    
+    // Create entities
+    player = new Lobster(400, 300);
+    bubbles = Bubble.create(8, CANVAS_WIDTH, CANVAS_HEIGHT);
+    cages = Cage.create(2, CANVAS_WIDTH, CANVAS_HEIGHT);
+    hooks = Hook.create(CANVAS_WIDTH, 2);
+    nets = [];
+    forks = [];
+    fish = null;
+    
+    updateUI();
+    gameLoop();
+}
+
+function getDifficulty() {
+    let tier = 0;
+    for (let i = 0; i < DIFFICULTY.THRESHOLDS.length; i++) {
+        if (score >= DIFFICULTY.THRESHOLDS[i]) tier = i + 1;
+    }
+    return {
+        tier,
+        name: DIFFICULTY.TIER_NAMES[tier],
+        speedMult: DIFFICULTY.SPEED_MULT[tier],
+        hookCount: DIFFICULTY.HOOK_COUNTS[tier]
+    };
+}
+
+function checkLevelUp() {
+    for (let lvl = 3; lvl >= 1; lvl--) {
+        if (score >= LEVELS[lvl].scoreThreshold && currentLevel < lvl) {
+            currentLevel = lvl;
+            document.body.style.background = LEVELS[lvl].background;
+            levelDisplay.textContent = LEVELS[lvl].name;
+            if (lvl === 2) nets = Net.create(2, CANVAS_WIDTH, CANVAS_HEIGHT);
+            if (lvl === 3) forks = Fork.create(3, CANVAS_WIDTH, CANVAS_HEIGHT);
+            audio.startLevelMusic(lvl);
+            audio.playLevelUp();
+            break;
+        }
+    }
+}
+
+function loseLife() {
+    screenShake = 12;
+    lives--;
+    updateLives();
+    
+    if (lives <= 0) {
+        audio.playDeath();
+        gameOver = true;
+        if (score > highScore) {
+            highScore = score;
+            localStorage.setItem('lobsterHighScore', highScore.toString());
+        }
+        showGameOver();
+    } else {
+        audio.playHit();
+        player.reset(400, 300);
+        hasTarget = false;
+        caught = false;
+        invincible = true;
+        invincibleTimer = INVINCIBLE_DURATION;
+    }
+}
+
+function update() {
+    if (gameOver) return;
+    
+    const diff = getDifficulty();
+    
+    // Invincibility
+    if (invincible) {
+        invincibleTimer--;
+        if (invincibleTimer <= 0) invincible = false;
+    }
+    
+    // Caught state
+    if (caught) {
+        caughtY -= 3;
+        player.y = caughtY;
+        if (player.y < -50) loseLife();
+        return;
+    }
+    
+    // Player movement
+    if (keys['ArrowUp'] || keys['w'] || keys['W']) player.y -= player.speed;
+    if (keys['ArrowDown'] || keys['s'] || keys['S']) player.y += player.speed;
+    if (keys['ArrowLeft'] || keys['a'] || keys['A']) player.x -= player.speed;
+    if (keys['ArrowRight'] || keys['d'] || keys['D']) player.x += player.speed;
+    
+    if (joystickDx !== 0 || joystickDy !== 0) {
+        player.x += joystickDx * player.speed;
+        player.y += joystickDy * player.speed;
+    }
+    
+    if (hasTarget) {
+        const dx = player.targetX - player.x;
+        const dy = player.targetY - player.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist > 10) {
+            player.x += (dx / dist) * player.speed;
+            player.y += (dy / dist) * player.speed;
+        } else {
+            hasTarget = false;
+        }
+    }
+    
+    player.clamp(CANVAS_WIDTH, CANVAS_HEIGHT);
+    
+    // Bubbles
+    bubbles.forEach(bubble => {
+        bubble.update(player.x, player.y);
+        if (bubble.checkCollision(player)) {
+            audio.playBloop();
+            score += 10;
+            bubble.respawn(CANVAS_WIDTH, CANVAS_HEIGHT);
+            updateScore();
+            
+            // Difficulty scaling
+            const diff = getDifficulty();
+            if (diff.hookCount > hooks.length && score > lastHookThreshold + 100) {
+                hooks.push(...Hook.create(CANVAS_WIDTH, 1));
+                lastHookThreshold = score;
+            }
+        }
+    });
+    
+    // Cages
+    cages.forEach(cage => {
+        cage.update(diff.speedMult, CANVAS_WIDTH, CANVAS_HEIGHT);
+        if (cage.checkCollision(player, invincible)) {
+            caught = true;
+            caughtY = player.y;
+            audio.playHooked();
+        }
+    });
+    
+    // Hooks
+    hooks.forEach(hook => {
+        hook.update(diff.speedMult);
+        if (hook.checkCollision(player, invincible)) {
+            caught = true;
+            caughtY = player.y;
+            audio.playHooked();
+        }
+    });
+    
+    // Nets (level 2+)
+    if (currentLevel >= 2) {
+        nets.forEach(net => {
+            net.update(diff.speedMult, CANVAS_WIDTH, CANVAS_HEIGHT);
+            if (net.checkCollision(player, invincible)) {
+                loseLife();
+            }
+        });
+    }
+    
+    // Forks (level 3)
+    if (currentLevel >= 3) {
+        forks.forEach(fork => {
+            fork.update(diff.speedMult, CANVAS_WIDTH, CANVAS_HEIGHT);
+            if (fork.checkCollision(player, invincible)) {
+                loseLife();
+            }
+        });
+    }
+    
+    // Golden fish
+    fishSpawnTimer++;
+    if (!fish && fishSpawnTimer > GoldenFish.SPAWN_INTERVAL && lives < 3) {
+        if (Math.random() < GoldenFish.SPAWN_CHANCE) {
+            fish = new GoldenFish(CANVAS_WIDTH);
+            fishSpawnTimer = 0;
+        }
+    }
+    
+    if (fish) {
+        const offScreen = fish.update(player.x, player.y, CANVAS_WIDTH);
+        if (offScreen) {
+            fish = null;
+        } else if (fish.checkCollision(player)) {
+            audio.playExtraLife();
+            lives++;
+            score += 50;
+            updateLives();
+            updateScore();
+            fish = null;
+        }
+    }
+    
+    // Level up check
+    checkLevelUp();
+    
+    // Background scroll
+    bgScrollX += 0.5;
+}
+
+function render() {
+    ctx.save();
+    
+    // Screen shake
+    if (screenShake > 0) {
+        const shakeX = (Math.random() - 0.5) * screenShake * 2;
+        const shakeY = (Math.random() - 0.5) * screenShake * 2;
+        ctx.translate(shakeX, shakeY);
+        screenShake--;
+    }
+    
+    // Background
+    renderBackground();
+    
+    // Entities
+    bubbles.forEach(b => b.render(ctx, player.x, player.y));
+    cages.forEach(c => c.render(ctx));
+    hooks.forEach(h => h.render(ctx));
+    
+    if (currentLevel >= 2) nets.forEach(n => n.render(ctx));
+    if (currentLevel >= 3) forks.forEach(f => f.render(ctx));
+    if (fish) fish.render(ctx);
+    
+    // Player
+    player.render(ctx, invincible, invincibleTimer);
+    
+    ctx.restore();
+}
+
+function renderBackground() {
+    const level = LEVELS[currentLevel];
+    ctx.fillStyle = level.background;
+    ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+    
+    if (currentLevel === 1) {
+        // Sandy floor
+        ctx.fillStyle = '#3d2817';
+        ctx.fillRect(0, 500, CANVAS_WIDTH, 100);
+        // Seaweed
+        ctx.fillStyle = '#2d5a2d';
+        for (let i = 0; i < 8; i++) {
+            const x = (i * 120 + bgScrollX * 0.2) % (CANVAS_WIDTH + 100) - 50;
+            for (let j = 0; j < 5; j++) {
+                const sway = Math.sin(Date.now() / 500 + i + j) * 10;
+                ctx.beginPath();
+                ctx.ellipse(x + sway, 520 - j * 30, 8, 25, 0.2 + sway * 0.02, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+    } else if (currentLevel === 2) {
+        ctx.fillStyle = '#4a4a4a';
+        ctx.fillRect(0, 520, CANVAS_WIDTH, 80);
+        ctx.fillStyle = '#666';
+        ctx.fillRect(30, 450, 60, 70);
+        ctx.fillStyle = '#888';
+        ctx.beginPath();
+        ctx.moveTo(30, 450);
+        ctx.lineTo(60, 420);
+        ctx.lineTo(90, 450);
+        ctx.fill();
+    } else if (currentLevel === 3) {
+        ctx.fillStyle = '#8B4513';
+        ctx.fillRect(0, 500, CANVAS_WIDTH, 100);
+        ctx.strokeStyle = '#ffffff22';
+        for (let x = 0; x < CANVAS_WIDTH; x += 50) {
+            ctx.beginPath();
+            ctx.moveTo(x, 0);
+            ctx.lineTo(x, 500);
+            ctx.stroke();
+        }
+        for (let y = 0; y < 500; y += 50) {
+            ctx.beginPath();
+            ctx.moveTo(0, y);
+            ctx.lineTo(CANVAS_WIDTH, y);
+            ctx.stroke();
+        }
+    }
+}
+
+function gameLoop() {
+    if (!gameStarted) return;
+    
+    update();
+    render();
+    
+    if (!gameOver) {
+        requestAnimationFrame(gameLoop);
+    }
+}
+
+function updateUI() {
+    updateScore();
+    updateLives();
+    levelDisplay.textContent = '';
+}
+
+function updateScore() {
+    scoreDisplay.textContent = score;
+    const diff = getDifficulty();
+    if (diff.name) {
+        difficultyDisplay.textContent = `[${diff.name}]`;
+    } else {
+        difficultyDisplay.textContent = '';
+    }
+}
+
+function updateLives() {
+    let hearts = '';
+    for (let i = 0; i < 3; i++) {
+        hearts += i < lives ? '❤️' : '🖤';
+    }
+    livesDisplay.innerHTML = hearts;
+}
+
+function showGameOver() {
+    const quote = DEATH_QUOTES[Math.floor(Math.random() * DEATH_QUOTES.length)];
+    document.getElementById('death-quote').textContent = `"${quote}"`;
+    finalScoreDisplay.textContent = score;
+    playerNameInput.value = localStorage.getItem('lobsterPlayerName') || '';
+    nameInput.style.display = 'block';
+    setTimeout(() => playerNameInput.focus(), 100);
+}
+
+async function submitScore() {
+    const name = playerNameInput.value.trim() || 'Anonymous';
+    localStorage.setItem('lobsterPlayerName', name);
+    
+    try {
+        await fetch('/api/scores', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, score })
+        });
+        fetchLeaderboard();
+    } catch (err) {
+        console.error('Failed to submit score:', err);
+    }
+    
+    returnToTitle();
+}
+
+function returnToTitle() {
+    nameInput.style.display = 'none';
+    audio.stopMusic();
+    gameStarted = false;
+    document.getElementById('title-hs').textContent = highScore;
+    titleScreen.classList.remove('hidden');
+    fetchLeaderboard();
+}
+
+async function fetchLeaderboard() {
+    try {
+        const res = await fetch('/api/scores');
+        const scores = await res.json();
+        const isMobile = window.innerWidth <= 820;
+        const limit = isMobile ? 5 : 10;
+        const top = scores.slice(0, limit);
+        
+        if (top.length === 0) {
+            leaderboard.innerHTML = 'No scores yet!';
+            return;
+        }
+        
+        leaderboard.innerHTML = top.map((s, i) => 
+            `<div>${i + 1}. ${escapeHtml(s.name)}: ${s.score}</div>`
+        ).join('');
+    } catch (err) {
+        leaderboard.innerHTML = 'Could not load scores';
+    }
+}
+
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+// Start when DOM ready
+document.addEventListener('DOMContentLoaded', init);
