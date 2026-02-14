@@ -344,8 +344,8 @@
             'fish-002': (c,x,y,t,size,dir,shimmer) => fishV002(c,x,y,t,size||15,dir||1,shimmer||5),
             'bubble-001': (c,x,y,s,t) => bubbleV001(c,x,y,s,false),
             'bubble-002': (c,x,y,s,t) => bubbleV002(c,x,y,s,t),
-            'hook-001': (c,x,l,t) => hookV001(c,x,l),
-            'hook-002': (c,x,l,t) => hookV002(c,x,l,t,10),
+            'hook-001': (c,x,l,t,swing) => hookV001(c,x,l),
+            'hook-002': (c,x,l,t,swing) => hookV002(c,x,l,t,swing||10),
             'cage-001': (c,x,y,s) => cageV001(c,x,y,s),
             'cage-002': (c,x,y,s) => cageV002(c,x,y,s),
         };
