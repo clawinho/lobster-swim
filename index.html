@@ -19,14 +19,72 @@
     </style>
 </head>
 <body>
+    <div id="leaderboard" style="position: fixed; top: 10px; right: 10px; background: #001820; border: 2px solid #ff4500; padding: 10px; min-width: 150px; z-index: 50;">
+        <div style="color: #ff4500; font-weight: bold; margin-bottom: 8px;">🏆 TOP SCORES</div>
+        <div id="scores-list" style="color: #fff; font-size: 12px;">Loading...</div>
+    </div>
+    <div id="name-input" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #001820; border: 2px solid #ff4500; padding: 20px; display: none; text-align: center; z-index: 100;">
+        <div style="color: #ff4500; margin-bottom: 10px;">GAME OVER! Enter your name:</div>
+        <input type="text" id="player-name" maxlength="15" style="background: #000; color: #fff; border: 1px solid #ff4500; padding: 5px; margin-bottom: 10px; text-align: center;" placeholder="Your name">
+        <br>
+        <button onclick="submitScore()" style="background: #ff4500; color: #000; border: none; padding: 8px 16px; cursor: pointer;">SUBMIT</button>
+        <button onclick="skipSubmit()" style="background: #333; color: #fff; border: none; padding: 8px 16px; cursor: pointer; margin-left: 5px;">SKIP</button>
+    </div>
     <div id="ui">
         <h1>🦞 Lobster Swim</h1>
         <p>Score: <span id="score">0</span> | <span id="lives">❤️❤️❤️</span><span id="difficulty"></span></p>
         <p id="mobile-hint">Touch & drag to swim!</p>
     </div>
     <canvas id="game" width="800" height="600"></canvas>
-    <div id="version">v0.1.0 - leaderboard</div>
+    <div id="version">v0.1.1 - leaderboard fix</div>
     <script>
+        // Leaderboard functions
+        let finalScore = 0;
+        
+        async function loadLeaderboard() {
+            try {
+                const res = await fetch('/api/scores');
+                const scores = await res.json();
+                const list = document.getElementById('scores-list');
+                if (scores.length === 0) {
+                    list.innerHTML = '<div style="color: #666;">No scores yet!</div>';
+                } else {
+                    list.innerHTML = scores.slice(0, 10).map((s, i) => 
+                        `<div style="margin: 2px 0;"><span style="color: #ff4500;">${i+1}.</span> ${s.name}: ${s.score}</div>`
+                    ).join('');
+                }
+            } catch(e) {
+                document.getElementById('scores-list').innerHTML = '<div style="color: #666;">Offline</div>';
+            }
+        }
+        
+        function showNameInput(sc) {
+            finalScore = sc;
+            document.getElementById('name-input').style.display = 'block';
+            setTimeout(() => document.getElementById('player-name').focus(), 100);
+        }
+        
+        async function submitScore() {
+            const name = document.getElementById('player-name').value.trim() || 'Anonymous';
+            try {
+                await fetch('/api/scores', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({name: name, score: finalScore})
+                });
+            } catch(e) {}
+            document.getElementById('name-input').style.display = 'none';
+            document.getElementById('player-name').value = '';
+            loadLeaderboard();
+        }
+        
+        function skipSubmit() {
+            document.getElementById('name-input').style.display = 'none';
+            document.getElementById('player-name').value = '';
+        }
+        
+        loadLeaderboard();
+        
         const canvas = document.getElementById('game');
         const ctx = canvas.getContext('2d');
         
