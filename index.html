@@ -19,6 +19,10 @@
         #mobile-hint { color: #666; font-size: 0.8em; }
         #difficulty { color: #ff8800; font-size: 0.75em; margin-left: 10px; }
         @media (max-width: 820px) { canvas { width: 100vw; height: auto; } }
+        #joystick-zone { display: none; justify-content: center; align-items: center; padding: 20px; }
+        @media (max-width: 820px) { #joystick-zone { display: flex; } }
+        #joystick-base { width: 120px; height: 120px; background: #001820; border: 3px solid #ff4500; border-radius: 50%; position: relative; touch-action: none; }
+        #joystick-knob { width: 50px; height: 50px; background: #ff4500; border-radius: 50%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); pointer-events: none; transition: none; }
     </style>
 </head>
 <body>
@@ -44,12 +48,17 @@
     <div id="ui">
         <h1>🦞 Lobster Swim</h1>
         <p>Score: <span id="score">0</span> | <span id="lives">❤️❤️❤️</span><span id="difficulty"></span> <span id="level-name" style="color: #88ffff;"></span></p>
-        <p id="mobile-hint">Tap or drag to swim!</p>
+        <p id="mobile-hint">Use joystick below or tap to swim!</p>
     </div>
     <canvas id="game" width="800" height="600"></canvas>
+    <div id="joystick-zone">
+        <div id="joystick-base">
+            <div id="joystick-knob"></div>
+        </div>
+    </div>
     <button id="music-btn" onclick="toggleMusic()" style="position: fixed; bottom: 10px; left: 10px; background: #001820; border: 1px solid #ff4500; color: #ff4500; padding: 6px 10px; cursor: pointer; font-family: monospace; font-size: 12px; z-index: 50; opacity: 0.8;">🎵</button>
     <button id="sfx-btn" onclick="toggleSfx()" style="position: fixed; bottom: 10px; left: 60px; background: #002010; border: 1px solid #ff4500; color: #ff4500; padding: 6px 10px; cursor: pointer; font-family: monospace; font-size: 12px; z-index: 50; opacity: 0.8;">💥</button>
-    <div id="version" onclick="toggleDevMode()" style="cursor: pointer;">v0.7.1 - higher thresholds</div>
+    <div id="version" onclick="toggleDevMode()" style="cursor: pointer;">v0.7.2 - mobile joystick</div>
     <div id="dev-panel" style="position: fixed; top: 10px; left: 10px; background: #001820ee; border: 2px solid #ff4500; padding: 15px; display: none; z-index: 100; font-size: 12px;">
         <div style="color: #ff4500; font-weight: bold; margin-bottom: 10px;">🔧 DEV MODE</div>
         <div style="display: flex; flex-direction: column; gap: 5px;">
@@ -717,6 +726,64 @@
             hasTarget = true;
         }
         
+        // Virtual joystick for mobile
+        let joystickActive = false;
+        let joystickX = 0;
+        let joystickY = 0;
+        
+        const joystickBase = document.getElementById('joystick-base');
+        const joystickKnob = document.getElementById('joystick-knob');
+        
+        if (joystickBase) {
+            joystickBase.addEventListener('touchstart', handleJoystickStart, { passive: false });
+            joystickBase.addEventListener('touchmove', handleJoystickMove, { passive: false });
+            joystickBase.addEventListener('touchend', handleJoystickEnd, { passive: false });
+        }
+        
+        function handleJoystickStart(e) {
+            e.preventDefault();
+            tryAutoStartMusic();
+            joystickActive = true;
+            handleJoystickMove(e);
+        }
+        
+        function handleJoystickMove(e) {
+            if (!joystickActive) return;
+            e.preventDefault();
+            
+            const rect = joystickBase.getBoundingClientRect();
+            const centerX = rect.width / 2;
+            const centerY = rect.height / 2;
+            const maxDist = rect.width / 2 - 25;
+            
+            let touchX = e.touches[0].clientX - rect.left - centerX;
+            let touchY = e.touches[0].clientY - rect.top - centerY;
+            
+            // Clamp to circle
+            const dist = Math.sqrt(touchX * touchX + touchY * touchY);
+            if (dist > maxDist) {
+                touchX = (touchX / dist) * maxDist;
+                touchY = (touchY / dist) * maxDist;
+            }
+            
+            // Update knob position
+            joystickKnob.style.left = (centerX + touchX) + 'px';
+            joystickKnob.style.top = (centerY + touchY) + 'px';
+            
+            // Normalize to -1 to 1
+            joystickX = touchX / maxDist;
+            joystickY = touchY / maxDist;
+        }
+        
+        function handleJoystickEnd(e) {
+            e.preventDefault();
+            joystickActive = false;
+            joystickX = 0;
+            joystickY = 0;
+            joystickKnob.style.left = '50%';
+            joystickKnob.style.top = '50%';
+        }
+        
         function getDifficulty() {
             if (score >= 1000) return { speedMult: 2.0, hookCount: 4, level: 5, name: 'HELL' };
             if (score >= 500) return { speedMult: 1.6, hookCount: 3, level: 4, name: 'HARD' };
@@ -1139,6 +1206,12 @@
             if (keys['ArrowDown'] || keys['s'] || keys['S']) lobster.y += lobster.speed;
             if (keys['ArrowLeft'] || keys['a'] || keys['A']) lobster.x -= lobster.speed;
             if (keys['ArrowRight'] || keys['d'] || keys['D']) lobster.x += lobster.speed;
+            
+            // Virtual joystick
+            if (joystickActive) {
+                lobster.x += joystickX * lobster.speed;
+                lobster.y += joystickY * lobster.speed;
+            }
             
             // FIXED: Touch/click continues until target reached
             if (hasTarget) {
