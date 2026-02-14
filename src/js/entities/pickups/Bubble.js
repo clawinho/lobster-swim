@@ -33,8 +33,6 @@ export class Bubble {
     }
 
     update(playerX, playerY) {
-        Bubble.globalTime++;
-        
         const dx = playerX - this.x;
         const dy = playerY - this.y;
         const dist = Math.sqrt(dx * dx + dy * dy);
@@ -54,7 +52,7 @@ export class Bubble {
         const dist = Math.sqrt(dx * dx + dy * dy);
         const inRange = dist < Bubble.MAGNET_RADIUS;
         
-        const t = Bubble.globalTime + this.phase * 100;
+        const t = Date.now() * 0.01 + this.phase * 100;
         const wobble = Math.sin(t * 0.08) * 2;
         const drawY = this.y + wobble;
 
