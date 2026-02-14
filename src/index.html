@@ -12,7 +12,7 @@
         #ui h1 { margin: 0; font-size: 1.5em; }
         #ui p { margin: 5px 0; font-size: 0.9em; }
         #lives { color: #ff6666; letter-spacing: 4px; }
-        #bottom-nav { display: flex; align-items: center; gap: 10px; }
+        #bottom-nav { display: flex; align-items: center; gap: 10px; } @media (max-width: 820px) { #bottom-nav { flex-direction: column !important; align-items: flex-end !important; gap: 8px !important; } #bottom-nav > div { flex-direction: column !important; gap: 8px !important; align-items: flex-end !important; } }
         #bottom-nav #version { transition: all 0.2s; cursor: pointer; } #bottom-nav #version:hover { transform: scale(1.1); color: #ff4500 !important; } #bottom-nav a { transition: all 0.2s; } #bottom-nav a:hover { transform: scale(1.1); }
         #bottom-nav a:hover { opacity: 1 !important; text-decoration: underline; }
         @media (min-width: 1400px) { #bottom-nav { font-size: 14px; padding: 8px 12px; background: #001820aa; border: 1px solid #ff450044; border-radius: 4px; } #bottom-nav #version { font-size: 14px !important; } }
@@ -161,7 +161,7 @@
     <button id="music-btn" onclick="toggleMusic()" style="position: fixed; bottom: 10px; left: 10px; background: #001820; border: 1px solid #ff4500; color: #ff4500; padding: 6px 10px; cursor: pointer; font-family: monospace; font-size: 12px; z-index: 50; opacity: 0.8;">🎵</button>
     <button id="sfx-btn" onclick="toggleSfx()" style="position: fixed; bottom: 10px; left: 60px; background: #002010; border: 1px solid #ff4500; color: #ff4500; padding: 6px 10px; cursor: pointer; font-family: monospace; font-size: 12px; z-index: 50; opacity: 0.8;">💥</button>
     <div id="bottom-nav" style="position: fixed; bottom: 10px; right: 15px; display: flex; align-items: center; gap: 10px;">
-        <div id="version" onclick="toggleDevMode()" style="cursor: pointer; font-size: 10px; color: #ff4500aa;">v0.9.6</div>
+        <div id="version" onclick="toggleDevMode()" style="cursor: pointer; font-size: 10px; color: #ff4500aa;">v0.9.7</div>
         <div style="display: flex; gap: 8px; align-items: center;">
             <a href="/pages/commits.html" target="_blank" style="color: #4488ff; text-decoration: none; background: #001828; border: 1px solid #4488ff44; padding: 6px 12px; border-radius: 4px; font-size: 15px;">commits</a>
             <a href="/pages/assets.html" target="_blank" style="color: #ffaa00; text-decoration: none; background: #1a1000; border: 1px solid #ffaa0044; padding: 6px 12px; border-radius: 4px; font-size: 15px;">assets</a>
