@@ -3,13 +3,7 @@
  * Manages game state, loop, and coordinates all entities
  */
 
-import { Lobster } from './entities/Lobster.js';
-import { Hook } from './entities/Hook.js';
-import { Cage } from './entities/Cage.js';
-import { Bubble } from './entities/Bubble.js';
-import { GoldenFish } from './entities/GoldenFish.js';
-import { Net } from './entities/Net.js';
-import { Fork } from './entities/Fork.js';
+import { Lobster, Hook, Cage, Bubble, GoldenFish, Net, Fork } from './entities/index.js';
 
 export class Game {
     static CANVAS_WIDTH = 800;
