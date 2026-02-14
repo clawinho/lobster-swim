@@ -86,9 +86,20 @@ function setupEvents() {
     document.addEventListener('keydown', e => keys[e.key] = true);
     document.addEventListener('keyup', e => keys[e.key] = false);
     
-    // Canvas click/touch
-    canvas.addEventListener('click', handleCanvasClick);
+    // Canvas mouse/touch - hold-down drag support
+    let mouseIsDown = false;
+    canvas.addEventListener('mousedown', (e) => {
+        mouseIsDown = true;
+        handleCanvasClick(e);
+    });
+    document.addEventListener('mouseup', () => {
+        mouseIsDown = false;
+    });
+    canvas.addEventListener('mousemove', (e) => {
+        if (mouseIsDown) handleCanvasClick(e);
+    });
     canvas.addEventListener('touchstart', handleCanvasTouch, { passive: false });
+    canvas.addEventListener('touchmove', handleCanvasTouch, { passive: false });
     
     // Joystick
     setupJoystick();

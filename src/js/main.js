@@ -80,26 +80,36 @@ class LobsterSwim {
         let mouseIsDown = false;
         
         const handleMouseMove = (e) => {
-            if (!this.game.gameStarted) return;
+            console.log('🎯 handleMouseMove called, gameStarted:', this.game.gameStarted);
+            if (!this.game.gameStarted) {
+                console.log('❌ game not started, ignoring');
+                return;
+            }
             const rect = canvas.getBoundingClientRect();
             const scaleX = canvas.width / rect.width;
             const scaleY = canvas.height / rect.height;
             const x = (e.clientX - rect.left) * scaleX;
             const y = (e.clientY - rect.top) * scaleY;
+            console.log('📍 setTarget:', x, y);
             this.game.setTarget(x, y);
         };
         
         canvas.addEventListener('mousedown', (e) => {
+            console.log('🖱️ mousedown', e.clientX, e.clientY, 'gameStarted:', this.game.gameStarted);
             mouseIsDown = true;
             handleMouseMove(e);
         });
         
         document.addEventListener('mouseup', () => {
+            console.log('🖱️ mouseup');
             mouseIsDown = false;
         });
         
         canvas.addEventListener('mousemove', (e) => {
-            if (mouseIsDown) handleMouseMove(e);
+            if (mouseIsDown) {
+                console.log('🖱️ mousemove while down');
+                handleMouseMove(e);
+            }
         });
 
         // Touch to move
