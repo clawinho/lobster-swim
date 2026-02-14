@@ -45,7 +45,7 @@
     </div>
     <canvas id="game" width="800" height="600"></canvas>
     <button id="music-btn" onclick="toggleMusic()" style="position: fixed; bottom: 10px; left: 10px; background: #001820; border: 1px solid #ff4500; color: #ff4500; padding: 6px 10px; cursor: pointer; font-family: monospace; font-size: 12px; z-index: 50; opacity: 0.8;">🎵</button>
-    <div id="version">v0.5.3 - scrolling backgrounds</div>
+    <div id="version">v0.5.4 - audio debug</div>
     <script>
         // Music control - iOS workaround
         let musicPlaying = false;
@@ -63,11 +63,27 @@
                     gameAudio = new Audio('lobster_jazz.mp3');
                     gameAudio.loop = true;
                     gameAudio.volume = 1.0;
+                    gameAudio.addEventListener('error', (e) => {
+                        console.error('Audio error:', e);
+                        btn.textContent = '❌';
+                        btn.style.background = '#300';
+                    });
+                    gameAudio.addEventListener('canplaythrough', () => {
+                        console.log('Audio loaded and ready');
+                    });
                 }
-                gameAudio.play();
-                btn.textContent = '🔊';
-                btn.style.background = '#002010';
-                musicPlaying = true;
+                gameAudio.play().then(() => {
+                    btn.textContent = '🔊';
+                    btn.style.background = '#002010';
+                    musicPlaying = true;
+                    console.log('Audio playing');
+                }).catch(err => {
+                    console.error('Play failed:', err);
+                    btn.textContent = '⚠️';
+                    btn.style.background = '#330';
+                    // Try unlocking audio context
+                    alert('Tap again to enable audio (browser blocked autoplay)');
+                });
             }
         }
 
