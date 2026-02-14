@@ -420,8 +420,8 @@
             if(c('ocean')) renderOceanPreview(c('ocean'), 200, 150, frame);
             if(c('tank')) renderTankPreview(c('tank'), 200, 150);
             if(c('kitchen')) renderKitchenPreview(c('kitchen'), 200, 150, frame);
-            if(c('magnet')) renderMagnetism(c('magnet'), 200, 150, frame);
-            if(c('invincibility')) renderInvincibility(c('invincibility'), 200, 150, frame);
+            if(c('magnet')) renderMagnetism(c('magnet'), 200, 150, frame, params.magnetRadius, params.magnetStrength);
+            if(c('invincibility')) renderInvincibility(c('invincibility'), 200, 150, frame, params.invulnDur);
             if(c('difficulty')) renderDifficulty(c('difficulty'), 200, 150);
             // END MECHANICS(c('kitchen'), 200, 150, frame);
             
