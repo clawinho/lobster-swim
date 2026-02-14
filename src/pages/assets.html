@@ -286,25 +286,29 @@
                 </div>
                 <div class="asset-info"><h3>Level Up</h3><p>Triumphant arpeggio.</p></div>
             </div>
-            <div class="asset-card" style="grid-column: span 2;">
-                <div class="asset-preview" style="flex-direction: column; gap: 10px; height: auto; padding: 20px;">
-                    <div style="font-size: 36px;">🎵 Music Tracks</div>
-                    <div style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: center;">
-                        <div class="music-track" style="text-align:center;padding:10px;background:#001020;border-radius:8px;">
-                            <div style="color: #4488ff;">🌊 Ocean</div>
-                            <audio controls src="../assets/music/music_ocean.mp3" style="width: 150px; height: 30px;"></audio>
-                        </div>
-                        <div class="music-track" style="text-align:center;padding:10px;background:#001020;border-radius:8px;">
-                            <div style="color: #88ffff;">🐟 Tank</div>
-                            <audio controls src="../assets/music/music_tank.mp3" style="width: 150px; height: 30px;"></audio>
-                        </div>
-                        <div class="music-track" style="text-align:center;padding:10px;background:#001020;border-radius:8px;">
-                            <div style="color: #ff8844;">🍳 Kitchen</div>
-                            <audio controls src="../assets/music/music_kitchen.mp3" style="width: 150px; height: 30px;"></audio>
-                        </div>
-                    </div>
+            <div class="asset-card">
+                <div class="asset-preview" style="flex-direction: column; gap: 10px;">
+                    <div style="font-size: 48px;">🌊</div>
+                    <button class="audio-btn" data-music="ocean">▶ Ocean</button>
+                    <audio id="music-ocean" src="../assets/music/music_ocean.mp3" loop></audio>
                 </div>
-                <div class="asset-info"><h3>Level Music</h3><p>Transport Tycoon style ragtime.</p></div>
+                <div class="asset-info"><h3>Ocean Theme</h3><p>Calm underwater vibes.</p></div>
+            </div>
+            <div class="asset-card">
+                <div class="asset-preview" style="flex-direction: column; gap: 10px;">
+                    <div style="font-size: 48px;">🐟</div>
+                    <button class="audio-btn" data-music="tank">▶ Tank</button>
+                    <audio id="music-tank" src="../assets/music/music_tank.mp3" loop></audio>
+                </div>
+                <div class="asset-info"><h3>Tank Theme</h3><p>Tense aquarium escape.</p></div>
+            </div>
+            <div class="asset-card">
+                <div class="asset-preview" style="flex-direction: column; gap: 10px;">
+                    <div style="font-size: 48px;">🍳</div>
+                    <button class="audio-btn" data-music="kitchen">▶ Kitchen</button>
+                    <audio id="music-kitchen" src="../assets/music/music_kitchen.mp3" loop></audio>
+                </div>
+                <div class="asset-info"><h3>Kitchen Theme</h3><p>Frantic final level.</p></div>
             </div>
         </div>
     </section>
@@ -485,6 +489,35 @@
         // Particle type selector
         document.getElementById('particle-type')?.addEventListener('change', e => {
             params.particleType = e.target.value;
+        });
+        
+        // Music button handlers
+        let currentMusic = null;
+        document.querySelectorAll('.audio-btn[data-music]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const trackId = btn.dataset.music;
+                const audio = document.getElementById(`music-${trackId}`);
+                
+                // Stop any currently playing music
+                if (currentMusic && currentMusic !== audio) {
+                    currentMusic.pause();
+                    currentMusic.currentTime = 0;
+                    document.querySelectorAll('.audio-btn[data-music]').forEach(b => {
+                        b.textContent = '▶ ' + b.textContent.replace('■ ', '').replace('▶ ', '');
+                    });
+                }
+                
+                if (audio.paused) {
+                    audio.play();
+                    btn.textContent = '■ ' + btn.textContent.replace('▶ ', '');
+                    currentMusic = audio;
+                } else {
+                    audio.pause();
+                    audio.currentTime = 0;
+                    btn.textContent = '▶ ' + btn.textContent.replace('■ ', '');
+                    currentMusic = null;
+                }
+            });
         });
         
         animate();
