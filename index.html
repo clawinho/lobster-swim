@@ -167,20 +167,94 @@
                 ctx.globalAlpha = 0.4;
             }
             
+            // Calculate angle based on movement
+            let dx = x - lobster.prevX;
+            let dy = y - lobster.prevY;
+            if (Math.abs(dx) > 0.5 || Math.abs(dy) > 0.5) {
+                let targetAngle = Math.atan2(dy, dx);
+                let diff = targetAngle - lobster.angle;
+                while (diff > Math.PI) diff -= Math.PI * 2;
+                while (diff < -Math.PI) diff += Math.PI * 2;
+                lobster.angle += diff * 0.1;
+            }
+            lobster.prevX = x;
+            lobster.prevY = y;
+            
+            ctx.save();
+            ctx.translate(x, y);
+            ctx.rotate(lobster.angle);
+            
+            // Body
             ctx.fillStyle = '#ff4500';
             ctx.beginPath();
-            ctx.ellipse(x, y, size, size * 0.6, 0, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.beginPath();
-            ctx.ellipse(x - size * 0.8, y - size * 0.3, size * 0.4, size * 0.2, -0.5, 0, Math.PI * 2);
-            ctx.ellipse(x - size * 0.8, y + size * 0.3, size * 0.4, size * 0.2, 0.5, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.fillStyle = '#000';
-            ctx.beginPath();
-            ctx.arc(x + size * 0.3, y - size * 0.2, 3, 0, Math.PI * 2);
-            ctx.arc(x + size * 0.3, y + size * 0.2, 3, 0, Math.PI * 2);
+            ctx.ellipse(0, 0, size, size * 0.6, 0, 0, Math.PI * 2);
             ctx.fill();
             
+            // Tail
+            ctx.fillStyle = '#cc3300';
+            ctx.beginPath();
+            ctx.ellipse(-size * 0.9, 0, size * 0.5, size * 0.35, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.ellipse(-size * 1.4, 0, size * 0.35, size * 0.25, 0, 0, Math.PI * 2);
+            ctx.fill();
+            // Tail fan
+            ctx.fillStyle = '#ff4500';
+            for (let i = -2; i <= 2; i++) {
+                ctx.beginPath();
+                ctx.ellipse(-size * 1.8, i * 4, 8, 3, 0, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            
+            // Claws
+            let clawWave = Math.sin(Date.now() / 200) * 0.15;
+            ctx.fillStyle = '#ff5500';
+            ctx.save();
+            ctx.translate(size * 0.6, -size * 0.35);
+            ctx.rotate(0.4 + clawWave);
+            ctx.beginPath();
+            ctx.ellipse(8, 0, 10, 4, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.ellipse(16, -2, 5, 2, 0, 0, Math.PI * 2);
+            ctx.ellipse(16, 2, 5, 2, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+            
+            ctx.save();
+            ctx.translate(size * 0.6, size * 0.35);
+            ctx.rotate(-0.4 - clawWave);
+            ctx.beginPath();
+            ctx.ellipse(8, 0, 10, 4, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.ellipse(16, -2, 5, 2, 0, 0, Math.PI * 2);
+            ctx.ellipse(16, 2, 5, 2, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+            
+            // Eyes
+            ctx.fillStyle = '#000';
+            ctx.beginPath();
+            ctx.arc(size * 0.4, -size * 0.25, 3, 0, Math.PI * 2);
+            ctx.arc(size * 0.4, size * 0.25, 3, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Antennae
+            ctx.strokeStyle = '#ff4500';
+            ctx.lineWidth = 1.5;
+            let wave = Math.sin(Date.now() / 150) * 3;
+            ctx.beginPath();
+            ctx.moveTo(size * 0.5, -size * 0.2);
+            ctx.quadraticCurveTo(size + 5, -size * 0.4 + wave, size + 15, -size * 0.1 + wave);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(size * 0.5, size * 0.2);
+            ctx.quadraticCurveTo(size + 5, size * 0.4 - wave, size + 15, size * 0.1 - wave);
+            ctx.stroke();
+            ctx.lineWidth = 1;
+            
+            ctx.restore();
             ctx.globalAlpha = 1;
             
             if (invincible) {
@@ -192,6 +266,7 @@
                 ctx.lineWidth = 1;
             }
         }
+
         
         function drawHook(hook) {
             const swingX = Math.sin(hook.angle) * 50;
