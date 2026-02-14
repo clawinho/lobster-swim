@@ -58,7 +58,7 @@
     </div>
     <button id="music-btn" onclick="toggleMusic()" style="position: fixed; bottom: 10px; left: 10px; background: #001820; border: 1px solid #ff4500; color: #ff4500; padding: 6px 10px; cursor: pointer; font-family: monospace; font-size: 12px; z-index: 50; opacity: 0.8;">🎵</button>
     <button id="sfx-btn" onclick="toggleSfx()" style="position: fixed; bottom: 10px; left: 60px; background: #002010; border: 1px solid #ff4500; color: #ff4500; padding: 6px 10px; cursor: pointer; font-family: monospace; font-size: 12px; z-index: 50; opacity: 0.8;">💥</button>
-    <div id="version" onclick="toggleDevMode()" style="cursor: pointer;">v0.7.6 - top 5 on mobile</div>
+    <div id="version" onclick="toggleDevMode()" style="cursor: pointer;">v0.7.7 - unique leaderboard</div>
     <div id="dev-panel" style="position: fixed; top: 10px; left: 10px; background: #001820ee; border: 2px solid #ff4500; padding: 15px; display: none; z-index: 100; font-size: 12px;">
         <div style="color: #ff4500; font-weight: bold; margin-bottom: 10px;">🔧 DEV MODE</div>
         <div style="display: flex; flex-direction: column; gap: 5px;">
@@ -358,8 +358,16 @@
                 if (scores.length === 0) {
                     list.innerHTML = '<div style="color: #666;">No scores yet!</div>';
                 } else {
+                    // Deduplicate: keep only highest score per name
+                    const best = {};
+                    scores.forEach(s => {
+                        if (!best[s.name] || s.score > best[s.name]) best[s.name] = s.score;
+                    });
+                    const unique = Object.entries(best).map(([name, score]) => ({name, score}))
+                        .sort((a, b) => b.score - a.score);
+                    
                     const limit = window.innerWidth < 820 ? 5 : 10;
-                    list.innerHTML = scores.slice(0, limit).map((s, i) => 
+                    list.innerHTML = unique.slice(0, limit).map((s, i) => 
                         `<div style="margin: 2px 0;"><span style="color: #ff4500;">${i+1}.</span> ${s.name}: ${s.score}</div>`
                     ).join('');
                 }
