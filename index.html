@@ -113,10 +113,6 @@
         }
     
     </style>
-
-    <!-- MIDI Player for title screen -->
-    <script src="https://cdn.jsdelivr.net/npm/midi-player-js@2.0.16/browser/midiplayer.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/soundfont-player@0.12.0/dist/soundfont-player.min.js"></script>
 </head>
 <body>
 
@@ -165,7 +161,7 @@
     <button id="music-btn" onclick="toggleMusic()" style="position: fixed; bottom: 10px; left: 10px; background: #001820; border: 1px solid #ff4500; color: #ff4500; padding: 6px 10px; cursor: pointer; font-family: monospace; font-size: 12px; z-index: 50; opacity: 0.8;">🎵</button>
     <button id="sfx-btn" onclick="toggleSfx()" style="position: fixed; bottom: 10px; left: 60px; background: #002010; border: 1px solid #ff4500; color: #ff4500; padding: 6px 10px; cursor: pointer; font-family: monospace; font-size: 12px; z-index: 50; opacity: 0.8;">💥</button>
     <div id="bottom-nav" style="position: fixed; bottom: 10px; right: 15px; display: flex; align-items: center; gap: 10px;">
-        <div id="version" onclick="toggleDevMode()" style="cursor: pointer; font-size: 10px; color: #ff4500aa;">v0.9.3</div>
+        <div id="version" onclick="toggleDevMode()" style="cursor: pointer; font-size: 10px; color: #ff4500aa;">v0.9.4</div>
         <div style="display: flex; gap: 8px; align-items: center;">
             <a href="/commits.html" target="_blank" style="color: #4488ff; text-decoration: none; background: #001828; border: 1px solid #4488ff44; padding: 6px 12px; border-radius: 4px; font-size: 15px;">commits</a>
             <a href="/assets.html" target="_blank" style="color: #ffaa00; text-decoration: none; background: #1a1000; border: 1px solid #ffaa0044; padding: 6px 12px; border-radius: 4px; font-size: 15px;">assets</a>
@@ -534,47 +530,27 @@
         
         
         
-        // MIDI Player for title screen music
-        let midiPlayer = null;
-        let piano = null;
+        // Title screen music (MP3)
+        let titleMusic = null;
         let titleMusicPlaying = false;
         
-        async function initTitleMusic() {
-            try {
-                // Load piano soundfont
-                const ac = new (window.AudioContext || window.webkitAudioContext)();
-                piano = await Soundfont.instrument(ac, 'acoustic_grand_piano', {
-                    soundfont: 'MusyngKite'
-                });
-                
-                // Initialize MIDI player
-                midiPlayer = new MidiPlayer.Player(function(event) {
-                    if (event.name === 'Note on' && event.velocity > 0) {
-                        piano.play(event.noteName, ac.currentTime, { gain: event.velocity / 127 * 0.5 });
-                    }
-                });
-                
-                // Load the MIDI file
-                const response = await fetch('forest_night.mid');
-                const arrayBuffer = await response.arrayBuffer();
-                midiPlayer.loadArrayBuffer(arrayBuffer);
-                
-                console.log('Title music loaded!');
-            } catch (e) {
-                console.log('MIDI player init failed:', e);
-            }
+        function initTitleMusic() {
+            titleMusic = new Audio('title_music.mp3');
+            titleMusic.loop = true;
+            titleMusic.volume = 0.6;
         }
         
         function playTitleMusic() {
-            if (midiPlayer && !titleMusicPlaying) {
-                midiPlayer.play();
+            if (titleMusic && !titleMusicPlaying) {
+                titleMusic.play().catch(e => console.log('Title music autoplay blocked'));
                 titleMusicPlaying = true;
             }
         }
         
         function stopTitleMusic() {
-            if (midiPlayer) {
-                midiPlayer.stop();
+            if (titleMusic) {
+                titleMusic.pause();
+                titleMusic.currentTime = 0;
                 titleMusicPlaying = false;
             }
         }
