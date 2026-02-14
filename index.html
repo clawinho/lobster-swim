@@ -44,7 +44,7 @@
         <p id="mobile-hint">Touch & drag to swim!</p>
     </div>
     <canvas id="game" width="800" height="600"></canvas>
-    <div id="version">v0.1.5 - fleeing fish</div>
+    <div id="version">v0.1.6 - fish only</div>
     <script>
         // Music control
         let musicPlaying = false;
@@ -227,14 +227,7 @@
         }
         
         function spawnBubble() {
-            // 1 in 12 chance for life bubble (only if not at max lives)
-            const isLife = lives < 3 && Math.random() < 0.08;
-            return { 
-                x: Math.random() * 750 + 25, 
-                y: Math.random() * 550 + 25, 
-                size: isLife ? 22 : 18,
-                isLife: isLife 
-            };
+            return { x: Math.random() * 750 + 25, y: Math.random() * 550 + 25, size: 18 };
         }
         initBubbles();
 
@@ -702,15 +695,15 @@ let dangers = [];
                     b.y += (dy / dist) * MAGNET_STRENGTH * pullFactor;
                     
                     // Visual feedback: bubble glows when being attracted
-                    ctx.fillStyle = b.isLife ? '#ff666688' : '#66aaff66';
+                    ctx.fillStyle = '#66aaff66';
                 } else {
-                    ctx.fillStyle = b.isLife ? '#ff444466' : '#4488ff44';
+                    ctx.fillStyle = '#4488ff44';
                 }
                 
                 ctx.beginPath();
                 ctx.arc(b.x, b.y, b.size, 0, Math.PI * 2);
                 ctx.fill();
-                ctx.strokeStyle = b.isLife ? '#ff6666' : (dist < MAGNET_RADIUS ? '#88ccff' : '#4488ff');
+                ctx.strokeStyle = dist < MAGNET_RADIUS ? '#88ccff' : '#4488ff';
                 ctx.stroke();
                 
                 // Collision check (recalculate dist after magnetism)
@@ -719,16 +712,7 @@ let dangers = [];
                 dist = Math.sqrt(dx*dx + dy*dy);
                 
                 if (dist < lobster.size + b.size) {
-                    if (b.isLife) {
-                        // Life bubble - gain a life!
-                        if (lives < 3) {
-                            lives++;
-                            updateLivesDisplay();
-                        }
-                        score += 25;
-                    } else {
-                        score += 10;
-                    }
+                    score += 10;
                     document.getElementById('score').textContent = score;
                     bubbles[i] = spawnBubble();
                     checkDifficultyScaling();
