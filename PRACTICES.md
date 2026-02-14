@@ -1,0 +1,103 @@
+# Lobster Swim - Development Practices
+
+## File Structure
+
+```
+src/
+├── index.html          # Main game page
+├── css/game.css        # Game styles
+├── js/
+│   ├── app.js          # ⚠️ MAIN ENTRY POINT - this is what runs!
+│   ├── main.js         # Unused/legacy modular version
+│   ├── audio-module.js # Sound effects + music
+│   ├── components/
+│   │   ├── BottomNav.js    # Reusable nav component
+│   │   ├── TitleScreen.js
+│   │   ├── GameOver.js
+│   │   └── Leaderboard.js
+│   └── entities/
+│       ├── hero/           # Lobster + versions
+│       ├── enemies/        # Hook, Cage, Net, Fork + versions
+│       ├── pickups/        # Bubble, GoldenFish + versions
+│       ├── effects/        # Particle.js
+│       ├── mechanics/      # Magnetism, Invincibility, Difficulty
+│       └── environments/   # Ocean, Tank, Kitchen backgrounds
+├── pages/
+│   ├── assets.html     # Asset library with live previews
+│   ├── commits.html    # Changelog
+│   └── roadmap.html    # Development roadmap
+└── assets/
+    └── music/          # MP3 files for level music
+```
+
+## Critical Lessons Learned
+
+### 1. ALWAYS check which file is the entry point
+- `index.html` loads `<script type="module" src="js/app.js">`
+- **app.js is the main game**, not main.js
+- Edit the wrong file = changes don't appear
+
+### 2. nginx serves from `/home/ubuntu/lobster-game/src/`
+- NOT from `/var/www/html/`
+- Check nginx config if confused: `cat /etc/nginx/sites-enabled/default`
+
+### 3. Asset page slider wiring pattern
+When adding a slider to assets.html:
+1. Add HTML slider with id: `<input type="range" id="entity-param">`
+2. Add to params object: `params.entityParam = defaultValue`
+3. Add to sliderConfig array: `['entity-param', 'entityParam']`
+4. Pass param to renderer in animate(): `renderer(ctx, x, y, params.entityParam)`
+5. **Update renderer wrapper** in renderers object to accept and pass the param
+
+Common mistake: Renderer wrapper ignores extra params!
+```js
+// BAD - ignores shimmer:
+'fish-002': (c,x,y,t) => fishV002(c,x,y,t,15,1,5)
+
+// GOOD - passes shimmer through:
+'fish-002': (c,x,y,t,size,dir,shimmer) => fishV002(c,x,y,t,size||15,dir||1,shimmer||5)
+```
+
+### 4. Entity version tabs
+- Each card needs `data-entity="name"` attribute
+- Tabs need `data-version="00X"` attribute
+- selectedVersions object tracks current version per entity
+- animate() uses `renderers[\`entity-${selectedVersions.entity}\`]`
+
+### 5. Web Components (like BottomNav)
+- Use Shadow DOM for style encapsulation
+- Dispatch custom events with `bubbles: true, composed: true` to escape shadow DOM
+- Import with `<script type="module" src="path/Component.js">`
+
+### 6. Music files
+- Level music: `assets/music/music_ocean.mp3`, `music_tank.mp3`, `music_kitchen.mp3`
+- OG groovy jazz: `assets/music/lobster_jazz_groovy.mp3` (Transport Tycoon style from v0.3.2)
+- Ambient version: `assets/music/lobster_jazz.mp3` (2-min loop, less groovy)
+
+### 7. Dev panel
+- Triggered by clicking version number in BottomNav
+- BottomNav dispatches `version-click` custom event
+- Dev functions exposed on window: `gameDevSetLevel`, `gameDevAddScore`, etc.
+
+### 8. Particle system
+- `Particle.js` in `entities/effects/`
+- Static factory methods: `Particle.spawnBubbleParticles(x, y)`
+- Returns array, use spread: `particles.push(...Particle.spawnBubbleParticles(x, y))`
+
+## Version Bumping
+- Update version in: `index.html`, `pages/*.html`, `components/BottomNav.js`
+- Or use sed: `sed -i 's/1.0.X/1.0.Y/g' src/index.html src/pages/*.html src/js/components/BottomNav.js`
+
+## Testing Checklist
+Before committing:
+- [ ] Hard refresh (Ctrl+Shift+R) to clear cache
+- [ ] Check version number shows correctly
+- [ ] Test the specific feature changed
+- [ ] Check browser console for errors
+
+## Git Archaeology
+To find old music/assets:
+```bash
+git log --oneline --all -- '*filename*'
+git show <commit>:path/to/file > restored_file
+```
