@@ -10,14 +10,11 @@
         header { text-align: center; padding: 30px 0; border-bottom: 1px solid #ff450044; margin-bottom: 30px; }
         header h1 { color: #ff4500; font-size: 2.5em; margin-bottom: 10px; }
         header p { color: #666; font-size: 0.9em; }
-        #compare-panel { display: none; background: #001020; border: 2px solid #ff4500; border-radius: 12px; padding: 20px; margin-bottom: 30px; position: relative; }
-        #compare-panel.active { display: block; }
-        #compare-panel h3 { color: #ff4500; margin-bottom: 15px; }
-        #compare-close { position: absolute; top: 15px; right: 15px; background: #ff450033; border: 1px solid #ff4500; color: #ff4500; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; }
-        #compare-grid { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; }
-        .compare-item { background: #000810; border: 1px solid #ff450044; border-radius: 8px; padding: 15px; text-align: center; min-width: 200px; }
-        .compare-item .label { color: #ff4500; font-weight: bold; margin: 10px 0 5px; }
-        .compare-item .desc { color: #888; font-size: 0.8em; }
+        .version-tabs { display: flex; gap: 0; border-bottom: 1px solid #ff450033; }
+        .version-tab { padding: 8px 14px; font-size: 0.75em; color: #666; cursor: pointer; border: 1px solid transparent; border-bottom: none; background: #000810; margin-bottom: -1px; border-radius: 4px 4px 0 0; }
+        .version-tab:hover { color: #ff4500; background: #ff450011; }
+        .version-tab.active { color: #ff4500; background: #001020; border-color: #ff450033; border-bottom-color: #001020; }
+        .version-tab .star { color: #ffd700; margin-left: 4px; }
         .nav { display: flex; justify-content: center; gap: 15px; margin-bottom: 40px; flex-wrap: wrap; }
         .nav a { color: #888; text-decoration: none; padding: 8px 16px; border: 1px solid #333; border-radius: 4px; }
         .nav a:hover, .nav a.active { color: #ff4500; border-color: #ff4500; background: #ff450011; }
@@ -39,11 +36,7 @@
         .control-row label { color: #666; font-size: 0.75em; width: 70px; }
         .control-row input[type="range"] { flex: 1; accent-color: #ff4500; }
         .control-row .value { color: #ff4500; font-size: 0.8em; width: 40px; text-align: right; }
-        .version-history { display: flex; gap: 8px; margin-top: 12px; padding-top: 12px; border-top: 1px solid #ffffff11; flex-wrap: wrap; }
-        .version { font-size: 0.7em; padding: 4px 8px; border-radius: 3px; background: #222; color: #666; cursor: pointer; border: 1px solid transparent; }
-        .version:hover { background: #333; }
-        .version.current { background: #ff450033; color: #ff4500; }
-        .version.in-compare { border-color: #00ff88; background: #00ff8822; color: #00ff88; }
+        /* version tabs are at top of cards now */
         #bottom-nav { position: fixed; bottom: 15px; right: 20px; display: flex; gap: 10px; }
         #bottom-nav a { color: #4488ff; text-decoration: none; background: #001828; border: 1px solid #4488ff44; padding: 8px 14px; border-radius: 4px; }
         #bottom-nav a.game { color: #ff4500; border-color: #ff450044; }
@@ -54,13 +47,12 @@
     </style>
 </head>
 <body>
-    <header><h1>🦞 Asset Library</h1><p>Modular entity versions — click tags to compare</p></header>
-    <div id="compare-panel"><h3>🔬 Comparison</h3><button id="compare-close" onclick="clearComparison()">×</button><div id="compare-grid"></div></div>
+    <header><h1>🦞 Asset Library</h1><p>Modular entity versions — use tabs to switch versions</p></header>
     
     <nav class="nav">
         <a href="#characters" class="active">Characters</a>
         <a href="#enemies">Enemies</a>
-        <a href="#items">Items</a>
+        <a href="#pickups">Pickups</a>
         <a href="#environments">Environments</a>
         <a href="#mechanics">Mechanics</a>
         <a href="#audio">Audio</a>
@@ -69,31 +61,18 @@
     <section class="section active" id="characters">
         <h2>🦞 Characters</h2>
         <div class="asset-grid">
-            <div class="asset-card">
+            <div class="asset-card" data-entity="lobster">
+                <div class="version-tabs">
+                    <span class="version-tab" data-version="001">v001</span>
+                    <span class="version-tab" data-version="002">v002</span>
+                    <span class="version-tab active" data-version="003">v003<span class="star">★</span></span>
+                </div>
                 <div class="asset-preview"><canvas id="lobster-canvas" width="200" height="150"></canvas></div>
                 <div class="asset-info">
                     <h3>Lobster</h3><p>Player character with tail physics.</p>
                     <div class="controls">
                         <div class="control-row"><label>Size</label><input type="range" id="lobster-size" min="15" max="60" value="30"><span class="value">30</span></div>
                         <div class="control-row"><label>Tail wag</label><input type="range" id="lobster-wag" min="1" max="20" value="8"><span class="value">8</span></div>
-                    </div>
-                    <div class="version-history">
-                        <span class="version" data-asset="lobster" data-version="001" data-desc="Basic circle">v001</span>
-                        <span class="version" data-asset="lobster" data-version="002" data-desc="With claws">v002</span>
-                        <span class="version current" data-asset="lobster" data-version="003" data-desc="Tail physics">v003 ★</span>
-                    </div>
-                </div>
-            </div>
-            <div class="asset-card">
-                <div class="asset-preview"><canvas id="fish-canvas" width="200" height="150"></canvas></div>
-                <div class="asset-info">
-                    <h3>Golden Fish</h3><p>+1 life pickup. v002 has shimmer!</p>
-                    <div class="controls">
-                        <div class="control-row"><label>Shimmer</label><input type="range" id="fish-shimmer" min="0" max="10" value="5"><span class="value">5</span></div>
-                    </div>
-                    <div class="version-history">
-                        <span class="version current" data-asset="fish" data-version="001" data-desc="Simple gold">v001 ★</span>
-                        <span class="version" data-asset="fish" data-version="002" data-desc="Shimmer particles">v002</span>
                     </div>
                 </div>
             </div>
@@ -103,7 +82,11 @@
     <section class="section" id="enemies">
         <h2>💀 Enemies</h2>
         <div class="asset-grid">
-            <div class="asset-card">
+            <div class="asset-card" data-entity="hook">
+                <div class="version-tabs">
+                    <span class="version-tab" data-version="001">v001</span>
+                    <span class="version-tab active" data-version="002">v002<span class="star">★</span></span>
+                </div>
                 <div class="asset-preview"><canvas id="hook-canvas" width="200" height="150"></canvas></div>
                 <div class="asset-info">
                     <h3>Hook</h3><p>Pendulum swing hazard.</p>
@@ -111,26 +94,25 @@
                         <div class="control-row"><label>Swing</label><input type="range" id="hook-swing" min="1" max="20" value="10"><span class="value">10</span></div>
                         <div class="control-row"><label>Line</label><input type="range" id="hook-line" min="50" max="150" value="100"><span class="value">100</span></div>
                     </div>
-                    <div class="version-history">
-                        <span class="version" data-asset="hook" data-version="001" data-desc="Static">v001</span>
-                        <span class="version current" data-asset="hook" data-version="002" data-desc="Pendulum">v002 ★</span>
-                    </div>
                 </div>
             </div>
-            <div class="asset-card">
+            <div class="asset-card" data-entity="cage">
+                <div class="version-tabs">
+                    <span class="version-tab" data-version="001">v001</span>
+                    <span class="version-tab active" data-version="002">v002<span class="star">★</span></span>
+                </div>
                 <div class="asset-preview"><canvas id="cage-canvas" width="200" height="150"></canvas></div>
                 <div class="asset-info">
                     <h3>Cage</h3><p>Lobster trap.</p>
                     <div class="controls">
                         <div class="control-row"><label>Size</label><input type="range" id="cage-size" min="30" max="80" value="50"><span class="value">50</span></div>
                     </div>
-                    <div class="version-history">
-                        <span class="version" data-asset="cage" data-version="001" data-desc="Purple void">v001</span>
-                        <span class="version current" data-asset="cage" data-version="002" data-desc="Wooden trap">v002 ★</span>
-                    </div>
                 </div>
             </div>
-            <div class="asset-card">
+            <div class="asset-card" data-entity="net">
+                <div class="version-tabs">
+                    <span class="version-tab active" data-version="001">v001<span class="star">★</span></span>
+                </div>
                 <div class="asset-preview"><canvas id="net-canvas" width="200" height="150"></canvas></div>
                 <div class="asset-info">
                     <h3>Net</h3><p>Level 2 sweeping hazard.</p>
@@ -139,7 +121,10 @@
                     </div>
                 </div>
             </div>
-            <div class="asset-card">
+            <div class="asset-card" data-entity="fork">
+                <div class="version-tabs">
+                    <span class="version-tab active" data-version="001">v001<span class="star">★</span></span>
+                </div>
                 <div class="asset-preview"><canvas id="fork-canvas" width="200" height="150"></canvas></div>
                 <div class="asset-info">
                     <h3>Fork</h3><p>Level 3 falling hazard.</p>
@@ -151,23 +136,39 @@
         </div>
     </section>
     
-    <section class="section" id="items">
-        <h2>✨ Items</h2>
+    <section class="section" id="pickups">
+        <h2>✨ Pickups</h2>
         <div class="asset-grid">
-            <div class="asset-card">
+            <div class="asset-card" data-entity="bubble">
+                <div class="version-tabs">
+                    <span class="version-tab active" data-version="001">v001<span class="star">★</span></span>
+                    <span class="version-tab" data-version="002">v002</span>
+                </div>
                 <div class="asset-preview"><canvas id="bubble-canvas" width="200" height="150"></canvas></div>
                 <div class="asset-info">
                     <h3>Bubble</h3><p>Collectible. v002 has gradient!</p>
                     <div class="controls">
                         <div class="control-row"><label>Size</label><input type="range" id="bubble-size" min="10" max="30" value="18"><span class="value">18</span></div>
                     </div>
-                    <div class="version-history">
-                        <span class="version current" data-asset="bubble" data-version="001" data-desc="Simple">v001 ★</span>
-                        <span class="version" data-asset="bubble" data-version="002" data-desc="Gradient wobble">v002</span>
+                </div>
+            </div>
+            <div class="asset-card" data-entity="fish">
+                <div class="version-tabs">
+                    <span class="version-tab active" data-version="001">v001<span class="star">★</span></span>
+                    <span class="version-tab" data-version="002">v002</span>
+                </div>
+                <div class="asset-preview"><canvas id="fish-canvas" width="200" height="150"></canvas></div>
+                <div class="asset-info">
+                    <h3>Golden Fish</h3><p>+1 life pickup. v002 has shimmer!</p>
+                    <div class="controls">
+                        <div class="control-row"><label>Shimmer</label><input type="range" id="fish-shimmer" min="0" max="10" value="5"><span class="value">5</span></div>
                     </div>
                 </div>
             </div>
-            <div class="asset-card">
+            <div class="asset-card" data-entity="particle">
+                <div class="version-tabs">
+                    <span class="version-tab active" data-version="001">v001<span class="star">★</span></span>
+                </div>
                 <div class="asset-preview"><canvas id="particle-canvas" width="200" height="150"></canvas></div>
                 <div class="asset-info">
                     <h3>Particles</h3><p>Visual effects for collect, death, bonus.</p>
@@ -181,7 +182,6 @@
                         </div>
                         <div class="control-row"><label>Count</label><input type="range" id="particle-count" min="4" max="20" value="8"><span class="value">8</span></div>
                     </div>
-                    <div class="asset-meta"><span class="tag">effects</span></div>
                 </div>
             </div>
         </div>
@@ -353,7 +353,7 @@
         
         
         
-        let frame = 0, compareItems = [], params = {
+        let frame = 0, params = {
             lobsterSize: 30, lobsterWag: 8,
             fishShimmer: 5,
             hookSwing: 10, hookLine: 100,
@@ -363,6 +363,19 @@
             invulnDur: 120,
             particleType: 'bubble', particleCount: 8
         };
+        
+        // Track selected version per entity
+        const selectedVersions = {
+            lobster: '003',
+            fish: '001',
+            bubble: '001',
+            hook: '002',
+            cage: '002',
+            net: '001',
+            fork: '001',
+            particle: '001'
+        };
+        
         const canvases = {};
         ['lobster','fish','hook','cage','bubble'].forEach(id => canvases[id] = document.getElementById(id+'-canvas'));
         canvases.ocean = document.getElementById('ocean-bg');
@@ -380,13 +393,29 @@
             const c = (id) => canvases[id]?.getContext('2d');
             Object.values(canvases).forEach(cv => cv?.getContext('2d').clearRect(0,0,200,150));
             
-            if(c('lobster')) lobsterV003(c('lobster'), 100, 80, params.lobsterSize, frame, params.lobsterWag);
-            if(c('fish')) fishV002(c('fish'), 100, 75, frame, 15, 1, params.fishShimmer);
-            if(c('hook')) hookV002(c('hook'), 100, params.hookLine, frame, params.hookSwing);
-            if(c('cage')) cageV002(c('cage'), 100, 75, params.cageSize);
+            // Render based on selected version
+            if(c('lobster')) {
+                const r = renderers[`lobster-${selectedVersions.lobster}`];
+                if(r) r(c('lobster'), 100, 80, params.lobsterSize, frame, params.lobsterWag);
+            }
+            if(c('fish')) {
+                const r = renderers[`fish-${selectedVersions.fish}`];
+                if(r) r(c('fish'), 100, 75, frame, 15, 1, params.fishShimmer);
+            }
+            if(c('hook')) {
+                const r = renderers[`hook-${selectedVersions.hook}`];
+                if(r) r(c('hook'), 100, params.hookLine, frame, params.hookSwing);
+            }
+            if(c('cage')) {
+                const r = renderers[`cage-${selectedVersions.cage}`];
+                if(r) r(c('cage'), 100, 75, params.cageSize);
+            }
             if(c('net')) netV001(c('net'), 100, 75, params.netWidth);
             if(c('fork')) forkV001(c('fork'), 100, 70, params.forkSize);
-            if(c('bubble')) bubbleV002(c('bubble'), 100, 75, params.bubbleSize, frame);
+            if(c('bubble')) {
+                const r = renderers[`bubble-${selectedVersions.bubble}`];
+                if(r) r(c('bubble'), 100, 75, params.bubbleSize, frame);
+            }
             if(c('particle')) renderParticle(c('particle'), 200, 150, frame, params.particleType);
             if(c('ocean')) renderOceanPreview(c('ocean'), 200, 150, frame);
             if(c('tank')) renderTankPreview(c('tank'), 200, 150);
@@ -396,43 +425,23 @@
             if(c('difficulty')) renderDifficulty(c('difficulty'), 200, 150);
             // END MECHANICS(c('kitchen'), 200, 150, frame);
             
-            compareItems.forEach((item, i) => {
-                const cv = document.getElementById(`compare-canvas-${i}`);
-                if (!cv) return;
-                const ctx = cv.getContext('2d');
-                ctx.clearRect(0,0,180,120);
-                ctx.fillStyle = '#000810'; ctx.fillRect(0,0,180,120);
-                const r = renderers[item.key];
-                if (r) {
-                    if (item.key.includes('lobster')) r(ctx, 90, 60, 25, frame);
-                    else if (item.key.includes('fish')) r(ctx, 90, 60, frame);
-                    else if (item.key.includes('hook')) r(ctx, 90, 80, frame);
-                    else if (item.key.includes('cage')) r(ctx, 90, 60, 50);
-                    else if (item.key.includes('bubble')) r(ctx, 90, 60, 18, frame);
-                }
-            });
             requestAnimationFrame(animate);
         }
         
-        window.clearComparison = () => { compareItems = []; updatePanel(); };
-        function toggleCompare(asset, version, desc) {
-            const key = `${asset}-${version}`;
-            const idx = compareItems.findIndex(i => i.key === key);
-            if (idx >= 0) { compareItems.splice(idx, 1); toast(`Removed ${key}`); }
-            else { if (compareItems.length >= 4) { toast('Max 4'); return; } compareItems.push({key,asset,version,desc}); toast(`Added ${key}`); }
-            updatePanel();
-        }
-        function updatePanel() {
-            const panel = document.getElementById('compare-panel');
-            const grid = document.getElementById('compare-grid');
-            if (!compareItems.length) { panel.classList.remove('active'); return; }
-            panel.classList.add('active');
-            grid.innerHTML = compareItems.map((item,i) => `<div class="compare-item"><canvas id="compare-canvas-${i}" width="180" height="120"></canvas><div class="label">${item.asset} v${item.version}</div><div class="desc">${item.desc}</div></div>`).join('');
-document.querySelectorAll('.version').forEach(t => t.classList.toggle('in-compare', compareItems.some(i => i.key === `${t.dataset.asset}-${t.dataset.version}`)));
-        }
-        function toast(m) { const t = document.getElementById('toast'); t.textContent = m; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2000); }
-        
-        document.querySelectorAll('.version').forEach(t => t.addEventListener('click', () => toggleCompare(t.dataset.asset, t.dataset.version, t.dataset.desc)));
+        // Version tab switching
+        document.querySelectorAll('.version-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                const card = tab.closest('.asset-card');
+                const entity = card?.dataset.entity;
+                const version = tab.dataset.version;
+                if (entity && version) {
+                    selectedVersions[entity] = version;
+                    // Update tab active states
+                    card.querySelectorAll('.version-tab').forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                }
+            });
+        });
         document.querySelectorAll('.nav a').forEach(a => a.addEventListener('click', e => {
             e.preventDefault();
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
