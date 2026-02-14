@@ -4,7 +4,7 @@ import os
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from urllib.parse import parse_qs
 
-SCORES_FILE = '/home/ubuntu/lobster-game/scores.json'
+SCORES_FILE = '/home/ubuntu/lobster-game/data/scores.json'
 
 def load_scores():
     if os.path.exists(SCORES_FILE):
