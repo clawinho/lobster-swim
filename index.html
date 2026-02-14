@@ -45,7 +45,7 @@
     </div>
     <canvas id="game" width="800" height="600"></canvas>
     <button id="music-btn" onclick="toggleMusic()" style="position: fixed; bottom: 10px; left: 10px; background: #001820; border: 1px solid #ff4500; color: #ff4500; padding: 6px 10px; cursor: pointer; font-family: monospace; font-size: 12px; z-index: 50; opacity: 0.8;">🎵</button>
-    <div id="version">v0.3.3 - level backgrounds</div>
+    <div id="version">v0.3.4 - bg fix</div>
     <script>
         // Music control - iOS workaround
         let musicPlaying = false;
@@ -850,11 +850,7 @@ let dangers = [];
         
         function gameLoop() {
             // Background
-            let gradient = ctx.createLinearGradient(0, 0, 0, 600);
-            gradient.addColorStop(0, '#001030');
-            gradient.addColorStop(1, '#000510');
-            ctx.fillStyle = gradient;
-            ctx.fillRect(0, 0, 800, 600);
+            drawBackground();
             
             // Water surface
             ctx.fillStyle = '#0020401a';
