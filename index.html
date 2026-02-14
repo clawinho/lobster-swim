@@ -45,11 +45,27 @@
     </div>
     <canvas id="game" width="800" height="600"></canvas>
     <button id="music-btn" onclick="toggleMusic()" style="position: fixed; bottom: 10px; left: 10px; background: #001820; border: 1px solid #ff4500; color: #ff4500; padding: 6px 10px; cursor: pointer; font-family: monospace; font-size: 12px; z-index: 50; opacity: 0.8;">🎵</button>
-    <div id="version">v0.5.4 - audio debug</div>
+    <div id="version">v0.5.5 - auto-start music</div>
     <script>
         // Music control - iOS workaround
         let musicPlaying = false;
         let gameAudio = null;
+        let musicAutoStarted = false;
+        
+        function tryAutoStartMusic() {
+            if (musicAutoStarted || musicPlaying) return;
+            musicAutoStarted = true;
+            if (!gameAudio) {
+                gameAudio = new Audio('lobster_jazz.mp3');
+                gameAudio.loop = true;
+                gameAudio.volume = 1.0;
+            }
+            gameAudio.play().then(() => {
+                musicPlaying = true;
+                document.getElementById('music-btn').textContent = '🔊';
+                document.getElementById('music-btn').style.background = '#002010';
+            }).catch(() => {}); // Silently fail if blocked
+        }
         
         function toggleMusic() {
             const btn = document.getElementById('music-btn');
@@ -444,6 +460,7 @@
         
         function handleTouch(e) {
             e.preventDefault();
+            tryAutoStartMusic();
             if (gameOver) { restartGame(); return; }
             if (caught) return;
             hasTarget = true;
@@ -455,6 +472,7 @@
         }
         
         function handleMouse(e) {
+            tryAutoStartMusic();
             if (gameOver) { restartGame(); return; }
             if (caught) return;
             const rect = canvas.getBoundingClientRect();
