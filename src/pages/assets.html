@@ -364,16 +364,16 @@
             if(c('fish')) fishV002(c('fish'), 100, 75, frame, 15, 1, params.fishShimmer);
             if(c('hook')) hookV002(c('hook'), 100, 100, frame, 10);
             if(c('cage')) cageV002(c('cage'), 100, 75, 50);
-            if(c('net')) renderNet(c('net'), 100, 75, 80);
-            if(c('fork')) renderFork(c('fork'), 100, 70, 40);
+            if(c('net')) netV001(c('net'), 100, 75, 80);
+            if(c('fork')) forkV001(c('fork'), 100, 70, 40);
             //ENEMIES(c('cage'), 100, 75, 50);
             if(c('bubble')) bubbleV001(c('bubble'), 100, 75, 18, false);
             if(c('ocean')) renderOceanPreview(c('ocean'), 200, 150, frame);
             if(c('tank')) renderTankPreview(c('tank'), 200, 150);
             if(c('kitchen')) renderKitchenPreview(c('kitchen'), 200, 150, frame);
-            if(c('magnet')) renderMagnetDemo(c('magnet'), 200, 150, frame);
-            if(c('invincibility')) renderInvincibilityDemo(c('invincibility'), 200, 150, frame);
-            if(c('difficulty')) renderDifficultyGraph(c('difficulty'), 200, 150);
+            if(c('magnet')) renderMagnetism(c('magnet'), 200, 150, frame);
+            if(c('invincibility')) renderInvincibility(c('invincibility'), 200, 150, frame);
+            if(c('difficulty')) renderDifficulty(c('difficulty'), 200, 150);
             // END MECHANICS(c('kitchen'), 200, 150, frame);
             
             compareItems.forEach((item, i) => {
