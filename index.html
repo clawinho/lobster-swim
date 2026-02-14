@@ -49,7 +49,7 @@
     <canvas id="game" width="800" height="600"></canvas>
     <button id="music-btn" onclick="toggleMusic()" style="position: fixed; bottom: 10px; left: 10px; background: #001820; border: 1px solid #ff4500; color: #ff4500; padding: 6px 10px; cursor: pointer; font-family: monospace; font-size: 12px; z-index: 50; opacity: 0.8;">🎵</button>
     <button id="sfx-btn" onclick="toggleSfx()" style="position: fixed; bottom: 10px; left: 60px; background: #002010; border: 1px solid #ff4500; color: #ff4500; padding: 6px 10px; cursor: pointer; font-family: monospace; font-size: 12px; z-index: 50; opacity: 0.8;">💥</button>
-    <div id="version" onclick="toggleDevMode()" style="cursor: pointer;">v0.6.5 - game over freeze</div>
+    <div id="version" onclick="toggleDevMode()" style="cursor: pointer;">v0.6.6 - dev level fix</div>
     <div id="dev-panel" style="position: fixed; top: 10px; left: 10px; background: #001820ee; border: 2px solid #ff4500; padding: 15px; display: none; z-index: 100; font-size: 12px;">
         <div style="color: #ff4500; font-weight: bold; margin-bottom: 10px;">🔧 DEV MODE</div>
         <div style="display: flex; flex-direction: column; gap: 5px;">
@@ -149,11 +149,24 @@
             currentLevel = lvl;
             document.body.style.background = LEVELS[lvl].background;
             document.getElementById('level-name').textContent = LEVELS[lvl].name;
-            if (lvl >= 2 && nets.length === 0) initNets();
-            if (lvl >= 3 && forks.length === 0) initForks();
-            // Set score to match level threshold
-            if (lvl === 2 && score < 50) { score = 50; document.getElementById('score').textContent = score; }
-            if (lvl === 3 && score < 100) { score = 100; document.getElementById('score').textContent = score; }
+            
+            // Set score to match level (both up AND down)
+            if (lvl === 1) { 
+                score = 0; 
+                nets = []; 
+                forks = []; 
+            }
+            if (lvl === 2) { 
+                score = 50; 
+                forks = [];
+                if (nets.length === 0) initNets();
+            }
+            if (lvl === 3) { 
+                score = 100; 
+                if (nets.length === 0) initNets();
+                if (forks.length === 0) initForks();
+            }
+            document.getElementById('score').textContent = score;
         }
         
         function devAddScore(amt) {
