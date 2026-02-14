@@ -129,7 +129,7 @@
     </div>
 
     <audio id="bgm" loop preload="auto">
-        <source src="lobster_jazz.mp3" type="audio/mpeg">
+        <source src="assets/music/lobster_jazz.mp3" type="audio/mpeg">
     </audio>
     
     <div id="leaderboard" style="position: fixed; top: 10px; right: 10px; background: #001820; border: 2px solid #ff4500; padding: 10px; min-width: 150px; z-index: 50;">
@@ -195,9 +195,9 @@
         let musicAutoStarted = false;
         let currentMusicLevel = 0;
         const levelTracks = {
-            1: 'music_ocean.mp3',
-            2: 'music_tank.mp3', 
-            3: 'music_kitchen.mp3'
+            1: 'assets/music/music_ocean.mp3',
+            2: 'assets/music/music_tank.mp3', 
+            3: 'assets/music/music_kitchen.mp3'
         };
         let gameAudio = null;
         
@@ -244,7 +244,7 @@
                 musicPlaying = false;
             } else {
                 if (!gameAudio) {
-                    gameAudio = new Audio('lobster_jazz.mp3');
+                    gameAudio = new Audio('assets/music/lobster_jazz.mp3');
                     gameAudio.loop = true;
                     gameAudio.volume = 1.0;
                     gameAudio.addEventListener('error', (e) => {
@@ -571,7 +571,7 @@
         let titleMusicPlaying = false;
         
         function initTitleMusic() {
-            titleMusic = new Audio('title_music.mp3');
+            titleMusic = new Audio('assets/music/title_music.mp3');
             titleMusic.loop = true;
             titleMusic.volume = 0.6;
         }

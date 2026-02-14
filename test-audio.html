@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head><title>Audio Test</title></head>
+<body style="background:#001020;color:#fff;font-family:monospace;padding:50px;text-align:center;">
+<h1>🦞 Audio Test</h1>
+<button onclick="playAudio()" style="padding:20px 40px;font-size:20px;cursor:pointer;">🎵 Play Music</button>
+<p id="status">Click the button</p>
+<script>
+function playAudio() {
+    document.getElementById('status').textContent = 'Loading...';
+    var audio = new Audio('title_music.mp3');
+    audio.play()
+        .then(function() { document.getElementById('status').textContent = '✅ Playing!'; })
+        .catch(function(e) { document.getElementById('status').textContent = '❌ Error: ' + e.message; });
+}
+</script>
+</body>
+</html>

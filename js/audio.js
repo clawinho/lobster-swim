@@ -10,9 +10,9 @@ const Audio = {
     currentLevel: 0,
     
     levelTracks: {
-        1: 'music_ocean.mp3',
-        2: 'music_tank.mp3',
-        3: 'music_kitchen.mp3'
+        1: 'assets/music/music_ocean.mp3',
+        2: 'assets/music/music_tank.mp3',
+        3: 'assets/music/music_kitchen.mp3'
     },
     
     init() {
