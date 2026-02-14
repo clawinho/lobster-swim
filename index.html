@@ -45,8 +45,8 @@
     </div>
     <canvas id="game" width="800" height="600"></canvas>
     <button id="music-btn" onclick="toggleMusic()" style="position: fixed; bottom: 10px; left: 10px; background: #001820; border: 1px solid #ff4500; color: #ff4500; padding: 6px 10px; cursor: pointer; font-family: monospace; font-size: 12px; z-index: 50; opacity: 0.8;">🎵</button>
-    <button id="sfx-btn" onclick="toggleSfx()" style="position: fixed; bottom: 10px; left: 50px; background: #002010; border: 1px solid #ff4500; color: #ff4500; padding: 6px 10px; cursor: pointer; font-family: monospace; font-size: 12px; z-index: 50; opacity: 0.8;">🔊</button>
-    <div id="version">v0.6.0 - sound effects!</div>
+    <button id="sfx-btn" onclick="toggleSfx()" style="position: fixed; bottom: 10px; left: 60px; background: #002010; border: 1px solid #ff4500; color: #ff4500; padding: 6px 10px; cursor: pointer; font-family: monospace; font-size: 12px; z-index: 50; opacity: 0.8;">💥</button>
+    <div id="version">v0.6.1 - button fix</div>
     <script>
         // Music control - iOS workaround
         let musicPlaying = false;
@@ -111,7 +111,7 @@
         function toggleSfx() {
             sfxEnabled = !sfxEnabled;
             const btn = document.getElementById('sfx-btn');
-            btn.textContent = sfxEnabled ? '🔊' : '🔇';
+            btn.textContent = sfxEnabled ? '💥' : '🔇';
             btn.style.background = sfxEnabled ? '#002010' : '#001820';
         }
         
