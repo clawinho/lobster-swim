@@ -25,7 +25,7 @@
         <p id="mobile-hint">Touch & drag to swim!</p>
     </div>
     <canvas id="game" width="800" height="600"></canvas>
-    <div id="version">v0.0.7 - bubble magnetism</div>
+    <div id="version">v0.1.0 - leaderboard</div>
     <script>
         const canvas = document.getElementById('game');
         const ctx = canvas.getContext('2d');
@@ -322,7 +322,8 @@ let dangers = [];
             updateLivesDisplay();
             
             if (lives <= 0) {
-                gameOver = true; showNameInput(score);
+                gameOver = true;
+                showNameInput(score);
                 if (score > highScore) {
                     highScore = score;
                     localStorage.setItem('lobsterHighScore', highScore.toString());
