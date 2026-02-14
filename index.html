@@ -27,12 +27,16 @@
         <div style="color: #ff4500; font-weight: bold; margin-bottom: 8px;">🏆 TOP SCORES</div>
         <div id="scores-list" style="color: #fff; font-size: 12px;">Loading...</div>
     </div>
-    <div id="name-input" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #001820; border: 2px solid #ff4500; padding: 20px; display: none; text-align: center; z-index: 100;">
-        <div style="color: #ff4500; margin-bottom: 10px;">GAME OVER! Enter your name:</div>
-        <input type="text" id="player-name" maxlength="15" style="background: #000; color: #fff; border: 1px solid #ff4500; padding: 5px; margin-bottom: 10px; text-align: center;" placeholder="Your name">
+    <div id="name-input" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #001820; border: 2px solid #ff4500; padding: 25px; display: none; text-align: center; z-index: 100; min-width: 280px;">
+        <div style="font-size: 24px; margin-bottom: 5px;">🦞💀</div>
+        <div style="color: #ff4500; font-weight: bold; font-size: 18px; margin-bottom: 8px;">GAME OVER</div>
+        <div id="death-quote" style="color: #888; font-style: italic; font-size: 12px; margin-bottom: 15px;">"The void claims all eventually..."</div>
+        <div style="color: #fff; margin-bottom: 8px;">Final Score: <span id="final-score-display">0</span></div>
+        <div style="color: #ff4500; margin-bottom: 10px; font-size: 14px;">Enter your name:</div>
+        <input type="text" id="player-name" maxlength="15" style="background: #000; color: #fff; border: 1px solid #ff4500; padding: 8px; margin-bottom: 12px; text-align: center; width: 150px;" placeholder="Your name">
         <br>
-        <button onclick="submitScore()" style="background: #ff4500; color: #000; border: none; padding: 8px 16px; cursor: pointer;">SUBMIT</button>
-        <button onclick="skipSubmit()" style="background: #333; color: #fff; border: none; padding: 8px 16px; cursor: pointer; margin-left: 5px;">SKIP</button>
+        <button onclick="submitScore()" style="background: #ff4500; color: #000; border: none; padding: 10px 20px; cursor: pointer; font-weight: bold;">SUBMIT</button>
+        <button onclick="skipSubmit()" style="background: #333; color: #fff; border: none; padding: 10px 20px; cursor: pointer; margin-left: 8px;">SKIP</button>
     </div>
     <div id="ui">
         <h1>🦞 Lobster Swim</h1>
@@ -40,7 +44,7 @@
         <p id="mobile-hint">Touch & drag to swim!</p>
     </div>
     <canvas id="game" width="800" height="600"></canvas>
-    <div id="version">v0.1.2 - jazzy music</div>
+    <div id="version">v0.1.3 - existential death</div>
     <script>
         // Music control
         let musicPlaying = false;
@@ -94,6 +98,19 @@
         
         function showNameInput(sc) {
             finalScore = sc;
+            const quotes = [
+                '"The void claims all eventually..."',
+                '"Even in death, the current flows..."',
+                '"The bubbles we collected remain..."',
+                '"To swim is to defy the darkness..."',
+                '"Every respawn is a second chance..."',
+                '"The hooks always win eventually..."',
+                '"In the deep, no one hears you scream..."',
+                '"The traps were always there, waiting..."',
+                '"We are all just lobsters in the cosmic sea..."'
+            ];
+            document.getElementById('death-quote').textContent = quotes[Math.floor(Math.random() * quotes.length)];
+            document.getElementById('final-score-display').textContent = sc;
             document.getElementById('name-input').style.display = 'block';
             setTimeout(() => document.getElementById('player-name').focus(), 100);
         }
