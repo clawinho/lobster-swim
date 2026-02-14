@@ -322,7 +322,7 @@ let dangers = [];
             updateLivesDisplay();
             
             if (lives <= 0) {
-                gameOver = true;
+                gameOver = true; showNameInput(score);
                 if (score > highScore) {
                     highScore = score;
                     localStorage.setItem('lobsterHighScore', highScore.toString());
