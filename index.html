@@ -45,30 +45,31 @@
     </div>
     <canvas id="game" width="800" height="600"></canvas>
     <button id="music-btn" onclick="toggleMusic()" style="display: block; margin: 10px auto; background: #ff4500; color: #000; padding: 15px 30px; cursor: pointer; font-family: monospace; font-weight: bold; font-size: 18px; border: 3px solid #fff;">🎵 PLAY</button>
-    <div id="version">v0.2.5 - simple music</div>
+    <div id="version">v0.2.6 - ios audio fix</div>
     <script>
-        // Music control - ultra simple
+        // Music control - iOS workaround
         let musicPlaying = false;
-        const bgm = document.getElementById('bgm');
-        if (bgm) bgm.volume = 0.4;
+        let gameAudio = null;
         
         function toggleMusic() {
-            const audio = document.getElementById('bgm');
             const btn = document.getElementById('music-btn');
-            try {
-                if (musicPlaying) {
-                    audio.pause();
-                    btn.textContent = '🎵 PLAY';
-                    btn.style.background = '#ff4500';
-                    musicPlaying = false;
-                } else {
-                    audio.play();
-                    btn.textContent = '⏸️ PAUSE';
-                    btn.style.background = '#00aa00';
-                    musicPlaying = true;
+            
+            if (musicPlaying && gameAudio) {
+                gameAudio.pause();
+                btn.textContent = '🎵 PLAY';
+                btn.style.background = '#ff4500';
+                musicPlaying = false;
+            } else {
+                // Create fresh audio on user click (iOS requirement)
+                if (!gameAudio) {
+                    gameAudio = new Audio('lobster_jazz.mp3');
+                    gameAudio.loop = true;
+                    gameAudio.volume = 0.4;
                 }
-            } catch(e) {
-                btn.textContent = '❌ ' + e;
+                gameAudio.play();
+                btn.textContent = '⏸️ PAUSE';
+                btn.style.background = '#00aa00';
+                musicPlaying = true;
             }
         }
 
