@@ -1,14 +1,11 @@
 /**
- * BubbleV2.js - Magnetic bubble with wobble and gradient
- * Version: 2.0.0 (current)
- * Added: Gradient, wobble animation, highlight
+ * Bubble.v002.js - Gradient + wobble + shine (UPGRADE CANDIDATE)
+ * @version 002
  */
-
-export function renderBubbleV2(ctx, x, y, size, time) {
+export function render(ctx, x, y, size, time) {
     const wobble = Math.sin(time * 0.1) * 2;
     const wobbleY = y + wobble;
     
-    // Gradient body
     const gradient = ctx.createRadialGradient(
         x - size * 0.3, wobbleY - size * 0.3, 0,
         x, wobbleY, size
@@ -22,17 +19,9 @@ export function renderBubbleV2(ctx, x, y, size, time) {
     ctx.arc(x, wobbleY, size, 0, Math.PI * 2);
     ctx.fill();
     
-    // Highlight
     ctx.fillStyle = 'rgba(255,255,255,0.8)';
     ctx.beginPath();
     ctx.arc(x - size * 0.3, wobbleY - size * 0.3, size * 0.2, 0, Math.PI * 2);
     ctx.fill();
 }
-
-export const metadata = {
-    version: '2.0.0',
-    name: 'Magnetic + Wobble',
-    description: 'Gradient bubble with wobble and highlight',
-    features: ['gradient', 'wobble animation', 'highlight', 'magnetism'],
-    current: true
-};
+export const meta = { version: '002', name: 'Gradient Wobble', features: ['gradient', 'wobble', 'shine highlight'] };

@@ -1,12 +1,10 @@
 /**
- * LobsterV3.js - Full animated lobster with tail physics
- * Version: 3.0.0 (current)
- * Added: Tail segments with physics, animated claws, antennae
+ * Lobster.v003.js - Full animation with tail physics (CURRENT IN GAME)
+ * @version 003
+ * @current true
  */
-
-export function renderLobsterV3(ctx, x, y, size, time, tailWag = 8) {
+export function render(ctx, x, y, size, time, tailWag = 8) {
     const tailAngle = Math.sin(time * 0.05 * tailWag / 8) * 0.3;
-    
     ctx.save();
     ctx.translate(x, y);
     
@@ -23,8 +21,7 @@ export function renderLobsterV3(ctx, x, y, size, time, tailWag = 8) {
     
     // Tail fan
     ctx.fillStyle = '#ff4500';
-    const fanX = -size * 1.8;
-    const fanY = Math.sin(time * 0.05 + 1.5) * tailWag;
+    const fanX = -size * 1.8, fanY = Math.sin(time * 0.05 + 1.5) * tailWag;
     for (let i = -2; i <= 2; i++) {
         ctx.beginPath();
         ctx.ellipse(fanX, fanY + i * 4, 8, 3, tailAngle * 3, 0, Math.PI * 2);
@@ -32,17 +29,13 @@ export function renderLobsterV3(ctx, x, y, size, time, tailWag = 8) {
     }
     
     // Body
-    ctx.fillStyle = '#ff4500';
     ctx.beginPath();
     ctx.ellipse(0, 0, size, size * 0.6, 0, 0, Math.PI * 2);
     ctx.fill();
     
-    // Animated claws
+    // Claws
     const clawAngle = Math.sin(time * 0.1) * 0.15;
-    
-    // Upper claw
-    ctx.save();
-    ctx.rotate(-0.5 + clawAngle);
+    ctx.save(); ctx.rotate(-0.5 + clawAngle);
     ctx.beginPath();
     ctx.ellipse(size * 0.9, -size * 0.1, size * 0.5, size * 0.25, 0.3, 0, Math.PI * 2);
     ctx.fill();
@@ -55,9 +48,7 @@ export function renderLobsterV3(ctx, x, y, size, time, tailWag = 8) {
     ctx.fill();
     ctx.restore();
     
-    // Lower claw
-    ctx.save();
-    ctx.rotate(0.5 - clawAngle);
+    ctx.save(); ctx.rotate(0.5 - clawAngle);
     ctx.fillStyle = '#ff4500';
     ctx.beginPath();
     ctx.ellipse(size * 0.9, size * 0.1, size * 0.5, size * 0.25, -0.3, 0, Math.PI * 2);
@@ -72,8 +63,7 @@ export function renderLobsterV3(ctx, x, y, size, time, tailWag = 8) {
     ctx.restore();
     
     // Antennae
-    ctx.strokeStyle = '#ff6600';
-    ctx.lineWidth = 2;
+    ctx.strokeStyle = '#ff6600'; ctx.lineWidth = 2;
     const antWave = Math.sin(time * 0.15) * 5;
     ctx.beginPath();
     ctx.moveTo(size * 0.5, -size * 0.3);
@@ -90,7 +80,6 @@ export function renderLobsterV3(ctx, x, y, size, time, tailWag = 8) {
     ctx.arc(size * 0.3, -size * 0.2, 4, 0, Math.PI * 2);
     ctx.arc(size * 0.3, size * 0.2, 4, 0, Math.PI * 2);
     ctx.fill();
-    
     ctx.fillStyle = '#fff';
     ctx.beginPath();
     ctx.arc(size * 0.32, -size * 0.22, 1.5, 0, Math.PI * 2);
@@ -99,11 +88,4 @@ export function renderLobsterV3(ctx, x, y, size, time, tailWag = 8) {
     
     ctx.restore();
 }
-
-export const metadata = {
-    version: '3.0.0',
-    name: 'Tail Physics',
-    description: 'Full animation: tail physics, waving antennae, claw motion',
-    features: ['tail physics', 'animated claws', 'antennae', 'eye highlights'],
-    current: true
-};
+export const meta = { version: '003', name: 'Tail Physics', current: true, features: ['tail physics', 'animated claws', 'antennae'] };

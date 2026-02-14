@@ -1,10 +1,8 @@
-/**
- * Pickup version exports
- */
-export { renderGoldenFishV1, metadata as fishMetaV1 } from './GoldenFishV1.js';
-export { renderGoldenFishV2, metadata as fishMetaV2 } from './GoldenFishV2.js';
-export { renderBubbleV1, metadata as bubbleMetaV1 } from './BubbleV1.js';
-export { renderBubbleV2, metadata as bubbleMetaV2 } from './BubbleV2.js';
-
-export const fishVersions = ['v1', 'v2'];
-export const bubbleVersions = ['v1', 'v2'];
+export { render as renderFishV001, meta as fishMetaV001 } from './GoldenFish.v001.js';
+export { render as renderFishV002, meta as fishMetaV002 } from './GoldenFish.v002.js';
+export { render as renderBubbleV001, meta as bubbleMetaV001 } from './Bubble.v001.js';
+export { render as renderBubbleV002, meta as bubbleMetaV002 } from './Bubble.v002.js';
+export const fishVersions = ['001', '002'];
+export const bubbleVersions = ['001', '002'];
+export const fishCurrent = '001';
+export const bubbleCurrent = '001';

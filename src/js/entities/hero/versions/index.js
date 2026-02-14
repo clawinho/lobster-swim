@@ -1,9 +1,5 @@
-/**
- * Lobster version exports
- */
-export { renderLobsterV1, metadata as metadataV1 } from './LobsterV1.js';
-export { renderLobsterV2, metadata as metadataV2 } from './LobsterV2.js';
-export { renderLobsterV3, metadata as metadataV3 } from './LobsterV3.js';
-
-export const versions = ['v1', 'v2', 'v3'];
-export const current = 'v3';
+export { render as renderV001, meta as metaV001 } from './Lobster.v001.js';
+export { render as renderV002, meta as metaV002 } from './Lobster.v002.js';
+export { render as renderV003, meta as metaV003 } from './Lobster.v003.js';
+export const versions = ['001', '002', '003'];
+export const current = '003';

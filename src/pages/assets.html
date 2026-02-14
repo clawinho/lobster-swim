@@ -6,109 +6,60 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { 
-            background: linear-gradient(180deg, #000810 0%, #001020 50%, #001830 100%);
-            min-height: 100vh;
-            font-family: 'Monaco', 'Consolas', monospace;
-            color: #fff;
-            padding: 20px;
-        }
-        
-        header {
-            text-align: center;
-            padding: 30px 0;
-            border-bottom: 1px solid #ff450044;
-            margin-bottom: 30px;
-        }
+        body { background: linear-gradient(180deg, #000810 0%, #001020 50%, #001830 100%); min-height: 100vh; font-family: monospace; color: #fff; padding: 20px; }
+        header { text-align: center; padding: 30px 0; border-bottom: 1px solid #ff450044; margin-bottom: 30px; }
         header h1 { color: #ff4500; font-size: 2.5em; margin-bottom: 10px; }
         header p { color: #666; font-size: 0.9em; }
-        
-        #compare-panel {
-            display: none;
-            background: #001020;
-            border: 2px solid #ff4500;
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 30px;
-            position: relative;
-        }
+        #compare-panel { display: none; background: #001020; border: 2px solid #ff4500; border-radius: 12px; padding: 20px; margin-bottom: 30px; position: relative; }
         #compare-panel.active { display: block; }
         #compare-panel h3 { color: #ff4500; margin-bottom: 15px; }
-        #compare-close {
-            position: absolute; top: 15px; right: 15px;
-            background: #ff450033; border: 1px solid #ff4500; color: #ff4500;
-            width: 30px; height: 30px; border-radius: 50%; cursor: pointer;
-        }
-        #compare-close:hover { background: #ff4500; color: #000; }
+        #compare-close { position: absolute; top: 15px; right: 15px; background: #ff450033; border: 1px solid #ff4500; color: #ff4500; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; }
         #compare-grid { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; }
         .compare-item { background: #000810; border: 1px solid #ff450044; border-radius: 8px; padding: 15px; text-align: center; min-width: 200px; }
         .compare-item .label { color: #ff4500; font-weight: bold; margin: 10px 0 5px; }
         .compare-item .desc { color: #888; font-size: 0.8em; }
-        
         .nav { display: flex; justify-content: center; gap: 15px; margin-bottom: 40px; flex-wrap: wrap; }
         .nav a { color: #888; text-decoration: none; padding: 8px 16px; border: 1px solid #333; border-radius: 4px; }
         .nav a:hover, .nav a.active { color: #ff4500; border-color: #ff4500; background: #ff450011; }
-        
         .section { display: none; margin-bottom: 50px; }
         .section.active { display: block; }
         .section h2 { color: #ff4500; font-size: 1.4em; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid #ff450033; }
-        
         .asset-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 25px; }
         .asset-card { background: #001020; border: 1px solid #ff450033; border-radius: 8px; overflow: hidden; }
-        .asset-card:hover { border-color: #ff4500; transform: translateY(-2px); box-shadow: 0 5px 20px #ff450022; }
-        .asset-preview { background: #000810; height: 180px; display: flex; align-items: center; justify-content: center; border-bottom: 1px solid #ff450022; }
+        .asset-card:hover { border-color: #ff4500; }
+        .asset-preview { background: #000810; height: 180px; display: flex; align-items: center; justify-content: center; }
         .asset-info { padding: 15px; }
-        .asset-info h3 { color: #fff; font-size: 1.1em; margin-bottom: 8px; }
-        .asset-info p { color: #888; font-size: 0.85em; line-height: 1.5; margin-bottom: 12px; }
-        
+        .asset-info h3 { color: #fff; margin-bottom: 8px; }
+        .asset-info p { color: #888; font-size: 0.85em; margin-bottom: 12px; }
         .asset-meta { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; }
         .tag { font-size: 0.7em; padding: 3px 8px; border-radius: 3px; background: #ff450022; color: #ff4500; }
         .tag.level { background: #4488ff22; color: #4488ff; }
-        .tag.mechanic { background: #88ff8822; color: #88ff88; }
-        
         .controls { display: flex; flex-direction: column; gap: 8px; }
         .control-row { display: flex; align-items: center; gap: 10px; }
         .control-row label { color: #666; font-size: 0.75em; width: 70px; }
         .control-row input[type="range"] { flex: 1; accent-color: #ff4500; }
         .control-row .value { color: #ff4500; font-size: 0.8em; width: 40px; text-align: right; }
-        
         .version-history { display: flex; gap: 8px; margin-top: 12px; padding-top: 12px; border-top: 1px solid #ffffff11; flex-wrap: wrap; }
         .version { font-size: 0.7em; padding: 4px 8px; border-radius: 3px; background: #222; color: #666; cursor: pointer; border: 1px solid transparent; }
-        .version:hover { background: #333; color: #888; border-color: #444; }
+        .version:hover { background: #333; }
         .version.current { background: #ff450033; color: #ff4500; }
         .version.in-compare { border-color: #00ff88; background: #00ff8822; color: #00ff88; }
-        .version-hint { font-size: 0.65em; color: #555; margin-left: auto; }
-        
-        .audio-btn { background: #ff4500; border: none; color: #000; padding: 10px 25px; border-radius: 20px; cursor: pointer; font-weight: bold; }
-        .audio-btn:hover { transform: scale(1.1); background: #ff6633; }
-        .music-track { text-align: center; padding: 10px; background: #001020; border-radius: 8px; }
-        
         #bottom-nav { position: fixed; bottom: 15px; right: 20px; display: flex; gap: 10px; }
-        #bottom-nav a { color: #4488ff; text-decoration: none; background: #001828; border: 1px solid #4488ff44; padding: 8px 14px; border-radius: 4px; font-size: 14px; }
-        #bottom-nav a.game { color: #ff4500; border-color: #ff450044; background: #180800; }
-        
-        #toast { position: fixed; bottom: 70px; right: 20px; background: #00ff8833; border: 1px solid #00ff88; color: #00ff88; padding: 10px 20px; border-radius: 6px; font-size: 0.85em; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
+        #bottom-nav a { color: #4488ff; text-decoration: none; background: #001828; border: 1px solid #4488ff44; padding: 8px 14px; border-radius: 4px; }
+        #bottom-nav a.game { color: #ff4500; border-color: #ff450044; }
+        #toast { position: fixed; bottom: 70px; right: 20px; background: #00ff8833; border: 1px solid #00ff88; color: #00ff88; padding: 10px 20px; border-radius: 6px; opacity: 0; transition: opacity 0.3s; }
         #toast.show { opacity: 1; }
     </style>
 </head>
 <body>
-    <header>
-        <h1>🦞 Asset Library</h1>
-        <p>Interactive showcase — modular architecture — click version tags to compare</p>
-    </header>
-    
-    <div id="compare-panel">
-        <h3>🔬 Version Comparison</h3>
-        <button id="compare-close" onclick="clearComparison()">×</button>
-        <div id="compare-grid"></div>
-    </div>
+    <header><h1>🦞 Asset Library</h1><p>Modular entity versions — click tags to compare</p></header>
+    <div id="compare-panel"><h3>🔬 Comparison</h3><button id="compare-close" onclick="clearComparison()">×</button><div id="compare-grid"></div></div>
     
     <nav class="nav">
         <a href="#characters" class="active">Characters</a>
         <a href="#enemies">Enemies</a>
         <a href="#items">Items</a>
         <a href="#environments">Environments</a>
-        <a href="#audio">Audio</a>
     </nav>
     
     <section class="section active" id="characters">
@@ -117,33 +68,24 @@
             <div class="asset-card">
                 <div class="asset-preview"><canvas id="lobster-canvas" width="200" height="150"></canvas></div>
                 <div class="asset-info">
-                    <h3>Clawinho the Lobster</h3>
-                    <p>Animated tail physics, rotating claws, wavy antennae.</p>
-                    <div class="asset-meta"><span class="tag">playable</span><span class="tag level">all levels</span></div>
+                    <h3>Lobster</h3><p>Player character with tail physics.</p>
                     <div class="controls">
                         <div class="control-row"><label>Size</label><input type="range" id="lobster-size" min="15" max="60" value="30"><span class="value">30</span></div>
-                        <div class="control-row"><label>Tail wag</label><input type="range" id="lobster-wag" min="1" max="20" value="8"><span class="value">8</span></div>
                     </div>
                     <div class="version-history">
-                        <span class="version" data-asset="lobster" data-version="v1" data-desc="Basic circle">v1 basic</span>
-                        <span class="version" data-asset="lobster" data-version="v2" data-desc="Added claws">v2 claws</span>
-                        <span class="version current" data-asset="lobster" data-version="v3" data-desc="Tail physics">v3 current</span>
+                        <span class="version" data-asset="lobster" data-version="001" data-desc="Basic circle">v001</span>
+                        <span class="version" data-asset="lobster" data-version="002" data-desc="With claws">v002</span>
+                        <span class="version current" data-asset="lobster" data-version="003" data-desc="Tail physics">v003 ★</span>
                     </div>
                 </div>
             </div>
-            
             <div class="asset-card">
                 <div class="asset-preview"><canvas id="fish-canvas" width="200" height="150"></canvas></div>
                 <div class="asset-info">
-                    <h3>Golden Fish</h3>
-                    <p>Rare spawn with shimmer particles. Catch for +1 life!</p>
-                    <div class="asset-meta"><span class="tag">collectible</span><span class="tag mechanic">+1 life</span></div>
-                    <div class="controls">
-                        <div class="control-row"><label>Shimmer</label><input type="range" id="fish-shimmer" min="0" max="10" value="5"><span class="value">5</span></div>
-                    </div>
+                    <h3>Golden Fish</h3><p>+1 life pickup. v002 has shimmer!</p>
                     <div class="version-history">
-                        <span class="version" data-asset="fish" data-version="v1" data-desc="Basic yellow">v1 basic</span>
-                        <span class="version current" data-asset="fish" data-version="v2" data-desc="Shimmer particles">v2 shimmer</span>
+                        <span class="version current" data-asset="fish" data-version="001" data-desc="Simple gold">v001 ★</span>
+                        <span class="version" data-asset="fish" data-version="002" data-desc="Shimmer particles">v002</span>
                     </div>
                 </div>
             </div>
@@ -156,44 +98,20 @@
             <div class="asset-card">
                 <div class="asset-preview"><canvas id="hook-canvas" width="200" height="150"></canvas></div>
                 <div class="asset-info">
-                    <h3>Fishing Hook</h3>
-                    <p>Pendulum swing. Getting caught = dramatic pull-up.</p>
-                    <div class="asset-meta"><span class="tag">enemy</span><span class="tag level">ocean</span></div>
-                    <div class="controls">
-                        <div class="control-row"><label>Swing</label><input type="range" id="hook-swing" min="1" max="20" value="10"><span class="value">10</span></div>
-                        <div class="control-row"><label>Line len</label><input type="range" id="hook-line" min="50" max="200" value="100"><span class="value">100</span></div>
-                    </div>
+                    <h3>Hook</h3><p>Pendulum swing hazard.</p>
                     <div class="version-history">
-                        <span class="version" data-asset="hook" data-version="v1" data-desc="Static drop">v1 static</span>
-                        <span class="version current" data-asset="hook" data-version="v2" data-desc="Pendulum swing">v2 swing</span>
+                        <span class="version" data-asset="hook" data-version="001" data-desc="Static">v001</span>
+                        <span class="version current" data-asset="hook" data-version="002" data-desc="Pendulum">v002 ★</span>
                     </div>
                 </div>
             </div>
-            
             <div class="asset-card">
                 <div class="asset-preview"><canvas id="cage-canvas" width="200" height="150"></canvas></div>
                 <div class="asset-info">
-                    <h3>Lobster Trap</h3>
-                    <p>Wooden cage with funnel entrance.</p>
-                    <div class="asset-meta"><span class="tag">enemy</span><span class="tag level">ocean</span></div>
-                    <div class="controls">
-                        <div class="control-row"><label>Size</label><input type="range" id="cage-size" min="30" max="80" value="50"><span class="value">50</span></div>
-                    </div>
+                    <h3>Cage</h3><p>Lobster trap.</p>
                     <div class="version-history">
-                        <span class="version" data-asset="cage" data-version="v1" data-desc="Purple void">v1 void</span>
-                        <span class="version current" data-asset="cage" data-version="v2" data-desc="Wooden trap">v2 trap</span>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="asset-card">
-                <div class="asset-preview"><canvas id="fork-canvas" width="200" height="150"></canvas></div>
-                <div class="asset-info">
-                    <h3>Fork</h3>
-                    <p>Level 3 enemy. Falls from sky.</p>
-                    <div class="asset-meta"><span class="tag">enemy</span><span class="tag level">kitchen</span></div>
-                    <div class="controls">
-                        <div class="control-row"><label>Size</label><input type="range" id="fork-size" min="20" max="60" value="40"><span class="value">40</span></div>
+                        <span class="version" data-asset="cage" data-version="001" data-desc="Purple void">v001</span>
+                        <span class="version current" data-asset="cage" data-version="002" data-desc="Wooden trap">v002 ★</span>
                     </div>
                 </div>
             </div>
@@ -206,15 +124,10 @@
             <div class="asset-card">
                 <div class="asset-preview"><canvas id="bubble-canvas" width="200" height="150"></canvas></div>
                 <div class="asset-info">
-                    <h3>Bubble</h3>
-                    <p>Primary collectible with magnetism.</p>
-                    <div class="asset-meta"><span class="tag">collectible</span><span class="tag mechanic">magnetism</span></div>
-                    <div class="controls">
-                        <div class="control-row"><label>Size</label><input type="range" id="bubble-size" min="10" max="30" value="18"><span class="value">18</span></div>
-                    </div>
+                    <h3>Bubble</h3><p>Collectible. v002 has gradient!</p>
                     <div class="version-history">
-                        <span class="version" data-asset="bubble" data-version="v1" data-desc="Static orbs">v1 static</span>
-                        <span class="version current" data-asset="bubble" data-version="v2" data-desc="Magnetic wobble">v2 magnetic</span>
+                        <span class="version current" data-asset="bubble" data-version="001" data-desc="Simple">v001 ★</span>
+                        <span class="version" data-asset="bubble" data-version="002" data-desc="Gradient wobble">v002</span>
                     </div>
                 </div>
             </div>
@@ -226,279 +139,118 @@
         <div class="asset-grid">
             <div class="asset-card">
                 <div class="asset-preview"><canvas id="ocean-bg" width="200" height="150"></canvas></div>
-                <div class="asset-info">
-                    <h3>Ocean (Level 1)</h3>
-                    <p>Deep sea with seaweed and bubbles.</p>
-                    <div class="asset-meta"><span class="tag level">level 1</span><span class="tag">0-199 pts</span></div>
-                </div>
+                <div class="asset-info"><h3>Ocean</h3><p>Level 1</p></div>
             </div>
             <div class="asset-card">
                 <div class="asset-preview"><canvas id="tank-bg" width="200" height="150"></canvas></div>
-                <div class="asset-info">
-                    <h3>Seafood Tank (Level 2)</h3>
-                    <p>Restaurant aquarium.</p>
-                    <div class="asset-meta"><span class="tag level">level 2</span><span class="tag">200-499 pts</span></div>
-                </div>
+                <div class="asset-info"><h3>Tank</h3><p>Level 2</p></div>
             </div>
             <div class="asset-card">
                 <div class="asset-preview"><canvas id="kitchen-bg" width="200" height="150"></canvas></div>
-                <div class="asset-info">
-                    <h3>Kitchen (Level 3)</h3>
-                    <p>The final nightmare.</p>
-                    <div class="asset-meta"><span class="tag level">level 3</span><span class="tag">500+ pts</span></div>
-                </div>
-            </div>
-        </div>
-    </section>
-    
-    <section class="section" id="audio">
-        <h2>🔊 Audio</h2>
-        <div class="asset-grid">
-            <div class="asset-card">
-                <div class="asset-preview" style="flex-direction: column; gap: 10px;">
-                    <div style="font-size: 48px;">🫧</div>
-                    <button onclick="Audio.playBloop()" class="audio-btn">▶ Bloop</button>
-                </div>
-                <div class="asset-info"><h3>Bubble Collect</h3><p>Rising pitch sweep.</p></div>
-            </div>
-            <div class="asset-card">
-                <div class="asset-preview" style="flex-direction: column; gap: 10px;">
-                    <div style="font-size: 48px;">💥</div>
-                    <button onclick="Audio.playHit()" class="audio-btn">▶ Hit</button>
-                </div>
-                <div class="asset-info"><h3>Damage</h3><p>Sawtooth descend.</p></div>
-            </div>
-            <div class="asset-card">
-                <div class="asset-preview" style="flex-direction: column; gap: 10px;">
-                    <div style="font-size: 48px;">❤️</div>
-                    <button onclick="Audio.playExtraLife()" class="audio-btn">▶ Life</button>
-                </div>
-                <div class="asset-info"><h3>Extra Life</h3><p>Ascending arpeggio.</p></div>
-            </div>
-            <div class="asset-card" style="grid-column: span 2;">
-                <div class="asset-preview" style="flex-direction: column; gap: 10px; height: auto; padding: 20px;">
-                    <div style="font-size: 36px;">🎵 Music</div>
-                    <div style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: center;">
-                        <div class="music-track"><div style="color: #4488ff;">🌊 Ocean</div><audio controls src="../assets/music/music_ocean.mp3" style="width: 180px; height: 30px;"></audio></div>
-                        <div class="music-track"><div style="color: #88ffff;">🐟 Tank</div><audio controls src="../assets/music/music_tank.mp3" style="width: 180px; height: 30px;"></audio></div>
-                        <div class="music-track"><div style="color: #ff8844;">🍳 Kitchen</div><audio controls src="../assets/music/music_kitchen.mp3" style="width: 180px; height: 30px;"></audio></div>
-                    </div>
-                </div>
-                <div class="asset-info"><h3>Level Music</h3><p>Transport Tycoon style ragtime.</p></div>
+                <div class="asset-info"><h3>Kitchen</h3><p>Level 3</p></div>
             </div>
         </div>
     </section>
 
-    <div id="bottom-nav">
-        <a href="/" class="game">🦞 Play</a>
-        <a href="/commits.html">commits</a>
-    </div>
+    <div id="bottom-nav"><a href="/" class="game">🦞 Play</a></div>
     <div id="toast"></div>
     
-    <script src="../js/audio.js"></script>
     <script type="module">
-        // Import versioned renderers
-        import { renderLobsterV1 } from '../js/entities/hero/versions/LobsterV1.js';
-        import { renderLobsterV2 } from '../js/entities/hero/versions/LobsterV2.js';
-        import { renderLobsterV3 } from '../js/entities/hero/versions/LobsterV3.js';
-        import { renderGoldenFishV1 } from '../js/entities/pickups/versions/GoldenFishV1.js';
-        import { renderGoldenFishV2 } from '../js/entities/pickups/versions/GoldenFishV2.js';
-        import { renderHookV1 } from '../js/entities/enemies/versions/HookV1.js';
-        import { renderHookV2 } from '../js/entities/enemies/versions/HookV2.js';
-        import { renderCageV1 } from '../js/entities/enemies/versions/CageV1.js';
-        import { renderCageV2 } from '../js/entities/enemies/versions/CageV2.js';
-        import { renderBubbleV1 } from '../js/entities/pickups/versions/BubbleV1.js';
-        import { renderBubbleV2 } from '../js/entities/pickups/versions/BubbleV2.js';
+        import { render as lobsterV001 } from '../js/entities/hero/versions/Lobster.v001.js';
+        import { render as lobsterV002 } from '../js/entities/hero/versions/Lobster.v002.js';
+        import { render as lobsterV003 } from '../js/entities/hero/versions/Lobster.v003.js';
+        import { render as fishV001 } from '../js/entities/pickups/versions/GoldenFish.v001.js';
+        import { render as fishV002 } from '../js/entities/pickups/versions/GoldenFish.v002.js';
+        import { render as bubbleV001 } from '../js/entities/pickups/versions/Bubble.v001.js';
+        import { render as bubbleV002 } from '../js/entities/pickups/versions/Bubble.v002.js';
+        import { render as hookV001 } from '../js/entities/enemies/versions/Hook.v001.js';
+        import { render as hookV002 } from '../js/entities/enemies/versions/Hook.v002.js';
+        import { render as cageV001 } from '../js/entities/enemies/versions/Cage.v001.js';
+        import { render as cageV002 } from '../js/entities/enemies/versions/Cage.v002.js';
         import { renderOceanPreview } from '../js/entities/environments/Ocean.js';
         import { renderTankPreview } from '../js/entities/environments/Tank.js';
         import { renderKitchenPreview } from '../js/entities/environments/Kitchen.js';
         
-        // Renderer registry
         const renderers = {
-            'lobster-v1': (ctx, x, y, s, t) => renderLobsterV1(ctx, x, y, s),
-            'lobster-v2': (ctx, x, y, s, t) => renderLobsterV2(ctx, x, y, s),
-            'lobster-v3': (ctx, x, y, s, t, w) => renderLobsterV3(ctx, x, y, s, t, w),
-            'fish-v1': (ctx, x, y, t) => renderGoldenFishV1(ctx, x, y, 1),
-            'fish-v2': (ctx, x, y, t, sh) => renderGoldenFishV2(ctx, x, y, t, 1, sh),
-            'hook-v1': (ctx, x, l, t) => renderHookV1(ctx, x, l),
-            'hook-v2': (ctx, x, l, t, sw) => renderHookV2(ctx, x, l, t, sw),
-            'cage-v1': (ctx, x, y, s) => renderCageV1(ctx, x, y, s),
-            'cage-v2': (ctx, x, y, s) => renderCageV2(ctx, x, y, s),
-            'bubble-v1': (ctx, x, y, s, t) => renderBubbleV1(ctx, x, y, s),
-            'bubble-v2': (ctx, x, y, s, t) => renderBubbleV2(ctx, x, y, s, t),
+            'lobster-001': (c,x,y,s,t) => lobsterV001(c,x,y,s),
+            'lobster-002': (c,x,y,s,t) => lobsterV002(c,x,y,s),
+            'lobster-003': (c,x,y,s,t) => lobsterV003(c,x,y,s,t),
+            'fish-001': (c,x,y,t) => fishV001(c,x,y,15,1),
+            'fish-002': (c,x,y,t) => fishV002(c,x,y,t,15,1,5),
+            'bubble-001': (c,x,y,s,t) => bubbleV001(c,x,y,s,false),
+            'bubble-002': (c,x,y,s,t) => bubbleV002(c,x,y,s,t),
+            'hook-001': (c,x,l,t) => hookV001(c,x,l),
+            'hook-002': (c,x,l,t) => hookV002(c,x,l,t,10),
+            'cage-001': (c,x,y,s) => cageV001(c,x,y,s),
+            'cage-002': (c,x,y,s) => cageV002(c,x,y,s),
         };
         
-        // State
-        let frame = 0;
-        let compareItems = [];
-        let params = {
-            lobsterSize: 30, lobsterWag: 8,
-            fishShimmer: 5,
-            hookSwing: 10, hookLine: 100,
-            cageSize: 50,
-            forkSize: 40,
-            bubbleSize: 18
-        };
+        let frame = 0, compareItems = [], params = { lobsterSize: 30 };
+        const canvases = {};
+        ['lobster','fish','hook','cage','bubble'].forEach(id => canvases[id] = document.getElementById(id+'- canvas'));
+        canvases.ocean = document.getElementById('ocean-bg');
+        canvases.tank = document.getElementById('tank-bg');
+        canvases.kitchen = document.getElementById('kitchen-bg');
         
-        // Canvas refs
-        const canvases = {
-            lobster: document.getElementById('lobster-canvas'),
-            fish: document.getElementById('fish-canvas'),
-            hook: document.getElementById('hook-canvas'),
-            cage: document.getElementById('cage-canvas'),
-            fork: document.getElementById('fork-canvas'),
-            bubble: document.getElementById('bubble-canvas'),
-            ocean: document.getElementById('ocean-bg'),
-            tank: document.getElementById('tank-bg'),
-            kitchen: document.getElementById('kitchen-bg'),
-        };
-        
-        // Fork renderer (inline since no versions yet)
-        function renderFork(ctx, x, y, size) {
-            ctx.fillStyle = '#8B4513';
-            ctx.fillRect(x - 4, y - 50, 8, 50);
-            ctx.fillStyle = '#c0c0c0';
-            for (let i = -1; i <= 1; i++) {
-                ctx.beginPath();
-                ctx.moveTo(x + i * 10 - 3, y);
-                ctx.lineTo(x + i * 10 + 3, y);
-                ctx.lineTo(x + i * 10 + 1, y + 35);
-                ctx.lineTo(x + i * 10 - 1, y + 35);
-                ctx.closePath();
-                ctx.fill();
-            }
-        }
-        
-        // Animation loop
         function animate() {
             frame++;
-            const ctx = {};
+            const c = (id) => canvases[id]?.getContext('2d');
+            Object.values(canvases).forEach(cv => cv?.getContext('2d').clearRect(0,0,200,150));
             
-            // Main previews
-            Object.entries(canvases).forEach(([k, c]) => {
-                if (c) ctx[k] = c.getContext('2d');
-            });
+            if(c('lobster')) lobsterV003(c('lobster'), 100, 80, params.lobsterSize, frame);
+            if(c('fish')) fishV001(c('fish'), 100, 75, 15, 1);
+            if(c('hook')) hookV002(c('hook'), 100, 100, frame, 10);
+            if(c('cage')) cageV002(c('cage'), 100, 75, 50);
+            if(c('bubble')) bubbleV001(c('bubble'), 100, 75, 18, false);
+            if(c('ocean')) renderOceanPreview(c('ocean'), 200, 150, frame);
+            if(c('tank')) renderTankPreview(c('tank'), 200, 150);
+            if(c('kitchen')) renderKitchenPreview(c('kitchen'), 200, 150, frame);
             
-            // Clear all
-            Object.values(ctx).forEach(c => c && c.clearRect(0, 0, 200, 150));
-            
-            // Draw main previews
-            if (ctx.lobster) renderLobsterV3(ctx.lobster, 100, 80, params.lobsterSize, frame, params.lobsterWag);
-            if (ctx.fish) renderGoldenFishV2(ctx.fish, 100, 75, frame, 1, params.fishShimmer);
-            if (ctx.hook) renderHookV2(ctx.hook, 100, params.hookLine, frame, params.hookSwing);
-            if (ctx.cage) renderCageV2(ctx.cage, 100, 80, params.cageSize);
-            if (ctx.fork) renderFork(ctx.fork, 100, 70, params.forkSize);
-            if (ctx.bubble) renderBubbleV2(ctx.bubble, 100, 75, params.bubbleSize, frame);
-            if (ctx.ocean) renderOceanPreview(ctx.ocean, 200, 150, frame);
-            if (ctx.tank) renderTankPreview(ctx.tank, 200, 150);
-            if (ctx.kitchen) renderKitchenPreview(ctx.kitchen, 200, 150, frame);
-            
-            // Draw comparison items
             compareItems.forEach((item, i) => {
-                const canvas = document.getElementById(`compare-canvas-${i}`);
-                if (!canvas) return;
-                const c = canvas.getContext('2d');
-                c.clearRect(0, 0, 180, 120);
-                c.fillStyle = '#000810';
-                c.fillRect(0, 0, 180, 120);
-                
-                const renderer = renderers[item.key];
-                if (renderer) {
-                    if (item.key.includes('lobster')) renderer(c, 90, 60, 25, frame, 8);
-                    else if (item.key.includes('fish')) renderer(c, 90, 60, frame, 5);
-                    else if (item.key.includes('hook')) renderer(c, 90, 80, frame, 10);
-                    else if (item.key.includes('cage')) renderer(c, 90, 60, 50);
-                    else if (item.key.includes('bubble')) renderer(c, 90, 60, 18, frame);
+                const cv = document.getElementById(`compare-canvas-${i}`);
+                if (!cv) return;
+                const ctx = cv.getContext('2d');
+                ctx.clearRect(0,0,180,120);
+                ctx.fillStyle = '#000810'; ctx.fillRect(0,0,180,120);
+                const r = renderers[item.key];
+                if (r) {
+                    if (item.key.includes('lobster')) r(ctx, 90, 60, 25, frame);
+                    else if (item.key.includes('fish')) r(ctx, 90, 60, frame);
+                    else if (item.key.includes('hook')) r(ctx, 90, 80, frame);
+                    else if (item.key.includes('cage')) r(ctx, 90, 60, 50);
+                    else if (item.key.includes('bubble')) r(ctx, 90, 60, 18, frame);
                 }
             });
-            
             requestAnimationFrame(animate);
         }
         
-        // Comparison
+        window.clearComparison = () => { compareItems = []; updatePanel(); };
         function toggleCompare(asset, version, desc) {
             const key = `${asset}-${version}`;
             const idx = compareItems.findIndex(i => i.key === key);
-            if (idx >= 0) {
-                compareItems.splice(idx, 1);
-                showToast(`Removed ${asset} ${version}`);
-            } else {
-                if (compareItems.length >= 4) { showToast('Max 4 items'); return; }
-                compareItems.push({ key, asset, version, desc });
-                showToast(`Added ${asset} ${version}`);
-            }
-            updateComparePanel();
+            if (idx >= 0) { compareItems.splice(idx, 1); toast(`Removed ${key}`); }
+            else { if (compareItems.length >= 4) { toast('Max 4'); return; } compareItems.push({key,asset,version,desc}); toast(`Added ${key}`); }
+            updatePanel();
         }
-        window.toggleCompare = toggleCompare;
-        
-        function clearComparison() { compareItems = []; updateComparePanel(); }
-        window.clearComparison = clearComparison;
-        
-        function updateComparePanel() {
+        function updatePanel() {
             const panel = document.getElementById('compare-panel');
             const grid = document.getElementById('compare-grid');
-            if (compareItems.length === 0) { panel.classList.remove('active'); return; }
+            if (!compareItems.length) { panel.classList.remove('active'); return; }
             panel.classList.add('active');
-            grid.innerHTML = compareItems.map((item, i) => `
-                <div class="compare-item">
-                    <canvas id="compare-canvas-${i}" width="180" height="120"></canvas>
-                    <div class="label">${item.asset} ${item.version}</div>
-                    <div class="desc">${item.desc}</div>
-                </div>
-            `).join('');
-            
-            // Update version tag styling
-            document.querySelectorAll('.version').forEach(tag => {
-                const key = `${tag.dataset.asset}-${tag.dataset.version}`;
-                tag.classList.toggle('in-compare', compareItems.some(i => i.key === key));
-            });
+            grid.innerHTML = compareItems.map((item,i) => `<div class="compare-item"><canvas id="compare-canvas-${i}" width="180" height="120"></canvas><div class="label">${item.asset} v${item.version}</div><div class="desc">${item.desc}</div></div>`).join('');
+            document.querySelectorAll('.version').forEach(t => t.classList.toggle('in-compare', compareItems.some(i => i.key === `${t.dataset.asset}-${t.dataset.version}`)));
         }
+        function toast(m) { const t = document.getElementById('toast'); t.textContent = m; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2000); }
         
-        function showToast(msg) {
-            const toast = document.getElementById('toast');
-            toast.textContent = msg;
-            toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 2000);
-        }
-        
-        // Slider setup
-        function setupSlider(id, param) {
-            const slider = document.getElementById(id);
-            if (!slider) return;
-            const display = slider.parentElement.querySelector('.value');
-            slider.addEventListener('input', () => {
-                params[param] = parseInt(slider.value);
-                if (display) display.textContent = slider.value;
-            });
-        }
-        
-        setupSlider('lobster-size', 'lobsterSize');
-        setupSlider('lobster-wag', 'lobsterWag');
-        setupSlider('fish-shimmer', 'fishShimmer');
-        setupSlider('hook-swing', 'hookSwing');
-        setupSlider('hook-line', 'hookLine');
-        setupSlider('cage-size', 'cageSize');
-        setupSlider('fork-size', 'forkSize');
-        setupSlider('bubble-size', 'bubbleSize');
-        
-        // Version tag clicks
-        document.querySelectorAll('.version').forEach(tag => {
-            tag.addEventListener('click', () => {
-                toggleCompare(tag.dataset.asset, tag.dataset.version, tag.dataset.desc);
-            });
-        });
-        
-        // Tab switching
-        document.querySelectorAll('.nav a').forEach(a => {
-            a.addEventListener('click', e => {
-                e.preventDefault();
-                const targetId = a.getAttribute('href').substring(1);
-                document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-                document.getElementById(targetId).classList.add('active');
-                document.querySelectorAll('.nav a').forEach(x => x.classList.remove('active'));
-                a.classList.add('active');
-            });
-        });
+        document.querySelectorAll('.version').forEach(t => t.addEventListener('click', () => toggleCompare(t.dataset.asset, t.dataset.version, t.dataset.desc)));
+        document.querySelectorAll('.nav a').forEach(a => a.addEventListener('click', e => {
+            e.preventDefault();
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.getElementById(a.getAttribute('href').slice(1)).classList.add('active');
+            document.querySelectorAll('.nav a').forEach(x => x.classList.remove('active'));
+            a.classList.add('active');
+        }));
+        document.getElementById('lobster-size')?.addEventListener('input', e => { params.lobsterSize = +e.target.value; e.target.nextElementSibling.textContent = e.target.value; });
         
         animate();
     </script>
