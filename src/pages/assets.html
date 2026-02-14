@@ -393,8 +393,8 @@
             const c = (id) => canvases[id]?.getContext('2d');
             Object.values(canvases).forEach(cv => cv?.getContext('2d').clearRect(0,0,200,150));
             
-            if(c('lobster')) lobsterV003(c('lobster'), 100, 80, params.lobsterSize, frame);
-            if(c('fish')) fishV001(c('fish'), 100, 75, 15, 1);
+            if(c('lobster')) lobsterV003(c('lobster'), 100, 80, params.lobsterSize, frame, params.lobsterWag);
+            if(c('fish')) fishV002(c('fish'), 100, 75, frame, 15, 1, params.fishShimmer);
             if(c('hook')) hookV002(c('hook'), 100, 100, frame, 10);
             if(c('cage')) cageV002(c('cage'), 100, 75, 50);
             if(c('net')) renderNet(c('net'), 100, 75, 80);
