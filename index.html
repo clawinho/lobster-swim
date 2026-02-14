@@ -44,7 +44,7 @@
         <p id="mobile-hint">Touch & drag to swim!</p>
     </div>
     <canvas id="game" width="800" height="600"></canvas>
-    <div id="version">v0.1.3 - existential death</div>
+    <div id="version">v0.1.4 - life bubbles</div>
     <script>
         // Music control
         let musicPlaying = false;
@@ -222,8 +222,19 @@
         function initBubbles() {
             bubbles = [];
             for(let i = 0; i < 7; i++) {
-                bubbles.push({ x: Math.random() * 750 + 25, y: Math.random() * 550 + 25, size: 18 });
+                bubbles.push({ x: Math.random() * 750 + 25, y: Math.random() * 550 + 25, size: 18, isLife: false });
             }
+        }
+        
+        function spawnBubble() {
+            // 1 in 12 chance for life bubble (only if not at max lives)
+            const isLife = lives < 3 && Math.random() < 0.08;
+            return { 
+                x: Math.random() * 750 + 25, 
+                y: Math.random() * 550 + 25, 
+                size: isLife ? 22 : 18,
+                isLife: isLife 
+            };
         }
         initBubbles();
         
@@ -583,15 +594,15 @@ let dangers = [];
                     b.y += (dy / dist) * MAGNET_STRENGTH * pullFactor;
                     
                     // Visual feedback: bubble glows when being attracted
-                    ctx.fillStyle = '#66aaff66';
+                    ctx.fillStyle = b.isLife ? '#ff666688' : '#66aaff66';
                 } else {
-                    ctx.fillStyle = '#4488ff44';
+                    ctx.fillStyle = b.isLife ? '#ff444466' : '#4488ff44';
                 }
                 
                 ctx.beginPath();
                 ctx.arc(b.x, b.y, b.size, 0, Math.PI * 2);
                 ctx.fill();
-                ctx.strokeStyle = dist < MAGNET_RADIUS ? '#88ccff' : '#4488ff';
+                ctx.strokeStyle = b.isLife ? '#ff6666' : (dist < MAGNET_RADIUS ? '#88ccff' : '#4488ff');
                 ctx.stroke();
                 
                 // Collision check (recalculate dist after magnetism)
@@ -600,9 +611,18 @@ let dangers = [];
                 dist = Math.sqrt(dx*dx + dy*dy);
                 
                 if (dist < lobster.size + b.size) {
-                    score += 10;
+                    if (b.isLife) {
+                        // Life bubble - gain a life!
+                        if (lives < 3) {
+                            lives++;
+                            updateLivesDisplay();
+                        }
+                        score += 25;
+                    } else {
+                        score += 10;
+                    }
                     document.getElementById('score').textContent = score;
-                    bubbles[i] = { x: Math.random() * 750 + 25, y: Math.random() * 550 + 25, size: 18 };
+                    bubbles[i] = spawnBubble();
                     checkDifficultyScaling();
                 }
             });
