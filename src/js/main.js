@@ -1,10 +1,13 @@
 /**
  * main.js - Entry point
- * Initializes the game and connects UI components
+ * Initializes the game and connects Web Components
  */
 
 import { Game } from './game.js';
 import { Audio } from './audio-module.js';
+import './components/TitleScreen.js';
+import './components/Leaderboard.js';
+import './components/GameOver.js';
 
 class LobsterSwim {
     constructor() {
@@ -12,6 +15,7 @@ class LobsterSwim {
         this.audio = null;
         this.titleScreen = null;
         this.leaderboard = null;
+        this.gameOver = null;
 
         this.init();
     }
@@ -22,9 +26,15 @@ class LobsterSwim {
             await new Promise(resolve => window.addEventListener('load', resolve));
         }
 
-        // Get elements
+        // Get canvas
         const canvas = document.getElementById('game');
-        this.titleScreen = document.getElementById('title-screen');
+
+        // Get/create Web Components
+        this.titleScreen = document.querySelector('title-screen');
+        this.leaderboard = document.querySelector('leader-board');
+        this.gameOver = document.querySelector('game-over');
+
+        // Get UI elements
         this.scoreDisplay = document.getElementById('score');
         this.livesDisplay = document.getElementById('lives');
         this.levelDisplay = document.getElementById('level-name');
@@ -36,30 +46,39 @@ class LobsterSwim {
         // Initialize game
         this.game = new Game(canvas, this.audio);
 
-        // Connect callbacks
+        // Connect game callbacks
         this.game.onScoreChange = (score) => this.updateScore(score);
         this.game.onLivesChange = (lives) => this.updateLives(lives);
         this.game.onLevelChange = (level, data) => this.updateLevel(level, data);
         this.game.onGameOver = (score) => this.showGameOver(score);
 
-        // Setup UI events
-        this.setupEvents(canvas);
-
-        // Show title screen
-        this.showTitleScreen();
-
-        console.log('🦞 Lobster Swim initialized');
-    }
-
-    setupEvents(canvas) {
-        // Play button
-        const playBtn = document.getElementById('play-btn');
-        if (playBtn) {
-            playBtn.addEventListener('click', () => this.startGame());
+        // Connect component callbacks
+        if (this.titleScreen) {
+            this.titleScreen.onPlay = () => this.startGame();
+            this.titleScreen.setHighScore(this.game.highScore);
         }
 
-        // Canvas touch/click
+        if (this.gameOver) {
+            this.gameOver.onSubmit = (name, score) => this.submitScore(name, score);
+            this.gameOver.onSkip = () => this.returnToTitle();
+        }
+
+        // Setup canvas events
+        this.setupCanvasEvents(canvas);
+
+        // Setup joystick
+        this.setupJoystick();
+
+        // Setup control buttons
+        this.setupControlButtons();
+
+        console.log('🦞 Lobster Swim initialized (modular)');
+    }
+
+    setupCanvasEvents(canvas) {
+        // Click to move
         canvas.addEventListener('click', (e) => {
+            if (!this.game.gameStarted) return;
             const rect = canvas.getBoundingClientRect();
             const scaleX = canvas.width / rect.width;
             const scaleY = canvas.height / rect.height;
@@ -68,8 +87,9 @@ class LobsterSwim {
             this.game.setTarget(x, y);
         });
 
-        // Touch support
+        // Touch to move
         canvas.addEventListener('touchstart', (e) => {
+            if (!this.game.gameStarted) return;
             e.preventDefault();
             const touch = e.touches[0];
             const rect = canvas.getBoundingClientRect();
@@ -79,27 +99,6 @@ class LobsterSwim {
             const y = (touch.clientY - rect.top) * scaleY;
             this.game.setTarget(x, y);
         }, { passive: false });
-
-        // Joystick (if exists)
-        this.setupJoystick();
-
-        // Music toggle
-        const musicBtn = document.getElementById('music-btn');
-        if (musicBtn) {
-            musicBtn.addEventListener('click', () => {
-                const enabled = this.audio.toggleMusic();
-                musicBtn.style.opacity = enabled ? '0.8' : '0.4';
-            });
-        }
-
-        // SFX toggle
-        const sfxBtn = document.getElementById('sfx-btn');
-        if (sfxBtn) {
-            sfxBtn.addEventListener('click', () => {
-                const enabled = this.audio.toggleSfx();
-                sfxBtn.style.opacity = enabled ? '0.8' : '0.4';
-            });
-        }
     }
 
     setupJoystick() {
@@ -108,7 +107,6 @@ class LobsterSwim {
         if (!joystickBase || !joystickKnob) return;
 
         let joystickActive = false;
-        let joystickCenter = { x: 0, y: 0 };
 
         const updateJoystick = (clientX, clientY) => {
             const rect = joystickBase.getBoundingClientRect();
@@ -148,25 +146,26 @@ class LobsterSwim {
         });
     }
 
-    showTitleScreen() {
-        if (this.titleScreen) {
-            this.titleScreen.classList.remove('hidden');
+    setupControlButtons() {
+        const musicBtn = document.getElementById('music-btn');
+        if (musicBtn) {
+            musicBtn.addEventListener('click', () => {
+                const enabled = this.audio.toggleMusic();
+                musicBtn.style.opacity = enabled ? '0.8' : '0.4';
+            });
         }
-        // Update high score display
-        const hsDisplay = document.getElementById('title-hs');
-        if (hsDisplay) {
-            hsDisplay.textContent = this.game.highScore;
-        }
-    }
 
-    hideTitleScreen() {
-        if (this.titleScreen) {
-            this.titleScreen.classList.add('hidden');
+        const sfxBtn = document.getElementById('sfx-btn');
+        if (sfxBtn) {
+            sfxBtn.addEventListener('click', () => {
+                const enabled = this.audio.toggleSfx();
+                sfxBtn.style.opacity = enabled ? '0.8' : '0.4';
+            });
         }
     }
 
     startGame() {
-        this.hideTitleScreen();
+        if (this.titleScreen) this.titleScreen.hide();
         this.audio.init();
         this.audio.startLevelMusic(1);
         this.game.start();
@@ -176,7 +175,6 @@ class LobsterSwim {
         if (this.scoreDisplay) {
             this.scoreDisplay.textContent = score;
         }
-        // Update difficulty display
         const diff = this.game.getDifficulty();
         if (this.difficultyDisplay && diff.name) {
             this.difficultyDisplay.textContent = `[${diff.name}]`;
@@ -202,14 +200,26 @@ class LobsterSwim {
     }
 
     showGameOver(score) {
-        // Show name input modal
-        const nameInput = document.getElementById('name-input');
-        const finalScore = document.getElementById('final-score-display');
-        if (nameInput) {
-            nameInput.style.display = 'block';
+        if (this.gameOver) {
+            this.gameOver.show(score);
         }
-        if (finalScore) {
-            finalScore.textContent = score;
+    }
+
+    async submitScore(name, score) {
+        if (this.leaderboard) {
+            await this.leaderboard.submitScore(name, score);
+        }
+        this.returnToTitle();
+    }
+
+    returnToTitle() {
+        this.audio.stopMusic();
+        if (this.titleScreen) {
+            this.titleScreen.setHighScore(this.game.highScore);
+            this.titleScreen.show();
+        }
+        if (this.leaderboard) {
+            this.leaderboard.refresh();
         }
     }
 }
