@@ -49,7 +49,7 @@
     <canvas id="game" width="800" height="600"></canvas>
     <button id="music-btn" onclick="toggleMusic()" style="position: fixed; bottom: 10px; left: 10px; background: #001820; border: 1px solid #ff4500; color: #ff4500; padding: 6px 10px; cursor: pointer; font-family: monospace; font-size: 12px; z-index: 50; opacity: 0.8;">🎵</button>
     <button id="sfx-btn" onclick="toggleSfx()" style="position: fixed; bottom: 10px; left: 60px; background: #002010; border: 1px solid #ff4500; color: #ff4500; padding: 6px 10px; cursor: pointer; font-family: monospace; font-size: 12px; z-index: 50; opacity: 0.8;">💥</button>
-    <div id="version" onclick="toggleDevMode()" style="cursor: pointer;">v0.7.0 - level music</div>
+    <div id="version" onclick="toggleDevMode()" style="cursor: pointer;">v0.7.1 - higher thresholds</div>
     <div id="dev-panel" style="position: fixed; top: 10px; left: 10px; background: #001820ee; border: 2px solid #ff4500; padding: 15px; display: none; z-index: 100; font-size: 12px;">
         <div style="color: #ff4500; font-weight: bold; margin-bottom: 10px;">🔧 DEV MODE</div>
         <div style="display: flex; flex-direction: column; gap: 5px;">
@@ -182,12 +182,12 @@
                 forks = []; 
             }
             if (lvl === 2) { 
-                score = 50; 
+                score = 200; 
                 forks = [];
                 if (nets.length === 0) initNets();
             }
             if (lvl === 3) { 
-                score = 100; 
+                score = 500; 
                 if (nets.length === 0) initNets();
                 if (forks.length === 0) initForks();
             }
@@ -407,8 +407,8 @@
         const BG_SCROLL_SPEED = 0.5;
         const LEVELS = {
             1: { name: 'The Ocean', background: '#001020', scoreThreshold: 0 },
-            2: { name: 'Seafood Tank', background: '#002030', scoreThreshold: 50 },
-            3: { name: 'The Kitchen', background: '#1a0a05', scoreThreshold: 100 }
+            2: { name: 'Seafood Tank', background: '#002030', scoreThreshold: 200 },
+            3: { name: 'The Kitchen', background: '#1a0a05', scoreThreshold: 500 }
         };
 
         // Helper to wrap X position for scrolling
