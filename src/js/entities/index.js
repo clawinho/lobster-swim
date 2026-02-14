@@ -1,11 +1,16 @@
 /**
- * entities/index.js - Export all game entities
+ * entities/index.js - Export all game entities by category
  */
 
-export { Lobster } from './Lobster.js';
-export { Hook } from './Hook.js';
-export { Cage } from './Cage.js';
-export { Bubble } from './Bubble.js';
-export { GoldenFish } from './GoldenFish.js';
-export { Net } from './Net.js';
-export { Fork } from './Fork.js';
+// Hero
+export { Lobster } from './hero/Lobster.js';
+
+// Enemies
+export { Hook } from './enemies/Hook.js';
+export { Cage } from './enemies/Cage.js';
+export { Net } from './enemies/Net.js';
+export { Fork } from './enemies/Fork.js';
+
+// Pickups
+export { Bubble } from './pickups/Bubble.js';
+export { GoldenFish } from './pickups/GoldenFish.js';
