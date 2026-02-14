@@ -288,6 +288,21 @@
             'cage-002': (c,x,y,s) => cageV002(c,x,y,s),
         };
         
+        // Net and Fork renderers
+        function renderNet(ctx, x, y, width) {
+            ctx.strokeStyle = "#446688"; ctx.lineWidth = 2;
+            for (let r = 0; r <= 4; r++) { ctx.beginPath(); ctx.moveTo(x-width/2, y-30+r*15); ctx.lineTo(x+width/2, y-30+r*15); ctx.stroke(); }
+            for (let c = 0; c <= 5; c++) { ctx.beginPath(); ctx.moveTo(x-width/2+c*(width/5), y-30); ctx.lineTo(x-width/2+c*(width/5), y+30); ctx.stroke(); }
+            ctx.strokeStyle = "#886644"; ctx.lineWidth = 4;
+            ctx.beginPath(); ctx.moveTo(x, y-30); ctx.lineTo(x, y-60); ctx.stroke();
+        }
+        function renderFork(ctx, x, y, size) {
+            ctx.fillStyle = "#8B4513"; ctx.fillRect(x-4, y-50, 8, 50);
+            ctx.fillStyle = "#c0c0c0";
+            for (let i = -1; i <= 1; i++) {
+                ctx.beginPath(); ctx.moveTo(x+i*10-3, y); ctx.lineTo(x+i*10+3, y); ctx.lineTo(x+i*10+1, y+35); ctx.lineTo(x+i*10-1, y+35); ctx.closePath(); ctx.fill();
+            }
+        }
         // Mechanics renderers
         function renderMagnetDemo(ctx, w, h, t) {
             ctx.fillStyle = "#000810"; ctx.fillRect(0,0,w,h);
@@ -341,6 +356,8 @@
         canvases.magnet = document.getElementById('magnet-canvas');
         canvases.invincibility = document.getElementById('invincibility-canvas');
         canvases.difficulty = document.getElementById('difficulty-canvas');
+        canvases.net = document.getElementById('net-canvas');
+        canvases.fork = document.getElementById('fork-canvas');
         
         function animate() {
             frame++;
@@ -351,6 +368,9 @@
             if(c('fish')) fishV001(c('fish'), 100, 75, 15, 1);
             if(c('hook')) hookV002(c('hook'), 100, 100, frame, 10);
             if(c('cage')) cageV002(c('cage'), 100, 75, 50);
+            if(c('net')) renderNet(c('net'), 100, 75, 80);
+            if(c('fork')) renderFork(c('fork'), 100, 70, 40);
+            //ENEMIES(c('cage'), 100, 75, 50);
             if(c('bubble')) bubbleV001(c('bubble'), 100, 75, 18, false);
             if(c('ocean')) renderOceanPreview(c('ocean'), 200, 150, frame);
             if(c('tank')) renderTankPreview(c('tank'), 200, 150);
@@ -392,6 +412,20 @@
             if (!compareItems.length) { panel.classList.remove('active'); return; }
             panel.classList.add('active');
             grid.innerHTML = compareItems.map((item,i) => `<div class="compare-item"><canvas id="compare-canvas-${i}" width="180" height="120"></canvas><div class="label">${item.asset} v${item.version}</div><div class="desc">${item.desc}</div></div>`).join('');
+            <div class="asset-card">
+                <div class="asset-preview"><canvas id="net-canvas" width="200" height="150"></canvas></div>
+                <div class="asset-info">
+                    <h3>Net</h3><p>Level 2 sweeping hazard.</p>
+                    <div class="asset-meta"><span class="tag">enemy</span><span class="tag level">tank</span></div>
+                </div>
+            </div>
+            <div class="asset-card">
+                <div class="asset-preview"><canvas id="fork-canvas" width="200" height="150"></canvas></div>
+                <div class="asset-info">
+                    <h3>Fork</h3><p>Level 3 falling hazard.</p>
+                    <div class="asset-meta"><span class="tag">enemy</span><span class="tag level">kitchen</span></div>
+                </div>
+            </div>
             document.querySelectorAll('.version').forEach(t => t.classList.toggle('in-compare', compareItems.some(i => i.key === `${t.dataset.asset}-${t.dataset.version}`)));
         }
         function toast(m) { const t = document.getElementById('toast'); t.textContent = m; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2000); }
