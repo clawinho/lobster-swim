@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Lobster Swim 🦞</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <style>
+        * { box-sizing: border-box; }
+        body { margin: 0; background: #001020; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 100vh; font-family: monospace; overflow: hidden; touch-action: none; }
+        canvas { border: 2px solid #ff4500; max-width: 100%; touch-action: none; }
+        #ui { color: #ff4500; text-align: center; padding: 10px; }
+        #ui h1 { margin: 0; font-size: 1.5em; }
+        #ui p { margin: 5px 0; font-size: 0.9em; }
+        #version { position: fixed; bottom: 5px; right: 10px; color: #334; font-size: 10px; }
+        #mobile-hint { color: #666; font-size: 0.8em; }
+        @media (max-width: 820px) { canvas { width: 100vw; height: auto; } }
+    </style>
+</head>
+<body>
+    <div id="ui">
+        <h1>🦞 Lobster Swim</h1>
+        <p>Score: <span id="score">0</span> | Deaths: <span id="deaths">0</span></p>
+        <p id="mobile-hint">Touch & drag to swim!</p>
+    </div>
+    <canvas id="game" width="800" height="600"></canvas>
+    <div id="version">v0.0.4 - respawn invincibility</div>
+    <script>
+        const canvas = document.getElementById('game');
+        const ctx = canvas.getContext('2d');
+        
+        let lobster = { x: 400, y: 300, size: 30, speed: 5, targetX: 400, targetY: 300 };
+        let score = 0;
+        let deaths = 0;
+        let keys = {};
+        let touchActive = false;
+        let caught = false;
+        let caughtY = 0;
+        
+        // NEW: Invincibility system
+        let invincible = true;  // Start invincible!
+        let invincibleTimer = 120;  // 2 seconds at 60fps
+        const INVINCIBLE_DURATION = 120;
+        
+        document.addEventListener('keydown', e => keys[e.key] = true);
+        document.addEventListener('keyup', e => keys[e.key] = false);
+        
+        canvas.addEventListener('touchstart', handleTouch, { passive: false });
+        canvas.addEventListener('touchmove', handleTouch, { passive: false });
+        canvas.addEventListener('touchend', () => touchActive = false, { passive: false });
+        canvas.addEventListener('mousedown', handleMouse);
+        canvas.addEventListener('mousemove', (e) => { if(e.buttons) handleMouse(e); });
+        
+        function handleTouch(e) {
+            e.preventDefault();
+            if (caught) return;
+            touchActive = true;
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            lobster.targetX = (e.touches[0].clientX - rect.left) * scaleX;
+            lobster.targetY = (e.touches[0].clientY - rect.top) * scaleY;
+        }
+        
+        function handleMouse(e) {
+            if (caught) return;
+            const rect = canvas.getBoundingClientRect();
+            lobster.targetX = (e.clientX - rect.left) * (canvas.width / rect.width);
+            lobster.targetY = (e.clientY - rect.top) * (canvas.height / rect.height);
+            touchActive = true;
+        }
+        
+        // Bubbles
+        let bubbles = [];
+        for(let i = 0; i < 7; i++) {  // More bubbles!
+            bubbles.push({ x: Math.random() * 750 + 25, y: Math.random() * 550 + 25, size: 18 }); // Bigger!
+        }
+        
+        // Void dangers - slower
+        let dangers = [];
+        for(let i = 0; i < 3; i++) {
+            dangers.push({ 
+                x: Math.random() * 700, 
+                y: Math.random() * 500, 
+                size: 40,  // Smaller!
+                dx: (Math.random() - 0.5) * 1.5,  // Slower!
+                dy: (Math.random() - 0.5) * 1.5 
+            });
+        }
+        
+        // Fishing hooks - slower swing
+        let hooks = [];
+        for(let i = 0; i < 2; i++) {
+            hooks.push({ 
+                x: 150 + Math.random() * 500, 
+                y: -50,
+                angle: 0,
+                swingSpeed: 0.015 + Math.random() * 0.01,  // Slower!
+                lineLength: 100 + Math.random() * 150,
+                dropping: true,
+                targetY: 150 + Math.random() * 200
+            });
+        }
+        
+        function drawLobster(x, y, size) {
+            // Flashing when invincible
+            if (invincible && Math.floor(invincibleTimer / 5) % 2 === 0) {
+                ctx.globalAlpha = 0.4;
+            }
+            
+            ctx.fillStyle = '#ff4500';
+            ctx.beginPath();
+            ctx.ellipse(x, y, size, size * 0.6, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.ellipse(x - size * 0.8, y - size * 0.3, size * 0.4, size * 0.2, -0.5, 0, Math.PI * 2);
+            ctx.ellipse(x - size * 0.8, y + size * 0.3, size * 0.4, size * 0.2, 0.5, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = '#000';
+            ctx.beginPath();
+            ctx.arc(x + size * 0.3, y - size * 0.2, 3, 0, Math.PI * 2);
+            ctx.arc(x + size * 0.3, y + size * 0.2, 3, 0, Math.PI * 2);
+            ctx.fill();
+            
+            ctx.globalAlpha = 1;
+            
+            // Show shield when invincible
+            if (invincible) {
+                ctx.strokeStyle = '#ffff0066';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.arc(x, y, size + 10, 0, Math.PI * 2);
+                ctx.stroke();
+                ctx.lineWidth = 1;
+            }
+        }
+        
+        function drawHook(hook) {
+            const swingX = Math.sin(hook.angle) * 50;
+            const hookX = hook.x + swingX;
+            const hookY = hook.y + hook.lineLength;
+            
+            ctx.strokeStyle = '#888';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(hook.x, 0);
+            ctx.lineTo(hookX, hookY - 20);
+            ctx.stroke();
+            
+            ctx.strokeStyle = '#ccc';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(hookX, hookY - 20);
+            ctx.lineTo(hookX, hookY);
+            ctx.arc(hookX - 10, hookY, 10, 0, Math.PI, false);
+            ctx.stroke();
+            
+            ctx.fillStyle = '#fff';
+            ctx.beginPath();
+            ctx.moveTo(hookX - 20, hookY);
+            ctx.lineTo(hookX - 25, hookY - 8);
+            ctx.lineTo(hookX - 18, hookY - 3);
+            ctx.fill();
+            
+            return { x: hookX - 10, y: hookY, radius: 20 };
+        }
+        
+        function respawn() {
+            lobster.x = 400;
+            lobster.y = 300;
+            lobster.targetX = 400;
+            lobster.targetY = 300;
+            caught = false;
+            deaths++;
+            document.getElementById('deaths').textContent = deaths;
+            
+            // Grant invincibility on respawn!
+            invincible = true;
+            invincibleTimer = INVINCIBLE_DURATION;
+        }
+        
+        function gameLoop() {
+            // Background
+            let gradient = ctx.createLinearGradient(0, 0, 0, 600);
+            gradient.addColorStop(0, '#001030');
+            gradient.addColorStop(1, '#000510');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, 800, 600);
+            
+            // Water surface
+            ctx.fillStyle = '#0020401a';
+            for(let i = 0; i < 5; i++) {
+                ctx.fillRect(0, i * 3, 800, 1);
+            }
+            
+            // Update invincibility
+            if (invincible) {
+                invincibleTimer--;
+                if (invincibleTimer <= 0) {
+                    invincible = false;
+                }
+            }
+            
+            if (caught) {
+                caughtY -= 3;
+                lobster.y = caughtY;
+                if (lobster.y < -50) respawn();
+                drawLobster(lobster.x, lobster.y, lobster.size);
+                requestAnimationFrame(gameLoop);
+                return;
+            }
+            
+            // Keyboard
+            if (keys['ArrowUp'] || keys['w'] || keys['W']) lobster.y -= lobster.speed;
+            if (keys['ArrowDown'] || keys['s'] || keys['S']) lobster.y += lobster.speed;
+            if (keys['ArrowLeft'] || keys['a'] || keys['A']) lobster.x -= lobster.speed;
+            if (keys['ArrowRight'] || keys['d'] || keys['D']) lobster.x += lobster.speed;
+            
+            // Touch
+            if (touchActive) {
+                let dx = lobster.targetX - lobster.x;
+                let dy = lobster.targetY - lobster.y;
+                let dist = Math.sqrt(dx*dx + dy*dy);
+                if (dist > 5) {
+                    lobster.x += (dx / dist) * lobster.speed;
+                    lobster.y += (dy / dist) * lobster.speed;
+                }
+            }
+            
+            lobster.x = Math.max(lobster.size, Math.min(800 - lobster.size, lobster.x));
+            lobster.y = Math.max(lobster.size, Math.min(600 - lobster.size, lobster.y));
+            
+            // Bubbles
+            ctx.fillStyle = '#4488ff44';
+            bubbles.forEach((b, i) => {
+                ctx.beginPath();
+                ctx.arc(b.x, b.y, b.size, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.strokeStyle = '#4488ff';
+                ctx.stroke();
+                
+                let dx = lobster.x - b.x, dy = lobster.y - b.y;
+                if (Math.sqrt(dx*dx + dy*dy) < lobster.size + b.size) {
+                    score += 10;
+                    document.getElementById('score').textContent = score;
+                    bubbles[i] = { x: Math.random() * 750 + 25, y: Math.random() * 550 + 25, size: 18 };
+                }
+            });
+            
+            // Void dangers
+            dangers.forEach(d => {
+                ctx.fillStyle = '#10002080';
+                ctx.beginPath();
+                ctx.arc(d.x, d.y, d.size, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.strokeStyle = '#200040';
+                ctx.lineWidth = 3;
+                ctx.stroke();
+                ctx.lineWidth = 1;
+                
+                d.x += d.dx; d.y += d.dy;
+                if (d.x < 0 || d.x > 800) d.dx *= -1;
+                if (d.y < 0 || d.y > 600) d.dy *= -1;
+                
+                // Only hurt if not invincible!
+                if (!invincible) {
+                    let dx = lobster.x - d.x, dy = lobster.y - d.y;
+                    if (Math.sqrt(dx*dx + dy*dy) < lobster.size + d.size) respawn();
+                }
+            });
+            
+            // Hooks
+            hooks.forEach(hook => {
+                if (hook.dropping && hook.y < hook.targetY) {
+                    hook.y += 1;
+                } else {
+                    hook.dropping = false;
+                    hook.angle += hook.swingSpeed;
+                }
+                
+                const hookPos = drawHook(hook);
+                
+                // Only catch if not invincible!
+                if (!invincible) {
+                    let dx = lobster.x - hookPos.x, dy = lobster.y - hookPos.y;
+                    if (Math.sqrt(dx*dx + dy*dy) < lobster.size + hookPos.radius) {
+                        caught = true;
+                        caughtY = lobster.y;
+                        lobster.x = hookPos.x;
+                    }
+                }
+            });
+            
+            drawLobster(lobster.x, lobster.y, lobster.size);
+            requestAnimationFrame(gameLoop);
+        }
+        
+        if (!('ontouchstart' in window)) {
+            document.getElementById('mobile-hint').textContent = 'WASD or Arrow Keys to swim!';
+        }
+        
+        gameLoop();
+    </script>
+</body>
+</html>
