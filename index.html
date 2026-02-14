@@ -44,39 +44,34 @@
         <p id="mobile-hint">Touch & drag to swim!</p>
     </div>
     <canvas id="game" width="800" height="600"></canvas>
-    <div id="version">v0.2.1 - levels fix</div>
+    <div id="version">v0.2.2 - music debug</div>
     <script>
-        // Music control
+        // Music control - simple and robust
         let musicPlaying = false;
-        let bgm = null;
-        
-        function initMusic() {
-            bgm = document.getElementById('bgm');
-            if (bgm) {
-                bgm.volume = 0.4;
-            }
-        }
         
         function toggleMusic() {
-            if (!bgm) initMusic();
-            if (!bgm) return;
+            const audio = document.getElementById('bgm');
+            const btn = document.getElementById('music-btn');
+            if (!audio) { alert('No audio element!'); return; }
             
             if (musicPlaying) {
-                bgm.pause();
-                document.getElementById('music-btn').textContent = '🔇 Music';
+                audio.pause();
+                btn.textContent = '🔇 Music';
                 musicPlaying = false;
             } else {
-                bgm.play().then(() => {
-                    document.getElementById('music-btn').textContent = '🔊 Music';
-                    musicPlaying = true;
-                }).catch(e => {
-                    console.log('Music play failed:', e);
-                });
+                audio.volume = 0.4;
+                const playPromise = audio.play();
+                if (playPromise !== undefined) {
+                    playPromise.then(() => {
+                        btn.textContent = '🔊 Music';
+                        musicPlaying = true;
+                    }).catch(err => {
+                        btn.textContent = '❌ Error';
+                        alert('Music error: ' + err.message);
+                    });
+                }
             }
         }
-        
-        // Initialize on load
-        window.addEventListener('load', initMusic);
 
         // Leaderboard functions
         let finalScore = 0;
