@@ -39,6 +39,8 @@
             z-index: 1000;
             transition: opacity 0.5s, visibility 0.5s;
         }
+        #title-screen ~ #music-btn, #title-screen ~ #sfx-btn { display: none; }
+        #title-screen.hidden ~ #music-btn, #title-screen.hidden ~ #sfx-btn { display: block; }
         #title-screen.hidden {
             opacity: 0;
             visibility: hidden;
@@ -124,7 +126,7 @@
             <p id="title-tagline">Escape the kitchen. Survive the void.</p>
             <div id="title-highscore">High Score: <span id="title-hs">0</span></div>
             <button id="play-btn" onclick="startGame()" onmouseover="playTitleMusic()">▶ PLAY</button>
-            <p id="title-hint">Arrow keys or touch to swim</p>
+            <p id="title-hint">🎵 Click anywhere for music • Arrow keys or touch to swim</p>
         </div>
     </div>
 
@@ -161,7 +163,7 @@
     <button id="music-btn" onclick="toggleMusic()" style="position: fixed; bottom: 10px; left: 10px; background: #001820; border: 1px solid #ff4500; color: #ff4500; padding: 6px 10px; cursor: pointer; font-family: monospace; font-size: 12px; z-index: 50; opacity: 0.8;">🎵</button>
     <button id="sfx-btn" onclick="toggleSfx()" style="position: fixed; bottom: 10px; left: 60px; background: #002010; border: 1px solid #ff4500; color: #ff4500; padding: 6px 10px; cursor: pointer; font-family: monospace; font-size: 12px; z-index: 50; opacity: 0.8;">💥</button>
     <div id="bottom-nav" style="position: fixed; bottom: 10px; right: 15px; display: flex; align-items: center; gap: 10px;">
-        <div id="version" onclick="toggleDevMode()" style="cursor: pointer; font-size: 10px; color: #ff4500aa;">v0.9.4</div>
+        <div id="version" onclick="toggleDevMode()" style="cursor: pointer; font-size: 10px; color: #ff4500aa;">v0.9.5</div>
         <div style="display: flex; gap: 8px; align-items: center;">
             <a href="/commits.html" target="_blank" style="color: #4488ff; text-decoration: none; background: #001828; border: 1px solid #4488ff44; padding: 6px 12px; border-radius: 4px; font-size: 15px;">commits</a>
             <a href="/assets.html" target="_blank" style="color: #ffaa00; text-decoration: none; background: #1a1000; border: 1px solid #ffaa0044; padding: 6px 12px; border-radius: 4px; font-size: 15px;">assets</a>
@@ -541,8 +543,14 @@
         }
         
         function playTitleMusic() {
+            // Create audio on first click if not exists
+            if (!titleMusic) {
+                titleMusic = new Audio("title_music.mp3");
+                titleMusic.loop = true;
+                titleMusic.volume = 0.6;
+            }
             if (titleMusic && !titleMusicPlaying) {
-                titleMusic.play().catch(e => console.log('Title music autoplay blocked'));
+                titleMusic.play().catch(e => console.log('Title music:', e));
                 titleMusicPlaying = true;
             }
         }
@@ -602,8 +610,12 @@
             
             updateLivesDisplay();
             updateDifficultyDisplay();
+        // Game loop starts when player clicks PLAY (not on page load)
             document.getElementById('score').textContent = '0';
             document.getElementById('level-name').textContent = '';
+            
+            // Start the game loop
+            gameLoop();
         }
         
         function showTitleScreen() {
@@ -1371,6 +1383,7 @@
             document.getElementById('score').textContent = '0';
             updateLivesDisplay();
             updateDifficultyDisplay();
+        // Game loop starts when player clicks PLAY (not on page load)
             
             initBubbles();
             initDangers();
@@ -1386,6 +1399,7 @@
                 }
             }
             updateDifficultyDisplay();
+        // Game loop starts when player clicks PLAY (not on page load)
         }
         
         function gameLoop() {
@@ -1653,7 +1667,8 @@
         
         updateLivesDisplay();
         updateDifficultyDisplay();
-        gameLoop();
+        // Game loop starts when player clicks PLAY (not on page load)
+        // gameLoop(); // Removed - now called from startGame()
     </script>
 </body>
 </html>
