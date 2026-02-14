@@ -37,9 +37,7 @@
         .control-row input[type="range"] { flex: 1; accent-color: #ff4500; }
         .control-row .value { color: #ff4500; font-size: 0.8em; width: 40px; text-align: right; }
         /* version tabs are at top of cards now */
-        #bottom-nav { position: fixed; bottom: 15px; right: 20px; display: flex; gap: 10px; }
-        #bottom-nav a { color: #4488ff; text-decoration: none; background: #001828; border: 1px solid #4488ff44; padding: 8px 14px; border-radius: 4px; }
-        #bottom-nav a.game { color: #ff4500; border-color: #ff450044; }
+        /* bottom-nav styles moved to component */
         #toast { position: fixed; bottom: 70px; right: 20px; background: #00ff8833; border: 1px solid #00ff88; color: #00ff88; padding: 10px 20px; border-radius: 6px; opacity: 0; transition: opacity 0.3s; }
         #toast.show { opacity: 1; }
         .audio-btn { background: #ff4500; border: none; color: #000; padding: 8px 20px; border-radius: 20px; cursor: pointer; font-weight: bold; font-size: 14px; }
@@ -310,7 +308,8 @@
             </div>
         </div>
     </section>
-    <div id="bottom-nav"><a href="/" class="game">🦞 Play</a></div>
+    <bottom-nav version="1.0.5"></bottom-nav>
+    <script type="module" src="../js/components/BottomNav.js"></script>
     <div id="toast"></div>
     
     <script src="../js/audio.js"></script>
