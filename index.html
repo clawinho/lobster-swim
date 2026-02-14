@@ -45,7 +45,7 @@
     </div>
     <canvas id="game" width="800" height="600"></canvas>
     <button id="music-btn" onclick="toggleMusic()" style="position: fixed; bottom: 10px; left: 10px; background: #001820; border: 1px solid #ff4500; color: #ff4500; padding: 6px 10px; cursor: pointer; font-family: monospace; font-size: 12px; z-index: 50; opacity: 0.8;">🎵</button>
-    <div id="version">v0.3.1 - clean ui</div>
+    <div id="version">v0.3.3 - level backgrounds</div>
     <script>
         // Music control - iOS workaround
         let musicPlaying = false;
@@ -143,6 +143,175 @@
             3: { name: 'The Kitchen', background: '#1a0a05', scoreThreshold: 100 }
         };
         
+
+        // Level backgrounds
+        function drawOceanBackground() {
+            // Sandy bottom
+            ctx.fillStyle = '#1a1a0a';
+            ctx.fillRect(0, 500, 800, 100);
+            
+            // Seaweed
+            ctx.strokeStyle = '#1a4a1a';
+            ctx.lineWidth = 3;
+            for (let x = 50; x < 800; x += 120) {
+                ctx.beginPath();
+                ctx.moveTo(x, 600);
+                for (let y = 600; y > 450; y -= 20) {
+                    ctx.lineTo(x + Math.sin((y + Date.now()/500) * 0.1) * 15, y);
+                }
+                ctx.stroke();
+            }
+            
+            // Starfish
+            ctx.fillStyle = '#ff6644';
+            drawStar(100, 550, 15, 5);
+            drawStar(400, 570, 12, 5);
+            drawStar(650, 540, 18, 5);
+            
+            // Shells
+            ctx.fillStyle = '#ddc';
+            ctx.beginPath(); ctx.arc(200, 565, 10, Math.PI, 0); ctx.fill();
+            ctx.beginPath(); ctx.arc(500, 575, 8, Math.PI, 0); ctx.fill();
+            
+            // Bubbles rising
+            ctx.fillStyle = '#4488ff22';
+            for (let i = 0; i < 5; i++) {
+                let bx = 100 + i * 150;
+                let by = 400 - ((Date.now()/20 + i*100) % 400);
+                ctx.beginPath(); ctx.arc(bx, by, 5, 0, Math.PI*2); ctx.fill();
+            }
+            ctx.lineWidth = 1;
+        }
+        
+        function drawStar(cx, cy, r, points) {
+            ctx.beginPath();
+            for (let i = 0; i < points * 2; i++) {
+                let radius = i % 2 === 0 ? r : r * 0.5;
+                let angle = (i * Math.PI / points) - Math.PI/2;
+                if (i === 0) ctx.moveTo(cx + radius * Math.cos(angle), cy + radius * Math.sin(angle));
+                else ctx.lineTo(cx + radius * Math.cos(angle), cy + radius * Math.sin(angle));
+            }
+            ctx.closePath();
+            ctx.fill();
+        }
+        
+        function drawTankBackground() {
+            // Glass edges
+            ctx.strokeStyle = '#446';
+            ctx.lineWidth = 8;
+            ctx.strokeRect(4, 4, 792, 592);
+            
+            // Gravel bottom
+            ctx.fillStyle = '#332211';
+            ctx.fillRect(0, 540, 800, 60);
+            for (let x = 0; x < 800; x += 8) {
+                ctx.fillStyle = Math.random() > 0.5 ? '#443322' : '#221100';
+                ctx.beginPath(); ctx.arc(x, 550 + Math.random()*40, 4, 0, Math.PI*2); ctx.fill();
+            }
+            
+            // Plastic plants
+            ctx.fillStyle = '#22aa44';
+            for (let x = 80; x < 800; x += 200) {
+                for (let i = 0; i < 5; i++) {
+                    ctx.beginPath();
+                    ctx.ellipse(x + i*8, 500 - i*20, 8, 25, 0.2, 0, Math.PI*2);
+                    ctx.fill();
+                }
+            }
+            
+            // Castle decoration
+            ctx.fillStyle = '#666';
+            ctx.fillRect(600, 480, 40, 60);
+            ctx.fillRect(595, 470, 15, 30);
+            ctx.fillRect(630, 470, 15, 30);
+            ctx.fillStyle = '#333';
+            ctx.fillRect(612, 510, 16, 30);
+            
+            // Treasure chest
+            ctx.fillStyle = '#884400';
+            ctx.fillRect(150, 520, 35, 25);
+            ctx.fillStyle = '#aa6600';
+            ctx.fillRect(150, 515, 35, 10);
+            ctx.fillStyle = '#ffcc00';
+            ctx.fillRect(163, 525, 10, 8);
+            
+            // Air bubbles from filter
+            ctx.fillStyle = '#ffffff44';
+            for (let i = 0; i < 8; i++) {
+                let by = 500 - ((Date.now()/15 + i*50) % 500);
+                ctx.beginPath(); ctx.arc(750, by, 3 + (i%3), 0, Math.PI*2); ctx.fill();
+            }
+            ctx.lineWidth = 1;
+        }
+        
+        function drawKitchenBackground() {
+            // Counter top
+            ctx.fillStyle = '#4a3a2a';
+            ctx.fillRect(0, 500, 800, 100);
+            
+            // Tile pattern on wall
+            ctx.strokeStyle = '#2a2a2a';
+            ctx.lineWidth = 1;
+            for (let x = 0; x < 800; x += 50) {
+                ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, 500); ctx.stroke();
+            }
+            for (let y = 0; y < 500; y += 50) {
+                ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(800, y); ctx.stroke();
+            }
+            
+            // Big pot (left)
+            ctx.fillStyle = '#555';
+            ctx.beginPath();
+            ctx.ellipse(150, 520, 60, 20, 0, 0, Math.PI*2);
+            ctx.fill();
+            ctx.fillStyle = '#444';
+            ctx.fillRect(90, 400, 120, 120);
+            ctx.fillStyle = '#333';
+            ctx.beginPath();
+            ctx.ellipse(150, 400, 60, 15, 0, 0, Math.PI*2);
+            ctx.fill();
+            // Steam
+            ctx.strokeStyle = '#ffffff33';
+            ctx.lineWidth = 2;
+            for (let i = 0; i < 3; i++) {
+                ctx.beginPath();
+                let sx = 130 + i*20;
+                ctx.moveTo(sx, 380);
+                ctx.quadraticCurveTo(sx + 10, 350, sx, 320 - (Date.now()/50 % 30));
+                ctx.stroke();
+            }
+            
+            // Pan (right)
+            ctx.fillStyle = '#333';
+            ctx.beginPath();
+            ctx.ellipse(600, 530, 70, 25, 0, 0, Math.PI);
+            ctx.fill();
+            ctx.fillStyle = '#222';
+            ctx.fillRect(660, 520, 80, 12);
+            
+            // Knife
+            ctx.fillStyle = '#888';
+            ctx.fillRect(400, 510, 60, 8);
+            ctx.fillStyle = '#553';
+            ctx.fillRect(395, 507, 20, 14);
+            
+            // Cutting board
+            ctx.fillStyle = '#aa8855';
+            ctx.fillRect(350, 530, 100, 15);
+            
+            ctx.lineWidth = 1;
+        }
+        
+        function drawBackground() {
+            // Clear with level color
+            ctx.fillStyle = LEVELS[currentLevel].background;
+            ctx.fillRect(0, 0, 800, 600);
+            
+            if (currentLevel === 1) drawOceanBackground();
+            else if (currentLevel === 2) drawTankBackground();
+            else if (currentLevel === 3) drawKitchenBackground();
+        }
+
         let nets = [];
         let forks = [];
         
