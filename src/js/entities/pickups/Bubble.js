@@ -1,16 +1,19 @@
 /**
  * Bubble.js - Collectible bubble
  * Points collectible with magnetism effect when player is nearby
+ * Render: v002 (gradient + wobble + shine)
  */
 
 export class Bubble {
     static MAGNET_RADIUS = 80;
     static MAGNET_STRENGTH = 3;
+    static globalTime = 0;
 
     constructor(x, y, size = 18) {
         this.x = x;
         this.y = y;
         this.size = size;
+        this.phase = Math.random() * Math.PI * 2; // Random wobble phase
     }
 
     static create(count = 8, canvasWidth = 800, canvasHeight = 600) {
@@ -26,19 +29,21 @@ export class Bubble {
     respawn(canvasWidth = 800, canvasHeight = 600) {
         this.x = Math.random() * (canvasWidth - 50) + 25;
         this.y = Math.random() * (canvasHeight - 50) + 25;
+        this.phase = Math.random() * Math.PI * 2;
     }
 
     update(playerX, playerY) {
+        Bubble.globalTime++;
+        
         const dx = playerX - this.x;
         const dy = playerY - this.y;
         const dist = Math.sqrt(dx * dx + dy * dy);
 
-        // Magnetism effect
         if (dist < Bubble.MAGNET_RADIUS && dist > 5) {
             const pullFactor = (1 - dist / Bubble.MAGNET_RADIUS);
             this.x += (dx / dist) * Bubble.MAGNET_STRENGTH * pullFactor;
             this.y += (dy / dist) * Bubble.MAGNET_STRENGTH * pullFactor;
-            return true; // Being pulled
+            return true;
         }
         return false;
     }
@@ -48,14 +53,48 @@ export class Bubble {
         const dy = playerY - this.y;
         const dist = Math.sqrt(dx * dx + dy * dy);
         const inRange = dist < Bubble.MAGNET_RADIUS;
+        
+        const t = Bubble.globalTime + this.phase * 100;
+        const wobble = Math.sin(t * 0.08) * 2;
+        const drawY = this.y + wobble;
 
-        ctx.fillStyle = inRange ? '#66aaff66' : '#4488ff44';
+        // Gradient body
+        const gradient = ctx.createRadialGradient(
+            this.x - this.size * 0.3, drawY - this.size * 0.3, 0,
+            this.x, drawY, this.size
+        );
+        
+        if (inRange) {
+            // Brighter when in magnet range
+            gradient.addColorStop(0, 'rgba(220, 240, 255, 0.95)');
+            gradient.addColorStop(0.5, 'rgba(130, 200, 255, 0.7)');
+            gradient.addColorStop(1, 'rgba(80, 150, 255, 0.4)');
+        } else {
+            gradient.addColorStop(0, 'rgba(200, 230, 255, 0.9)');
+            gradient.addColorStop(0.5, 'rgba(100, 180, 255, 0.5)');
+            gradient.addColorStop(1, 'rgba(50, 100, 200, 0.3)');
+        }
+
+        ctx.fillStyle = gradient;
         ctx.beginPath();
-        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.arc(this.x, drawY, this.size, 0, Math.PI * 2);
         ctx.fill();
 
-        ctx.strokeStyle = inRange ? '#88ccff' : '#4488ff';
-        ctx.stroke();
+        // Shine highlight
+        ctx.fillStyle = 'rgba(255,255,255,0.8)';
+        ctx.beginPath();
+        ctx.arc(this.x - this.size * 0.3, drawY - this.size * 0.3, this.size * 0.2, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Magnet range indicator (subtle ring when in range)
+        if (inRange) {
+            ctx.strokeStyle = 'rgba(150, 220, 255, 0.4)';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(this.x, drawY, this.size + 3, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.lineWidth = 1;
+        }
     }
 
     checkCollision(player) {
