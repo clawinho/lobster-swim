@@ -312,6 +312,11 @@
         import { renderOceanPreview } from '../js/entities/environments/Ocean.js';
         import { renderTankPreview } from '../js/entities/environments/Tank.js';
         import { renderKitchenPreview } from '../js/entities/environments/Kitchen.js';
+        import { render as netV001 } from '../js/entities/enemies/versions/Net.v001.js';
+        import { render as forkV001 } from '../js/entities/enemies/versions/Fork.v001.js';
+        import { render as renderMagnetism } from '../js/entities/mechanics/Magnetism.js';
+        import { render as renderInvincibility } from '../js/entities/mechanics/Invincibility.js';
+        import { render as renderDifficulty } from '../js/entities/mechanics/Difficulty.js';
         
         const renderers = {
             'lobster-001': (c,x,y,s,t) => lobsterV001(c,x,y,s),
@@ -327,64 +332,8 @@
             'cage-002': (c,x,y,s) => cageV002(c,x,y,s),
         };
         
-        // Net and Fork renderers
-        function renderNet(ctx, x, y, width) {
-            ctx.strokeStyle = "#446688"; ctx.lineWidth = 2;
-            for (let r = 0; r <= 4; r++) { ctx.beginPath(); ctx.moveTo(x-width/2, y-30+r*15); ctx.lineTo(x+width/2, y-30+r*15); ctx.stroke(); }
-            for (let c = 0; c <= 5; c++) { ctx.beginPath(); ctx.moveTo(x-width/2+c*(width/5), y-30); ctx.lineTo(x-width/2+c*(width/5), y+30); ctx.stroke(); }
-            ctx.strokeStyle = "#886644"; ctx.lineWidth = 4;
-            ctx.beginPath(); ctx.moveTo(x, y-30); ctx.lineTo(x, y-60); ctx.stroke();
-        }
-        function renderFork(ctx, x, y, size) {
-            ctx.fillStyle = "#8B4513"; ctx.fillRect(x-4, y-50, 8, 50);
-            ctx.fillStyle = "#c0c0c0";
-            for (let i = -1; i <= 1; i++) {
-                ctx.beginPath(); ctx.moveTo(x+i*10-3, y); ctx.lineTo(x+i*10+3, y); ctx.lineTo(x+i*10+1, y+35); ctx.lineTo(x+i*10-1, y+35); ctx.closePath(); ctx.fill();
-            }
-        }
-        // Mechanics renderers
-        function renderMagnetDemo(ctx, w, h, t, radius = 80, strength = 3) {
-            ctx.fillStyle = "#000810"; ctx.fillRect(0,0,w,h);
-            const cx = w/2, cy = h/2;
-            ctx.strokeStyle = "rgba(100,200,255,0.3)"; ctx.setLineDash([5,5]);
-            ctx.beginPath(); ctx.arc(cx, cy, radius * 0.75, 0, Math.PI*2); ctx.stroke();
-            ctx.setLineDash([]);
-            for (let i = 0; i < 5; i++) {
-                const angle = t * 0.02 + i * (Math.PI * 2 / 5);
-                const dist = (radius * 0.6) + Math.sin(t * 0.02 * strength + i) * 15;
-                const bx = cx + Math.cos(angle) * dist;
-                const by = cy + Math.sin(angle) * dist;
-                ctx.fillStyle = "rgba(100,180,255,0.6)";
-                ctx.beginPath(); ctx.arc(bx, by, 8, 0, Math.PI*2); ctx.fill();
-                ctx.strokeStyle = "rgba(100,200,255,0.2)";
-                ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(bx,by); ctx.stroke();
-            }
-            ctx.fillStyle = "#ff4500"; ctx.beginPath(); ctx.arc(cx, cy, 12, 0, Math.PI*2); ctx.fill();
-        }
-        function renderInvincibilityDemo(ctx, w, h, t, dur = 120) {
-            ctx.fillStyle = "#000810"; ctx.fillRect(0,0,w,h);
-            const cx = w/2, cy = h/2;
-            const flash = Math.floor(t / 5) % 2;
-            ctx.globalAlpha = flash ? 1 : 0.4;
-            ctx.fillStyle = "#ff4500"; ctx.beginPath(); ctx.ellipse(cx, cy, 25, 15, 0, 0, Math.PI*2); ctx.fill();
-            ctx.globalAlpha = 1;
-            ctx.strokeStyle = "#ffff0066"; ctx.lineWidth = 3;
-            const pulse = 1 + Math.sin(t * 0.1) * 0.1;
-            ctx.beginPath(); ctx.arc(cx, cy, 35 * pulse, 0, Math.PI*2); ctx.stroke();
-            ctx.lineWidth = 1;
-        }
-        function renderDifficultyGraph(ctx, w, h) {
-            ctx.fillStyle = "#000810"; ctx.fillRect(0,0,w,h);
-            ctx.strokeStyle = "#444"; ctx.lineWidth = 1;
-            ctx.beginPath(); ctx.moveTo(30,20); ctx.lineTo(30,h-20); ctx.lineTo(w-20,h-20); ctx.stroke();
-            ctx.fillStyle = "#666"; ctx.font = "10px monospace";
-            ctx.fillText("diff", 35, 25); ctx.fillText("score", w-45, h-8);
-            ctx.strokeStyle = "#ff4500"; ctx.lineWidth = 2;
-            ctx.beginPath(); ctx.moveTo(30, h-25);
-            const pts = [[0,1],[100,1.2],[200,1.4],[500,1.6],[1000,2]];
-            pts.forEach(p => { const x = 30 + (p[0]/1000)*(w-50); const y = h-25-(p[1]-1)*(h-50); ctx.lineTo(x,y); });
-            ctx.stroke();
-        }
+        
+        
         
         let frame = 0, compareItems = [], params = {
             lobsterSize: 30, lobsterWag: 8,
