@@ -23,7 +23,6 @@
         header h1 { color: #ff4500; font-size: 2.5em; margin-bottom: 10px; }
         header p { color: #666; font-size: 0.9em; }
         
-        /* COMPARISON PANEL */
         #compare-panel {
             display: none;
             background: #001020;
@@ -34,278 +33,74 @@
             position: relative;
         }
         #compare-panel.active { display: block; }
-        #compare-panel h3 {
-            color: #ff4500;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+        #compare-panel h3 { color: #ff4500; margin-bottom: 15px; }
         #compare-close {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: #ff450033;
-            border: 1px solid #ff4500;
-            color: #ff4500;
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 16px;
-            transition: all 0.2s;
+            position: absolute; top: 15px; right: 15px;
+            background: #ff450033; border: 1px solid #ff4500; color: #ff4500;
+            width: 30px; height: 30px; border-radius: 50%; cursor: pointer;
         }
         #compare-close:hover { background: #ff4500; color: #000; }
-        #compare-grid {
-            display: flex;
-            gap: 20px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-        .compare-item {
-            background: #000810;
-            border: 1px solid #ff450044;
-            border-radius: 8px;
-            padding: 15px;
-            text-align: center;
-            min-width: 200px;
-        }
-        .compare-item canvas {
-            border-radius: 4px;
-            margin-bottom: 10px;
-        }
-        .compare-item .label {
-            color: #ff4500;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-        .compare-item .desc {
-            color: #888;
-            font-size: 0.8em;
-        }
-        #compare-hint {
-            text-align: center;
-            color: #666;
-            padding: 30px;
-            font-style: italic;
-        }
+        #compare-grid { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; }
+        .compare-item { background: #000810; border: 1px solid #ff450044; border-radius: 8px; padding: 15px; text-align: center; min-width: 200px; }
+        .compare-item .label { color: #ff4500; font-weight: bold; margin: 10px 0 5px; }
+        .compare-item .desc { color: #888; font-size: 0.8em; }
         
-        .nav {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-bottom: 40px;
-            flex-wrap: wrap;
-        }
-        .nav a {
-            color: #888;
-            text-decoration: none;
-            padding: 8px 16px;
-            border: 1px solid #333;
-            border-radius: 4px;
-            transition: all 0.2s;
-        }
-        .nav a:hover, .nav a.active {
-            color: #ff4500;
-            border-color: #ff4500;
-            background: #ff450011;
-        }
+        .nav { display: flex; justify-content: center; gap: 15px; margin-bottom: 40px; flex-wrap: wrap; }
+        .nav a { color: #888; text-decoration: none; padding: 8px 16px; border: 1px solid #333; border-radius: 4px; }
+        .nav a:hover, .nav a.active { color: #ff4500; border-color: #ff4500; background: #ff450011; }
         
-        .section { display: none; }
-        .section.active { display: block;
-            margin-bottom: 50px;
-        }
-        .section h2 {
-            color: #ff4500;
-            font-size: 1.4em;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #ff450033;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+        .section { display: none; margin-bottom: 50px; }
+        .section.active { display: block; }
+        .section h2 { color: #ff4500; font-size: 1.4em; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid #ff450033; }
         
-        .asset-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 25px;
-        }
+        .asset-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 25px; }
+        .asset-card { background: #001020; border: 1px solid #ff450033; border-radius: 8px; overflow: hidden; }
+        .asset-card:hover { border-color: #ff4500; transform: translateY(-2px); box-shadow: 0 5px 20px #ff450022; }
+        .asset-preview { background: #000810; height: 180px; display: flex; align-items: center; justify-content: center; border-bottom: 1px solid #ff450022; }
+        .asset-info { padding: 15px; }
+        .asset-info h3 { color: #fff; font-size: 1.1em; margin-bottom: 8px; }
+        .asset-info p { color: #888; font-size: 0.85em; line-height: 1.5; margin-bottom: 12px; }
         
-        .asset-card {
-            background: #001020;
-            border: 1px solid #ff450033;
-            border-radius: 8px;
-            overflow: hidden;
-            transition: all 0.3s;
-        }
-        .asset-card:hover {
-            border-color: #ff4500;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 20px #ff450022;
-        }
-        
-        .asset-preview {
-            background: #000810;
-            height: 180px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-bottom: 1px solid #ff450022;
-            position: relative;
-        }
-        .asset-preview canvas {
-            max-width: 100%;
-            max-height: 100%;
-        }
-        
-        .asset-info {
-            padding: 15px;
-        }
-        .asset-info h3 {
-            color: #fff;
-            font-size: 1.1em;
-            margin-bottom: 8px;
-        }
-        .asset-info p {
-            color: #888;
-            font-size: 0.85em;
-            line-height: 1.5;
-            margin-bottom: 12px;
-        }
-        
-        .asset-meta {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin-bottom: 12px;
-        }
-        .tag {
-            font-size: 0.7em;
-            padding: 3px 8px;
-            border-radius: 3px;
-            background: #ff450022;
-            color: #ff4500;
-        }
+        .asset-meta { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; }
+        .tag { font-size: 0.7em; padding: 3px 8px; border-radius: 3px; background: #ff450022; color: #ff4500; }
         .tag.level { background: #4488ff22; color: #4488ff; }
         .tag.mechanic { background: #88ff8822; color: #88ff88; }
         
-        .controls {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-        .control-row {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .control-row label {
-            color: #666;
-            font-size: 0.75em;
-            width: 70px;
-        }
-        .control-row input[type="range"] {
-            flex: 1;
-            accent-color: #ff4500;
-        }
-        .control-row .value {
-            color: #ff4500;
-            font-size: 0.8em;
-            width: 40px;
-            text-align: right;
-        }
+        .controls { display: flex; flex-direction: column; gap: 8px; }
+        .control-row { display: flex; align-items: center; gap: 10px; }
+        .control-row label { color: #666; font-size: 0.75em; width: 70px; }
+        .control-row input[type="range"] { flex: 1; accent-color: #ff4500; }
+        .control-row .value { color: #ff4500; font-size: 0.8em; width: 40px; text-align: right; }
         
-        .version-history {
-            display: flex;
-            gap: 8px;
-            margin-top: 12px;
-            padding-top: 12px;
-            border-top: 1px solid #ffffff11;
-            flex-wrap: wrap;
-        }
-        .version {
-            font-size: 0.7em;
-            padding: 4px 8px;
-            border-radius: 3px;
-            background: #222;
-            color: #666;
-            cursor: pointer;
-            transition: all 0.2s;
-            border: 1px solid transparent;
-        }
+        .version-history { display: flex; gap: 8px; margin-top: 12px; padding-top: 12px; border-top: 1px solid #ffffff11; flex-wrap: wrap; }
+        .version { font-size: 0.7em; padding: 4px 8px; border-radius: 3px; background: #222; color: #666; cursor: pointer; border: 1px solid transparent; }
         .version:hover { background: #333; color: #888; border-color: #444; }
         .version.current { background: #ff450033; color: #ff4500; }
-        .version.in-compare { 
-            border-color: #00ff88; 
-            background: #00ff8822; 
-            color: #00ff88;
-        }
-        .version-hint {
-            font-size: 0.65em;
-            color: #555;
-            margin-left: auto;
-        }
+        .version.in-compare { border-color: #00ff88; background: #00ff8822; color: #00ff88; }
+        .version-hint { font-size: 0.65em; color: #555; margin-left: auto; }
         
-        .audio-btn { background: #ff4500; border: none; color: #000; padding: 10px 25px; border-radius: 20px; cursor: pointer; font-weight: bold; font-size: 14px; transition: all 0.2s; }
+        .audio-btn { background: #ff4500; border: none; color: #000; padding: 10px 25px; border-radius: 20px; cursor: pointer; font-weight: bold; }
         .audio-btn:hover { transform: scale(1.1); background: #ff6633; }
         .music-track { text-align: center; padding: 10px; background: #001020; border-radius: 8px; }
-        #bottom-nav {
-            position: fixed;
-            bottom: 15px;
-            right: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        #bottom-nav a {
-            color: #4488ff;
-            text-decoration: none;
-            background: #001828;
-            border: 1px solid #4488ff44;
-            padding: 8px 14px;
-            border-radius: 4px;
-            font-size: 14px;
-            transition: all 0.2s;
-        }
-        #bottom-nav a:hover {
-            transform: scale(1.1);
-            border-color: #4488ff;
-        }
-        #bottom-nav a.game { color: #ff4500; border-color: #ff450044; background: #180800; }
-        #bottom-nav a.game:hover { border-color: #ff4500; }
         
-        /* Toast notification */
-        #toast {
-            position: fixed;
-            bottom: 70px;
-            right: 20px;
-            background: #00ff8833;
-            border: 1px solid #00ff88;
-            color: #00ff88;
-            padding: 10px 20px;
-            border-radius: 6px;
-            font-size: 0.85em;
-            opacity: 0;
-            transition: opacity 0.3s;
-            pointer-events: none;
-        }
+        #bottom-nav { position: fixed; bottom: 15px; right: 20px; display: flex; gap: 10px; }
+        #bottom-nav a { color: #4488ff; text-decoration: none; background: #001828; border: 1px solid #4488ff44; padding: 8px 14px; border-radius: 4px; font-size: 14px; }
+        #bottom-nav a.game { color: #ff4500; border-color: #ff450044; background: #180800; }
+        
+        #toast { position: fixed; bottom: 70px; right: 20px; background: #00ff8833; border: 1px solid #00ff88; color: #00ff88; padding: 10px 20px; border-radius: 6px; font-size: 0.85em; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
         #toast.show { opacity: 1; }
     </style>
 </head>
 <body>
     <header>
         <h1>🦞 Asset Library</h1>
-        <p>Interactive showcase of all game elements — click version tags to compare</p>
+        <p>Interactive showcase — modular architecture — click version tags to compare</p>
     </header>
     
-    <!-- COMPARISON PANEL -->
     <div id="compare-panel">
         <h3>🔬 Version Comparison</h3>
         <button id="compare-close" onclick="clearComparison()">×</button>
-        <div id="compare-grid">
-            <div id="compare-hint">Click version tags below to add them here</div>
-        </div>
+        <div id="compare-grid"></div>
     </div>
     
     <nav class="nav">
@@ -313,661 +108,349 @@
         <a href="#enemies">Enemies</a>
         <a href="#items">Items</a>
         <a href="#environments">Environments</a>
-        <a href="#mechanics">Mechanics</a>
         <a href="#audio">Audio</a>
     </nav>
     
-    <!-- CHARACTERS -->
-    <section class="section" id="characters">
+    <section class="section active" id="characters">
         <h2>🦞 Characters</h2>
         <div class="asset-grid">
             <div class="asset-card">
-                <div class="asset-preview">
-                    <canvas id="lobster-canvas" width="200" height="150"></canvas>
-                </div>
+                <div class="asset-preview"><canvas id="lobster-canvas" width="200" height="150"></canvas></div>
                 <div class="asset-info">
                     <h3>Clawinho the Lobster</h3>
-                    <p>Our hero! Features animated tail physics, rotating claws, and wavy antennae. Flashes when invincible.</p>
-                    <div class="asset-meta">
-                        <span class="tag">playable</span>
-                        <span class="tag level">all levels</span>
-                    </div>
+                    <p>Animated tail physics, rotating claws, wavy antennae.</p>
+                    <div class="asset-meta"><span class="tag">playable</span><span class="tag level">all levels</span></div>
                     <div class="controls">
-                        <div class="control-row">
-                            <label>Size</label>
-                            <input type="range" id="lobster-size" min="15" max="60" value="30">
-                            <span class="value" id="lobster-size-val">30</span>
-                        </div>
-                        <div class="control-row">
-                            <label>Tail wag</label>
-                            <input type="range" id="lobster-wag" min="1" max="20" value="8">
-                            <span class="value" id="lobster-wag-val">8</span>
-                        </div>
+                        <div class="control-row"><label>Size</label><input type="range" id="lobster-size" min="15" max="60" value="30"><span class="value">30</span></div>
+                        <div class="control-row"><label>Tail wag</label><input type="range" id="lobster-wag" min="1" max="20" value="8"><span class="value">8</span></div>
                     </div>
                     <div class="version-history">
-                        <span class="version" onclick="toggleCompare('lobster', 'v1', 'Basic circle')">v1 basic</span>
-                        <span class="version" onclick="toggleCompare('lobster', 'v2', 'Added claws')">v2 claws</span>
-                        <span class="version current" onclick="toggleCompare('lobster', 'v3', 'Tail physics + antennae')">v3 tail physics</span>
-                        <span class="version-hint">click to compare</span>
+                        <span class="version" data-asset="lobster" data-version="v1" data-desc="Basic circle">v1 basic</span>
+                        <span class="version" data-asset="lobster" data-version="v2" data-desc="Added claws">v2 claws</span>
+                        <span class="version current" data-asset="lobster" data-version="v3" data-desc="Tail physics">v3 current</span>
                     </div>
                 </div>
             </div>
             
             <div class="asset-card">
-                <div class="asset-preview">
-                    <canvas id="fish-canvas" width="200" height="150"></canvas>
-                </div>
+                <div class="asset-preview"><canvas id="fish-canvas" width="200" height="150"></canvas></div>
                 <div class="asset-info">
                     <h3>Golden Fish</h3>
-                    <p>Rare spawn that flees from the player. Catch it for +1 life! Shimmers with golden particles.</p>
-                    <div class="asset-meta">
-                        <span class="tag">collectible</span>
-                        <span class="tag mechanic">+1 life</span>
-                    </div>
+                    <p>Rare spawn with shimmer particles. Catch for +1 life!</p>
+                    <div class="asset-meta"><span class="tag">collectible</span><span class="tag mechanic">+1 life</span></div>
                     <div class="controls">
-                        <div class="control-row">
-                            <label>Speed</label>
-                            <input type="range" id="fish-speed" min="1" max="10" value="5">
-                            <span class="value" id="fish-speed-val">5</span>
-                        </div>
-                        <div class="control-row">
-                            <label>Shimmer</label>
-                            <input type="range" id="fish-shimmer" min="0" max="10" value="5">
-                            <span class="value" id="fish-shimmer-val">5</span>
-                        </div>
+                        <div class="control-row"><label>Shimmer</label><input type="range" id="fish-shimmer" min="0" max="10" value="5"><span class="value">5</span></div>
                     </div>
                     <div class="version-history">
-                        <span class="version" onclick="toggleCompare('fish', 'v1', 'Basic yellow')">v1 basic</span>
-                        <span class="version current" onclick="toggleCompare('fish', 'v2', 'Shimmer particles')">v2 shimmer</span>
-                        <span class="version-hint">click to compare</span>
+                        <span class="version" data-asset="fish" data-version="v1" data-desc="Basic yellow">v1 basic</span>
+                        <span class="version current" data-asset="fish" data-version="v2" data-desc="Shimmer particles">v2 shimmer</span>
                     </div>
                 </div>
             </div>
         </div>
     </section>
     
-    <!-- ENEMIES -->
     <section class="section" id="enemies">
         <h2>💀 Enemies</h2>
         <div class="asset-grid">
             <div class="asset-card">
-                <div class="asset-preview">
-                    <canvas id="hook-canvas" width="200" height="150"></canvas>
-                </div>
+                <div class="asset-preview"><canvas id="hook-canvas" width="200" height="150"></canvas></div>
                 <div class="asset-info">
                     <h3>Fishing Hook</h3>
-                    <p>Drops from above, swings pendulum-style. Getting caught = lose a life and dramatic pull-up animation.</p>
-                    <div class="asset-meta">
-                        <span class="tag">enemy</span>
-                        <span class="tag level">ocean</span>
-                    </div>
+                    <p>Pendulum swing. Getting caught = dramatic pull-up.</p>
+                    <div class="asset-meta"><span class="tag">enemy</span><span class="tag level">ocean</span></div>
                     <div class="controls">
-                        <div class="control-row">
-                            <label>Swing</label>
-                            <input type="range" id="hook-swing" min="1" max="20" value="10">
-                            <span class="value" id="hook-swing-val">10</span>
-                        </div>
-                        <div class="control-row">
-                            <label>Line len</label>
-                            <input type="range" id="hook-line" min="50" max="200" value="100">
-                            <span class="value" id="hook-line-val">100</span>
-                        </div>
+                        <div class="control-row"><label>Swing</label><input type="range" id="hook-swing" min="1" max="20" value="10"><span class="value">10</span></div>
+                        <div class="control-row"><label>Line len</label><input type="range" id="hook-line" min="50" max="200" value="100"><span class="value">100</span></div>
                     </div>
                     <div class="version-history">
-                        <span class="version" onclick="toggleCompare('hook', 'v1', 'Static drop')">v1 static</span>
-                        <span class="version current" onclick="toggleCompare('hook', 'v2', 'Pendulum swing')">v2 swing</span>
-                        <span class="version-hint">click to compare</span>
+                        <span class="version" data-asset="hook" data-version="v1" data-desc="Static drop">v1 static</span>
+                        <span class="version current" data-asset="hook" data-version="v2" data-desc="Pendulum swing">v2 swing</span>
                     </div>
                 </div>
             </div>
             
             <div class="asset-card">
-                <div class="asset-preview">
-                    <canvas id="cage-canvas" width="200" height="150"></canvas>
-                </div>
+                <div class="asset-preview"><canvas id="cage-canvas" width="200" height="150"></canvas></div>
                 <div class="asset-info">
                     <h3>Lobster Trap</h3>
-                    <p>Floating cage hazard. Replaces abstract "void zones" with thematic traps. Drifts slowly.</p>
-                    <div class="asset-meta">
-                        <span class="tag">enemy</span>
-                        <span class="tag level">ocean</span>
-                    </div>
+                    <p>Wooden cage with funnel entrance.</p>
+                    <div class="asset-meta"><span class="tag">enemy</span><span class="tag level">ocean</span></div>
                     <div class="controls">
-                        <div class="control-row">
-                            <label>Size</label>
-                            <input type="range" id="cage-size" min="30" max="80" value="50">
-                            <span class="value" id="cage-size-val">50</span>
-                        </div>
+                        <div class="control-row"><label>Size</label><input type="range" id="cage-size" min="30" max="80" value="50"><span class="value">50</span></div>
                     </div>
                     <div class="version-history">
-                        <span class="version" onclick="toggleCompare('cage', 'v1', 'Purple void circle')">v1 void</span>
-                        <span class="version current" onclick="toggleCompare('cage', 'v2', 'Wooden trap')">v2 trap</span>
-                        <span class="version-hint">click to compare</span>
+                        <span class="version" data-asset="cage" data-version="v1" data-desc="Purple void">v1 void</span>
+                        <span class="version current" data-asset="cage" data-version="v2" data-desc="Wooden trap">v2 trap</span>
                     </div>
                 </div>
             </div>
             
             <div class="asset-card">
-                <div class="asset-preview">
-                    <canvas id="net-canvas" width="200" height="150"></canvas>
-                </div>
-                <div class="asset-info">
-                    <h3>Fishing Net</h3>
-                    <p>Level 2 (Tank) enemy. Sweeps across the screen. Larger hitbox than hooks.</p>
-                    <div class="asset-meta">
-                        <span class="tag">enemy</span>
-                        <span class="tag level">tank</span>
-                    </div>
-                    <div class="controls">
-                        <div class="control-row">
-                            <label>Width</label>
-                            <input type="range" id="net-width" min="40" max="120" value="80">
-                            <span class="value" id="net-width-val">80</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="asset-card">
-                <div class="asset-preview">
-                    <canvas id="fork-canvas" width="200" height="150"></canvas>
-                </div>
+                <div class="asset-preview"><canvas id="fork-canvas" width="200" height="150"></canvas></div>
                 <div class="asset-info">
                     <h3>Fork</h3>
-                    <p>Level 3 (Kitchen) enemy. Fast, deadly, and terrifying. The final boss-tier hazard.</p>
-                    <div class="asset-meta">
-                        <span class="tag">enemy</span>
-                        <span class="tag level">kitchen</span>
-                    </div>
+                    <p>Level 3 enemy. Falls from sky.</p>
+                    <div class="asset-meta"><span class="tag">enemy</span><span class="tag level">kitchen</span></div>
                     <div class="controls">
-                        <div class="control-row">
-                            <label>Size</label>
-                            <input type="range" id="fork-size" min="20" max="60" value="40">
-                            <span class="value" id="fork-size-val">40</span>
-                        </div>
+                        <div class="control-row"><label>Size</label><input type="range" id="fork-size" min="20" max="60" value="40"><span class="value">40</span></div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
     
-    <!-- ITEMS -->
     <section class="section" id="items">
         <h2>✨ Items</h2>
         <div class="asset-grid">
             <div class="asset-card">
-                <div class="asset-preview">
-                    <canvas id="bubble-canvas" width="200" height="150"></canvas>
-                </div>
+                <div class="asset-preview"><canvas id="bubble-canvas" width="200" height="150"></canvas></div>
                 <div class="asset-info">
                     <h3>Bubble</h3>
-                    <p>Primary collectible. Features magnetic attraction when lobster is nearby. +1 score each.</p>
-                    <div class="asset-meta">
-                        <span class="tag">collectible</span>
-                        <span class="tag mechanic">magnetism</span>
-                    </div>
+                    <p>Primary collectible with magnetism.</p>
+                    <div class="asset-meta"><span class="tag">collectible</span><span class="tag mechanic">magnetism</span></div>
                     <div class="controls">
-                        <div class="control-row">
-                            <label>Size</label>
-                            <input type="range" id="bubble-size" min="10" max="30" value="18">
-                            <span class="value" id="bubble-size-val">18</span>
-                        </div>
-                        <div class="control-row">
-                            <label>Magnet R</label>
-                            <input type="range" id="bubble-magnet" min="20" max="150" value="80">
-                            <span class="value" id="bubble-magnet-val">80</span>
-                        </div>
+                        <div class="control-row"><label>Size</label><input type="range" id="bubble-size" min="10" max="30" value="18"><span class="value">18</span></div>
                     </div>
                     <div class="version-history">
-                        <span class="version" onclick="toggleCompare('bubble', 'v1', 'Static orbs')">v1 static</span>
-                        <span class="version current" onclick="toggleCompare('bubble', 'v2', 'Magnetism + wobble')">v2 magnetic</span>
-                        <span class="version-hint">click to compare</span>
+                        <span class="version" data-asset="bubble" data-version="v1" data-desc="Static orbs">v1 static</span>
+                        <span class="version current" data-asset="bubble" data-version="v2" data-desc="Magnetic wobble">v2 magnetic</span>
                     </div>
                 </div>
             </div>
         </div>
     </section>
     
-    <!-- ENVIRONMENTS -->
     <section class="section" id="environments">
         <h2>🌊 Environments</h2>
         <div class="asset-grid">
             <div class="asset-card">
-                <div class="asset-preview">
-                    <canvas id="ocean-bg-canvas" width="200" height="150"></canvas>
-                </div>
+                <div class="asset-preview"><canvas id="ocean-bg" width="200" height="150"></canvas></div>
                 <div class="asset-info">
                     <h3>Ocean (Level 1)</h3>
-                    <p>Deep sea with procedural seaweed, starfish, and bubbles. The starting zone.</p>
-                    <div class="asset-meta">
-                        <span class="tag level">level 1</span>
-                        <span class="tag">0-199 pts</span>
-                    </div>
+                    <p>Deep sea with seaweed and bubbles.</p>
+                    <div class="asset-meta"><span class="tag level">level 1</span><span class="tag">0-199 pts</span></div>
                 </div>
             </div>
-            
             <div class="asset-card">
-                <div class="asset-preview">
-                    <canvas id="tank-bg-canvas" width="200" height="150"></canvas>
-                </div>
+                <div class="asset-preview"><canvas id="tank-bg" width="200" height="150"></canvas></div>
                 <div class="asset-info">
                     <h3>Seafood Tank (Level 2)</h3>
-                    <p>Restaurant aquarium. Cleaner look, artificial plants, glass reflections.</p>
-                    <div class="asset-meta">
-                        <span class="tag level">level 2</span>
-                        <span class="tag">200-499 pts</span>
-                    </div>
+                    <p>Restaurant aquarium.</p>
+                    <div class="asset-meta"><span class="tag level">level 2</span><span class="tag">200-499 pts</span></div>
                 </div>
             </div>
-            
             <div class="asset-card">
-                <div class="asset-preview">
-                    <canvas id="kitchen-bg-canvas" width="200" height="150"></canvas>
-                </div>
+                <div class="asset-preview"><canvas id="kitchen-bg" width="200" height="150"></canvas></div>
                 <div class="asset-info">
                     <h3>Kitchen (Level 3)</h3>
-                    <p>The final nightmare. Boiling pots, cutting boards, chef's domain. Survive if you can.</p>
-                    <div class="asset-meta">
-                        <span class="tag level">level 3</span>
-                        <span class="tag">500+ pts</span>
-                    </div>
+                    <p>The final nightmare.</p>
+                    <div class="asset-meta"><span class="tag level">level 3</span><span class="tag">500+ pts</span></div>
                 </div>
             </div>
         </div>
     </section>
     
-    <!-- MECHANICS -->
-    <section class="section" id="mechanics">
-        <h2>⚙️ Mechanics</h2>
-        <div class="asset-grid">
-            <div class="asset-card">
-                <div class="asset-preview">
-                    <canvas id="magnet-canvas" width="200" height="150"></canvas>
-                </div>
-                <div class="asset-info">
-                    <h3>Bubble Magnetism</h3>
-                    <p>Bubbles gently attracted to lobster within radius. Makes collection feel satisfying.</p>
-                    <div class="asset-meta">
-                        <span class="tag mechanic">core</span>
-                    </div>
-                    <div class="controls">
-                        <div class="control-row">
-                            <label>Radius</label>
-                            <input type="range" id="magnet-radius" min="30" max="150" value="80">
-                            <span class="value" id="magnet-radius-val">80</span>
-                        </div>
-                        <div class="control-row">
-                            <label>Strength</label>
-                            <input type="range" id="magnet-strength" min="1" max="10" value="3">
-                            <span class="value" id="magnet-strength-val">3</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="asset-card">
-                <div class="asset-preview">
-                    <canvas id="invincibility-canvas" width="200" height="150"></canvas>
-                </div>
-                <div class="asset-info">
-                    <h3>Invincibility Shield</h3>
-                    <p>Golden ring + flashing sprite. Activates on spawn and after taking damage.</p>
-                    <div class="asset-meta">
-                        <span class="tag mechanic">defensive</span>
-                    </div>
-                    <div class="controls">
-                        <div class="control-row">
-                            <label>Duration</label>
-                            <input type="range" id="invuln-dur" min="30" max="180" value="120">
-                            <span class="value" id="invuln-dur-val">2s</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="asset-card">
-                <div class="asset-preview">
-                    <canvas id="difficulty-canvas" width="200" height="150"></canvas>
-                </div>
-                <div class="asset-info">
-                    <h3>Difficulty Scaling</h3>
-                    <p>Enemy speed and count increase with score. Visual: difficulty curve graph.</p>
-                    <div class="asset-meta">
-                        <span class="tag mechanic">progression</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    
-
-    <!-- AUDIO -->
     <section class="section" id="audio">
         <h2>🔊 Audio</h2>
         <div class="asset-grid">
-            <!-- Sound Effects -->
             <div class="asset-card">
                 <div class="asset-preview" style="flex-direction: column; gap: 10px;">
                     <div style="font-size: 48px;">🫧</div>
-                    <button onclick="Audio.playBloop()" class="audio-btn">▶ Play</button>
+                    <button onclick="Audio.playBloop()" class="audio-btn">▶ Bloop</button>
                 </div>
-                <div class="asset-info">
-                    <h3>Bubble Collect</h3>
-                    <p>Satisfying bloop when collecting bubbles. Rising pitch sweep.</p>
-                    <div class="asset-meta">
-                        <span class="tag">SFX</span>
-                        <span class="tag mechanic">Web Audio</span>
-                    </div>
-                </div>
+                <div class="asset-info"><h3>Bubble Collect</h3><p>Rising pitch sweep.</p></div>
             </div>
-            
             <div class="asset-card">
                 <div class="asset-preview" style="flex-direction: column; gap: 10px;">
                     <div style="font-size: 48px;">💥</div>
-                    <button onclick="Audio.playHit()" class="audio-btn">▶ Play</button>
+                    <button onclick="Audio.playHit()" class="audio-btn">▶ Hit</button>
                 </div>
-                <div class="asset-info">
-                    <h3>Hit / Damage</h3>
-                    <p>Sawtooth wave descending. Plays when lobster takes damage.</p>
-                    <div class="asset-meta">
-                        <span class="tag">SFX</span>
-                    </div>
-                </div>
+                <div class="asset-info"><h3>Damage</h3><p>Sawtooth descend.</p></div>
             </div>
-            
-            <div class="asset-card">
-                <div class="asset-preview" style="flex-direction: column; gap: 10px;">
-                    <div style="font-size: 48px;">💀</div>
-                    <button onclick="Audio.playDeath()" class="audio-btn">▶ Play</button>
-                </div>
-                <div class="asset-info">
-                    <h3>Death</h3>
-                    <p>Dramatic descending tone when game over. Longer and more intense than hit.</p>
-                    <div class="asset-meta">
-                        <span class="tag">SFX</span>
-                    </div>
-                </div>
-            </div>
-            
             <div class="asset-card">
                 <div class="asset-preview" style="flex-direction: column; gap: 10px;">
                     <div style="font-size: 48px;">❤️</div>
-                    <button onclick="Audio.playExtraLife()" class="audio-btn">▶ Play</button>
+                    <button onclick="Audio.playExtraLife()" class="audio-btn">▶ Life</button>
                 </div>
-                <div class="asset-info">
-                    <h3>Extra Life</h3>
-                    <p>Ascending arpeggio (C-E-G-C). Plays when catching golden fish.</p>
-                    <div class="asset-meta">
-                        <span class="tag">SFX</span>
-                        <span class="tag mechanic">+1 life</span>
-                    </div>
-                </div>
+                <div class="asset-info"><h3>Extra Life</h3><p>Ascending arpeggio.</p></div>
             </div>
-            
-            <div class="asset-card">
-                <div class="asset-preview" style="flex-direction: column; gap: 10px;">
-                    <div style="font-size: 48px;">🪝</div>
-                    <button onclick="Audio.playHooked()" class="audio-btn">▶ Play</button>
-                </div>
-                <div class="asset-info">
-                    <h3>Hooked</h3>
-                    <p>Triangle wave sweep down. Plays during the hook catch animation.</p>
-                    <div class="asset-meta">
-                        <span class="tag">SFX</span>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="asset-card">
-                <div class="asset-preview" style="flex-direction: column; gap: 10px;">
-                    <div style="font-size: 48px;">⬆️</div>
-                    <button onclick="Audio.playLevelUp()" class="audio-btn">▶ Play</button>
-                </div>
-                <div class="asset-info">
-                    <h3>Level Up</h3>
-                    <p>Triumphant arpeggio (G-B-D-G). Plays on level transitions.</p>
-                    <div class="asset-meta">
-                        <span class="tag">SFX</span>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Music Tracks -->
             <div class="asset-card" style="grid-column: span 2;">
                 <div class="asset-preview" style="flex-direction: column; gap: 10px; height: auto; padding: 20px;">
-                    <div style="font-size: 36px;">🎵 Music Tracks</div>
+                    <div style="font-size: 36px;">🎵 Music</div>
                     <div style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: center;">
-                        <div class="music-track">
-                            <div style="color: #4488ff;">🌊 Ocean</div>
-                            <audio controls src="../assets/music/music_ocean.mp3" style="width: 200px; height: 30px;"></audio>
-                        </div>
-                        <div class="music-track">
-                            <div style="color: #88ffff;">🐟 Tank</div>
-                            <audio controls src="../assets/music/music_tank.mp3" style="width: 200px; height: 30px;"></audio>
-                        </div>
-                        <div class="music-track">
-                            <div style="color: #ff8844;">🍳 Kitchen</div>
-                            <audio controls src="../assets/music/music_kitchen.mp3" style="width: 200px; height: 30px;"></audio>
-                        </div>
+                        <div class="music-track"><div style="color: #4488ff;">🌊 Ocean</div><audio controls src="../assets/music/music_ocean.mp3" style="width: 180px; height: 30px;"></audio></div>
+                        <div class="music-track"><div style="color: #88ffff;">🐟 Tank</div><audio controls src="../assets/music/music_tank.mp3" style="width: 180px; height: 30px;"></audio></div>
+                        <div class="music-track"><div style="color: #ff8844;">🍳 Kitchen</div><audio controls src="../assets/music/music_kitchen.mp3" style="width: 180px; height: 30px;"></audio></div>
                     </div>
                 </div>
-                <div class="asset-info">
-                    <h3>Level Music</h3>
-                    <p>Transport Tycoon style ragtime tracks. Each level has unique music that auto-switches on level transition.</p>
-                    <div class="asset-meta">
-                        <span class="tag">Music</span>
-                        <span class="tag level">per-level</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    
-    <!-- AUDIO -->
-    <section class="section" id="audio">
-        <h2>🔊 Audio</h2>
-        <div class="asset-grid">
-            <!-- Sound Effects -->
-            <div class="asset-card">
-                <div class="asset-preview" style="flex-direction: column; gap: 10px;">
-                    <div style="font-size: 48px;">🫧</div>
-                    <button onclick="Audio.playBloop()" class="audio-btn">▶ Play</button>
-                </div>
-                <div class="asset-info">
-                    <h3>Bubble Collect</h3>
-                    <p>Satisfying bloop when collecting bubbles. Rising pitch sweep.</p>
-                    <div class="asset-meta">
-                        <span class="tag">SFX</span>
-                        <span class="tag mechanic">Web Audio</span>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="asset-card">
-                <div class="asset-preview" style="flex-direction: column; gap: 10px;">
-                    <div style="font-size: 48px;">💥</div>
-                    <button onclick="Audio.playHit()" class="audio-btn">▶ Play</button>
-                </div>
-                <div class="asset-info">
-                    <h3>Hit / Damage</h3>
-                    <p>Sawtooth wave descending. Plays when lobster takes damage.</p>
-                    <div class="asset-meta">
-                        <span class="tag">SFX</span>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="asset-card">
-                <div class="asset-preview" style="flex-direction: column; gap: 10px;">
-                    <div style="font-size: 48px;">💀</div>
-                    <button onclick="Audio.playDeath()" class="audio-btn">▶ Play</button>
-                </div>
-                <div class="asset-info">
-                    <h3>Death</h3>
-                    <p>Dramatic descending tone when game over. Longer and more intense than hit.</p>
-                    <div class="asset-meta">
-                        <span class="tag">SFX</span>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="asset-card">
-                <div class="asset-preview" style="flex-direction: column; gap: 10px;">
-                    <div style="font-size: 48px;">❤️</div>
-                    <button onclick="Audio.playExtraLife()" class="audio-btn">▶ Play</button>
-                </div>
-                <div class="asset-info">
-                    <h3>Extra Life</h3>
-                    <p>Ascending arpeggio (C-E-G-C). Plays when catching golden fish.</p>
-                    <div class="asset-meta">
-                        <span class="tag">SFX</span>
-                        <span class="tag mechanic">+1 life</span>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="asset-card">
-                <div class="asset-preview" style="flex-direction: column; gap: 10px;">
-                    <div style="font-size: 48px;">🪝</div>
-                    <button onclick="Audio.playHooked()" class="audio-btn">▶ Play</button>
-                </div>
-                <div class="asset-info">
-                    <h3>Hooked</h3>
-                    <p>Triangle wave sweep down. Plays during the hook catch animation.</p>
-                    <div class="asset-meta">
-                        <span class="tag">SFX</span>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="asset-card">
-                <div class="asset-preview" style="flex-direction: column; gap: 10px;">
-                    <div style="font-size: 48px;">⬆️</div>
-                    <button onclick="Audio.playLevelUp()" class="audio-btn">▶ Play</button>
-                </div>
-                <div class="asset-info">
-                    <h3>Level Up</h3>
-                    <p>Triumphant arpeggio (G-B-D-G). Plays on level transitions.</p>
-                    <div class="asset-meta">
-                        <span class="tag">SFX</span>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Music Tracks -->
-            <div class="asset-card" style="grid-column: span 2;">
-                <div class="asset-preview" style="flex-direction: column; gap: 10px; height: auto; padding: 20px;">
-                    <div style="font-size: 36px;">🎵 Music Tracks</div>
-                    <div style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: center;">
-                        <div class="music-track">
-                            <div style="color: #4488ff;">🌊 Ocean</div>
-                            <audio controls src="../assets/music/music_ocean.mp3" style="width: 200px; height: 30px;"></audio>
-                        </div>
-                        <div class="music-track">
-                            <div style="color: #88ffff;">🐟 Tank</div>
-                            <audio controls src="../assets/music/music_tank.mp3" style="width: 200px; height: 30px;"></audio>
-                        </div>
-                        <div class="music-track">
-                            <div style="color: #ff8844;">🍳 Kitchen</div>
-                            <audio controls src="../assets/music/music_kitchen.mp3" style="width: 200px; height: 30px;"></audio>
-                        </div>
-                    </div>
-                </div>
-                <div class="asset-info">
-                    <h3>Level Music</h3>
-                    <p>Transport Tycoon style ragtime tracks. Each level has unique music that auto-switches on level transition.</p>
-                    <div class="asset-meta">
-                        <span class="tag">Music</span>
-                        <span class="tag level">per-level</span>
-                    </div>
-                </div>
+                <div class="asset-info"><h3>Level Music</h3><p>Transport Tycoon style ragtime.</p></div>
             </div>
         </div>
     </section>
 
     <div id="bottom-nav">
-        <a href="/" class="game">🦞 Play Game</a>
-        <a href="/commits.html" target="_blank">commits</a>
-        <a href="/roadmap.html" target="_blank">roadmap</a>
+        <a href="/" class="game">🦞 Play</a>
+        <a href="/commits.html">commits</a>
     </div>
-    
     <div id="toast"></div>
     
-    <script src="../js/config.js"></script>
-    <script src="../js/sprites.js"></script>
     <script src="../js/audio.js"></script>
-    <script>
-        // Animation frame counter
+    <script type="module">
+        // Import versioned renderers
+        import { renderLobsterV1 } from '../js/entities/hero/versions/LobsterV1.js';
+        import { renderLobsterV2 } from '../js/entities/hero/versions/LobsterV2.js';
+        import { renderLobsterV3 } from '../js/entities/hero/versions/LobsterV3.js';
+        import { renderGoldenFishV1 } from '../js/entities/pickups/versions/GoldenFishV1.js';
+        import { renderGoldenFishV2 } from '../js/entities/pickups/versions/GoldenFishV2.js';
+        import { renderHookV1 } from '../js/entities/enemies/versions/HookV1.js';
+        import { renderHookV2 } from '../js/entities/enemies/versions/HookV2.js';
+        import { renderCageV1 } from '../js/entities/enemies/versions/CageV1.js';
+        import { renderCageV2 } from '../js/entities/enemies/versions/CageV2.js';
+        import { renderBubbleV1 } from '../js/entities/pickups/versions/BubbleV1.js';
+        import { renderBubbleV2 } from '../js/entities/pickups/versions/BubbleV2.js';
+        import { renderOceanPreview } from '../js/entities/environments/Ocean.js';
+        import { renderTankPreview } from '../js/entities/environments/Tank.js';
+        import { renderKitchenPreview } from '../js/entities/environments/Kitchen.js';
+        
+        // Renderer registry
+        const renderers = {
+            'lobster-v1': (ctx, x, y, s, t) => renderLobsterV1(ctx, x, y, s),
+            'lobster-v2': (ctx, x, y, s, t) => renderLobsterV2(ctx, x, y, s),
+            'lobster-v3': (ctx, x, y, s, t, w) => renderLobsterV3(ctx, x, y, s, t, w),
+            'fish-v1': (ctx, x, y, t) => renderGoldenFishV1(ctx, x, y, 1),
+            'fish-v2': (ctx, x, y, t, sh) => renderGoldenFishV2(ctx, x, y, t, 1, sh),
+            'hook-v1': (ctx, x, l, t) => renderHookV1(ctx, x, l),
+            'hook-v2': (ctx, x, l, t, sw) => renderHookV2(ctx, x, l, t, sw),
+            'cage-v1': (ctx, x, y, s) => renderCageV1(ctx, x, y, s),
+            'cage-v2': (ctx, x, y, s) => renderCageV2(ctx, x, y, s),
+            'bubble-v1': (ctx, x, y, s, t) => renderBubbleV1(ctx, x, y, s),
+            'bubble-v2': (ctx, x, y, s, t) => renderBubbleV2(ctx, x, y, s, t),
+        };
+        
+        // State
         let frame = 0;
-        
-        // Comparison state
         let compareItems = [];
-        const MAX_COMPARE = 4;
+        let params = {
+            lobsterSize: 30, lobsterWag: 8,
+            fishShimmer: 5,
+            hookSwing: 10, hookLine: 100,
+            cageSize: 50,
+            forkSize: 40,
+            bubbleSize: 18
+        };
         
+        // Canvas refs
+        const canvases = {
+            lobster: document.getElementById('lobster-canvas'),
+            fish: document.getElementById('fish-canvas'),
+            hook: document.getElementById('hook-canvas'),
+            cage: document.getElementById('cage-canvas'),
+            fork: document.getElementById('fork-canvas'),
+            bubble: document.getElementById('bubble-canvas'),
+            ocean: document.getElementById('ocean-bg'),
+            tank: document.getElementById('tank-bg'),
+            kitchen: document.getElementById('kitchen-bg'),
+        };
+        
+        // Fork renderer (inline since no versions yet)
+        function renderFork(ctx, x, y, size) {
+            ctx.fillStyle = '#8B4513';
+            ctx.fillRect(x - 4, y - 50, 8, 50);
+            ctx.fillStyle = '#c0c0c0';
+            for (let i = -1; i <= 1; i++) {
+                ctx.beginPath();
+                ctx.moveTo(x + i * 10 - 3, y);
+                ctx.lineTo(x + i * 10 + 3, y);
+                ctx.lineTo(x + i * 10 + 1, y + 35);
+                ctx.lineTo(x + i * 10 - 1, y + 35);
+                ctx.closePath();
+                ctx.fill();
+            }
+        }
+        
+        // Animation loop
+        function animate() {
+            frame++;
+            const ctx = {};
+            
+            // Main previews
+            Object.entries(canvases).forEach(([k, c]) => {
+                if (c) ctx[k] = c.getContext('2d');
+            });
+            
+            // Clear all
+            Object.values(ctx).forEach(c => c && c.clearRect(0, 0, 200, 150));
+            
+            // Draw main previews
+            if (ctx.lobster) renderLobsterV3(ctx.lobster, 100, 80, params.lobsterSize, frame, params.lobsterWag);
+            if (ctx.fish) renderGoldenFishV2(ctx.fish, 100, 75, frame, 1, params.fishShimmer);
+            if (ctx.hook) renderHookV2(ctx.hook, 100, params.hookLine, frame, params.hookSwing);
+            if (ctx.cage) renderCageV2(ctx.cage, 100, 80, params.cageSize);
+            if (ctx.fork) renderFork(ctx.fork, 100, 70, params.forkSize);
+            if (ctx.bubble) renderBubbleV2(ctx.bubble, 100, 75, params.bubbleSize, frame);
+            if (ctx.ocean) renderOceanPreview(ctx.ocean, 200, 150, frame);
+            if (ctx.tank) renderTankPreview(ctx.tank, 200, 150);
+            if (ctx.kitchen) renderKitchenPreview(ctx.kitchen, 200, 150, frame);
+            
+            // Draw comparison items
+            compareItems.forEach((item, i) => {
+                const canvas = document.getElementById(`compare-canvas-${i}`);
+                if (!canvas) return;
+                const c = canvas.getContext('2d');
+                c.clearRect(0, 0, 180, 120);
+                c.fillStyle = '#000810';
+                c.fillRect(0, 0, 180, 120);
+                
+                const renderer = renderers[item.key];
+                if (renderer) {
+                    if (item.key.includes('lobster')) renderer(c, 90, 60, 25, frame, 8);
+                    else if (item.key.includes('fish')) renderer(c, 90, 60, frame, 5);
+                    else if (item.key.includes('hook')) renderer(c, 90, 80, frame, 10);
+                    else if (item.key.includes('cage')) renderer(c, 90, 60, 50);
+                    else if (item.key.includes('bubble')) renderer(c, 90, 60, 18, frame);
+                }
+            });
+            
+            requestAnimationFrame(animate);
+        }
+        
+        // Comparison
         function toggleCompare(asset, version, desc) {
             const key = `${asset}-${version}`;
             const idx = compareItems.findIndex(i => i.key === key);
-            
             if (idx >= 0) {
-                // Remove from comparison
                 compareItems.splice(idx, 1);
-                showToast(`Removed ${asset} ${version} from comparison`);
+                showToast(`Removed ${asset} ${version}`);
             } else {
-                // Add to comparison
-                if (compareItems.length >= MAX_COMPARE) {
-                    showToast(`Max ${MAX_COMPARE} items in comparison`);
-                    return;
-                }
+                if (compareItems.length >= 4) { showToast('Max 4 items'); return; }
                 compareItems.push({ key, asset, version, desc });
-                showToast(`Added ${asset} ${version} to comparison`);
+                showToast(`Added ${asset} ${version}`);
             }
-            
             updateComparePanel();
-            updateVersionTags();
         }
+        window.toggleCompare = toggleCompare;
         
-        function clearComparison() {
-            compareItems = [];
-            updateComparePanel();
-            updateVersionTags();
-        }
+        function clearComparison() { compareItems = []; updateComparePanel(); }
+        window.clearComparison = clearComparison;
         
         function updateComparePanel() {
             const panel = document.getElementById('compare-panel');
             const grid = document.getElementById('compare-grid');
-            
-            if (compareItems.length === 0) {
-                panel.classList.remove('active');
-                return;
-            }
-            
+            if (compareItems.length === 0) { panel.classList.remove('active'); return; }
             panel.classList.add('active');
-            grid.innerHTML = '';
-            
-            compareItems.forEach((item, i) => {
-                const div = document.createElement('div');
-                div.className = 'compare-item';
-                div.innerHTML = `
+            grid.innerHTML = compareItems.map((item, i) => `
+                <div class="compare-item">
                     <canvas id="compare-canvas-${i}" width="180" height="120"></canvas>
                     <div class="label">${item.asset} ${item.version}</div>
                     <div class="desc">${item.desc}</div>
-                `;
-                grid.appendChild(div);
-            });
-        }
-        
-        function updateVersionTags() {
+                </div>
+            `).join('');
+            
+            // Update version tag styling
             document.querySelectorAll('.version').forEach(tag => {
-                const onclick = tag.getAttribute('onclick');
-                if (!onclick) return;
-                const match = onclick.match(/toggleCompare\('(\w+)',\s*'(\w+)'/);
-                if (!match) return;
-                const key = `${match[1]}-${match[2]}`;
-                if (compareItems.find(i => i.key === key)) {
-                    tag.classList.add('in-compare');
-                } else {
-                    tag.classList.remove('in-compare');
-                }
+                const key = `${tag.dataset.asset}-${tag.dataset.version}`;
+                tag.classList.toggle('in-compare', compareItems.some(i => i.key === key));
             });
         }
         
@@ -978,838 +461,46 @@
             setTimeout(() => toast.classList.remove('show'), 2000);
         }
         
-        // === DRAWING FUNCTIONS FOR VERSIONS ===
-        
-        // Lobster versions
-        function drawLobsterV1(ctx, x, y, size) {
-            ctx.fillStyle = '#ff4500';
-            ctx.beginPath();
-            ctx.arc(x, y, size * 0.8, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.fillStyle = '#000';
-            ctx.beginPath();
-            ctx.arc(x + size * 0.3, y - size * 0.2, 3, 0, Math.PI * 2);
-            ctx.arc(x + size * 0.3, y + size * 0.2, 3, 0, Math.PI * 2);
-            ctx.fill();
-        }
-        
-        function drawLobsterV2(ctx, x, y, size) {
-            ctx.fillStyle = '#ff4500';
-            ctx.beginPath();
-            ctx.ellipse(x, y, size, size * 0.6, 0, 0, Math.PI * 2);
-            ctx.fill();
-            // Claws
-            ctx.beginPath();
-            ctx.ellipse(x - size * 0.9, y - size * 0.3, size * 0.5, size * 0.25, -0.3, 0, Math.PI * 2);
-            ctx.ellipse(x - size * 0.9, y + size * 0.3, size * 0.5, size * 0.25, 0.3, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.fillStyle = '#000';
-            ctx.beginPath();
-            ctx.arc(x + size * 0.3, y - size * 0.2, 3, 0, Math.PI * 2);
-            ctx.arc(x + size * 0.3, y + size * 0.2, 3, 0, Math.PI * 2);
-            ctx.fill();
-        }
-        
-        function drawLobsterV3(ctx, x, y, size, time) {
-            const wag = 8;
-            const tailAngle = Math.sin(time * 0.05 * wag / 8) * 0.3;
-            
-            ctx.save();
-            ctx.translate(x, y);
-            
-            // Tail
-            ctx.fillStyle = '#cc3300';
-            for (let i = 0; i < 3; i++) {
-                const segX = -size * (0.6 + i * 0.4);
-                const segY = Math.sin(time * 0.05 + i * 0.5) * wag;
-                const segSize = size * (0.5 - i * 0.12);
-                ctx.beginPath();
-                ctx.ellipse(segX, segY, segSize, segSize * 0.7, tailAngle * (i + 1), 0, Math.PI * 2);
-                ctx.fill();
-            }
-            
-            // Tail fan
-            ctx.fillStyle = '#ff4500';
-            const fanX = -size * 1.8;
-            const fanY = Math.sin(time * 0.05 + 1.5) * wag;
-            for (let i = -2; i <= 2; i++) {
-                ctx.beginPath();
-                ctx.ellipse(fanX, fanY + i * 4, 8, 3, tailAngle * 3, 0, Math.PI * 2);
-                ctx.fill();
-            }
-            
-            // Body
-            ctx.fillStyle = '#ff4500';
-            ctx.beginPath();
-            ctx.ellipse(0, 0, size, size * 0.6, 0, 0, Math.PI * 2);
-            ctx.fill();
-            
-            // Claws
-            const clawAngle = Math.sin(time * 0.1) * 0.15;
-            ctx.save();
-            ctx.rotate(-0.5 + clawAngle);
-            ctx.beginPath();
-            ctx.ellipse(size * 0.9, -size * 0.1, size * 0.5, size * 0.25, 0.3, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.restore();
-            ctx.save();
-            ctx.rotate(0.5 - clawAngle);
-            ctx.beginPath();
-            ctx.ellipse(size * 0.9, size * 0.1, size * 0.5, size * 0.25, -0.3, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.restore();
-            
-            // Antennae
-            ctx.strokeStyle = '#ff6600';
-            ctx.lineWidth = 2;
-            const antWave = Math.sin(time * 0.15) * 5;
-            ctx.beginPath();
-            ctx.moveTo(size * 0.5, -size * 0.3);
-            ctx.quadraticCurveTo(size * 0.8, -size * 0.8 + antWave, size * 1.2, -size * 0.6 + antWave);
-            ctx.stroke();
-            ctx.beginPath();
-            ctx.moveTo(size * 0.5, size * 0.3);
-            ctx.quadraticCurveTo(size * 0.8, size * 0.8 - antWave, size * 1.2, size * 0.6 - antWave);
-            ctx.stroke();
-            
-            // Eyes
-            ctx.fillStyle = '#000';
-            ctx.beginPath();
-            ctx.arc(size * 0.3, -size * 0.2, 4, 0, Math.PI * 2);
-            ctx.arc(size * 0.3, size * 0.2, 4, 0, Math.PI * 2);
-            ctx.fill();
-            
-            ctx.restore();
-        }
-        
-        // Fish versions
-        function drawFishV1(ctx, x, y) {
-            ctx.fillStyle = '#ffdd00';
-            ctx.beginPath();
-            ctx.ellipse(x, y, 20, 12, 0, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.fillStyle = '#ffaa00';
-            ctx.beginPath();
-            ctx.moveTo(x - 18, y);
-            ctx.lineTo(x - 35, y - 12);
-            ctx.lineTo(x - 35, y + 12);
-            ctx.closePath();
-            ctx.fill();
-            ctx.fillStyle = '#000';
-            ctx.beginPath();
-            ctx.arc(x + 10, y - 2, 4, 0, Math.PI * 2);
-            ctx.fill();
-        }
-        
-        function drawFishV2(ctx, x, y, time) {
-            const wobble = Math.sin(time * 0.1) * 5;
-            ctx.save();
-            ctx.translate(x + wobble, y);
-            
-            // Shimmer
-            ctx.fillStyle = '#ffff0044';
-            for (let i = 0; i < 5; i++) {
-                const px = Math.sin(time * 0.1 + i * 1.5) * 25;
-                const py = Math.cos(time * 0.13 + i) * 15;
-                ctx.beginPath();
-                ctx.arc(px, py, 2 + Math.sin(time * 0.2 + i), 0, Math.PI * 2);
-                ctx.fill();
-            }
-            
-            const gradient = ctx.createRadialGradient(0, 0, 0, 0, 0, 20);
-            gradient.addColorStop(0, '#ffdd00');
-            gradient.addColorStop(1, '#ff8800');
-            ctx.fillStyle = gradient;
-            ctx.beginPath();
-            ctx.ellipse(0, 0, 20, 12, 0, 0, Math.PI * 2);
-            ctx.fill();
-            
-            ctx.fillStyle = '#ffaa00';
-            const tailWag = Math.sin(time * 0.4) * 0.3;
-            ctx.save();
-            ctx.rotate(tailWag);
-            ctx.beginPath();
-            ctx.moveTo(-18, 0);
-            ctx.lineTo(-35, -12);
-            ctx.lineTo(-35, 12);
-            ctx.closePath();
-            ctx.fill();
-            ctx.restore();
-            
-            ctx.fillStyle = '#000';
-            ctx.beginPath();
-            ctx.arc(10, -2, 4, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.restore();
-        }
-        
-        // Hook versions
-        function drawHookV1(ctx, x, lineLen) {
-            ctx.strokeStyle = '#666';
-            ctx.lineWidth = 2;
-            ctx.beginPath();
-            ctx.moveTo(x, 0);
-            ctx.lineTo(x, lineLen - 15);
-            ctx.stroke();
-            
-            ctx.strokeStyle = '#ccc';
-            ctx.lineWidth = 3;
-            ctx.beginPath();
-            ctx.moveTo(x, lineLen - 15);
-            ctx.lineTo(x, lineLen);
-            ctx.arc(x - 8, lineLen, 8, 0, Math.PI, false);
-            ctx.stroke();
-        }
-        
-        function drawHookV2(ctx, x, lineLen, time) {
-            const swingAngle = Math.sin(time * 0.03) * 0.4;
-            const hookX = x + Math.sin(swingAngle) * 40;
-            const hookY = lineLen;
-            
-            ctx.strokeStyle = '#666';
-            ctx.lineWidth = 2;
-            ctx.beginPath();
-            ctx.moveTo(x, 0);
-            ctx.lineTo(hookX, hookY - 15);
-            ctx.stroke();
-            
-            ctx.strokeStyle = '#ccc';
-            ctx.lineWidth = 3;
-            ctx.beginPath();
-            ctx.moveTo(hookX, hookY - 15);
-            ctx.lineTo(hookX, hookY);
-            ctx.arc(hookX - 8, hookY, 8, 0, Math.PI, false);
-            ctx.stroke();
-            
-            ctx.fillStyle = '#fff';
-            ctx.beginPath();
-            ctx.moveTo(hookX - 16, hookY);
-            ctx.lineTo(hookX - 22, hookY - 6);
-            ctx.lineTo(hookX - 14, hookY - 2);
-            ctx.fill();
-        }
-        
-        // Cage versions
-        function drawCageV1(ctx, x, y, size) {
-            ctx.fillStyle = '#440066';
-            ctx.globalAlpha = 0.6;
-            ctx.beginPath();
-            ctx.arc(x, y, size / 2, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.globalAlpha = 1;
-            ctx.strokeStyle = '#8800ff';
-            ctx.lineWidth = 2;
-            ctx.beginPath();
-            ctx.arc(x, y, size / 2, 0, Math.PI * 2);
-            ctx.stroke();
-        }
-        
-        function drawCageV2(ctx, x, y, size) {
-            ctx.strokeStyle = '#664422';
-            ctx.lineWidth = 3;
-            ctx.strokeRect(x - size/2, y - size/2, size, size * 0.8);
-            ctx.lineWidth = 2;
-            for (let i = 1; i < 4; i++) {
-                const bx = x - size/2 + (size * i / 4);
-                ctx.beginPath();
-                ctx.moveTo(bx, y - size/2);
-                ctx.lineTo(bx, y + size * 0.3);
-                ctx.stroke();
-            }
-            ctx.beginPath();
-            ctx.moveTo(x - size * 0.3, y - size/2);
-            ctx.lineTo(x, y - size * 0.2);
-            ctx.lineTo(x + size * 0.3, y - size/2);
-            ctx.stroke();
-        }
-        
-        // Bubble versions
-        function drawBubbleV1(ctx, x, y, size) {
-            ctx.fillStyle = 'rgba(100, 180, 255, 0.5)';
-            ctx.beginPath();
-            ctx.arc(x, y, size, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.strokeStyle = 'rgba(150, 200, 255, 0.8)';
-            ctx.stroke();
-        }
-        
-        function drawBubbleV2(ctx, x, y, size, time) {
-            const wobble = Math.sin(time * 0.1) * 2;
-            ctx.beginPath();
-            ctx.arc(x, y + wobble, size, 0, Math.PI * 2);
-            const gradient = ctx.createRadialGradient(x - size * 0.3, y + wobble - size * 0.3, 0, x, y + wobble, size);
-            gradient.addColorStop(0, 'rgba(200, 230, 255, 0.9)');
-            gradient.addColorStop(0.5, 'rgba(100, 180, 255, 0.5)');
-            gradient.addColorStop(1, 'rgba(50, 100, 200, 0.3)');
-            ctx.fillStyle = gradient;
-            ctx.fill();
-            ctx.fillStyle = 'rgba(255,255,255,0.8)';
-            ctx.beginPath();
-            ctx.arc(x - size * 0.3, y + wobble - size * 0.3, size * 0.2, 0, Math.PI * 2);
-            ctx.fill();
-        }
-        
-        // Draw comparison item
-        function drawCompareItem(item, canvasId, time) {
-            const canvas = document.getElementById(canvasId);
-            if (!canvas) return;
-            const ctx = canvas.getContext('2d');
-            ctx.clearRect(0, 0, 180, 120);
-            
-            ctx.fillStyle = '#000810';
-            ctx.fillRect(0, 0, 180, 120);
-            
-            const cx = 90, cy = 60;
-            
-            switch(item.key) {
-                case 'lobster-v1': drawLobsterV1(ctx, cx, cy, 25); break;
-                case 'lobster-v2': drawLobsterV2(ctx, cx, cy, 25); break;
-                case 'lobster-v3': drawLobsterV3(ctx, cx, cy, 25, time); break;
-                case 'fish-v1': drawFishV1(ctx, cx, cy); break;
-                case 'fish-v2': drawFishV2(ctx, cx, cy, time); break;
-                case 'hook-v1': drawHookV1(ctx, 90, 80); break;
-                case 'hook-v2': drawHookV2(ctx, 90, 80, time); break;
-                case 'cage-v1': drawCageV1(ctx, cx, cy, 50); break;
-                case 'cage-v2': drawCageV2(ctx, cx, cy, 50); break;
-                case 'bubble-v1': drawBubbleV1(ctx, cx, cy, 18); break;
-                case 'bubble-v2': drawBubbleV2(ctx, cx, cy, 18, time); break;
-            }
-        }
-        
-        // === MAIN ASSET PREVIEWS (same as before) ===
-        const lobsterCanvas = document.getElementById('lobster-canvas');
-        const lobsterCtx = lobsterCanvas.getContext('2d');
-        let lobsterSize = 30;
-        let lobsterWag = 8;
-        
-        function drawLobsterAsset(ctx, x, y, size, wag, time) {
-            const tailAngle = Math.sin(time * 0.05 * wag / 8) * 0.3;
-            
-            ctx.save();
-            ctx.translate(x, y);
-            
-            ctx.fillStyle = '#cc3300';
-            for (let i = 0; i < 3; i++) {
-                const segX = -size * (0.6 + i * 0.4);
-                const segY = Math.sin(time * 0.05 + i * 0.5) * wag;
-                const segSize = size * (0.5 - i * 0.12);
-                ctx.beginPath();
-                ctx.ellipse(segX, segY, segSize, segSize * 0.7, tailAngle * (i + 1), 0, Math.PI * 2);
-                ctx.fill();
-            }
-            
-            ctx.fillStyle = '#ff4500';
-            const fanX = -size * 1.8;
-            const fanY = Math.sin(time * 0.05 + 1.5) * wag;
-            for (let i = -2; i <= 2; i++) {
-                ctx.beginPath();
-                ctx.ellipse(fanX, fanY + i * 4, 8, 3, tailAngle * 3, 0, Math.PI * 2);
-                ctx.fill();
-            }
-            
-            ctx.fillStyle = '#ff4500';
-            ctx.beginPath();
-            ctx.ellipse(0, 0, size, size * 0.6, 0, 0, Math.PI * 2);
-            ctx.fill();
-            
-            const clawAngle = Math.sin(time * 0.1) * 0.15;
-            ctx.save();
-            ctx.rotate(-0.5 + clawAngle);
-            ctx.beginPath();
-            ctx.ellipse(size * 0.9, -size * 0.1, size * 0.5, size * 0.25, 0.3, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.fillStyle = '#cc3300';
-            ctx.beginPath();
-            ctx.moveTo(size * 1.3, -size * 0.2);
-            ctx.lineTo(size * 1.6, -size * 0.4);
-            ctx.lineTo(size * 1.6, 0);
-            ctx.closePath();
-            ctx.fill();
-            ctx.restore();
-            
-            ctx.save();
-            ctx.rotate(0.5 - clawAngle);
-            ctx.fillStyle = '#ff4500';
-            ctx.beginPath();
-            ctx.ellipse(size * 0.9, size * 0.1, size * 0.5, size * 0.25, -0.3, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.fillStyle = '#cc3300';
-            ctx.beginPath();
-            ctx.moveTo(size * 1.3, size * 0.2);
-            ctx.lineTo(size * 1.6, size * 0.4);
-            ctx.lineTo(size * 1.6, 0);
-            ctx.closePath();
-            ctx.fill();
-            ctx.restore();
-            
-            ctx.strokeStyle = '#ff6600';
-            ctx.lineWidth = 2;
-            const antWave = Math.sin(time * 0.15) * 5;
-            ctx.beginPath();
-            ctx.moveTo(size * 0.5, -size * 0.3);
-            ctx.quadraticCurveTo(size * 0.8, -size * 0.8 + antWave, size * 1.2, -size * 0.6 + antWave);
-            ctx.stroke();
-            ctx.beginPath();
-            ctx.moveTo(size * 0.5, size * 0.3);
-            ctx.quadraticCurveTo(size * 0.8, size * 0.8 - antWave, size * 1.2, size * 0.6 - antWave);
-            ctx.stroke();
-            
-            ctx.fillStyle = '#000';
-            ctx.beginPath();
-            ctx.arc(size * 0.3, -size * 0.2, 4, 0, Math.PI * 2);
-            ctx.arc(size * 0.3, size * 0.2, 4, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.fillStyle = '#fff';
-            ctx.beginPath();
-            ctx.arc(size * 0.32, -size * 0.22, 1.5, 0, Math.PI * 2);
-            ctx.arc(size * 0.32, size * 0.18, 1.5, 0, Math.PI * 2);
-            ctx.fill();
-            
-            ctx.restore();
-        }
-        
-        const fishCanvas = document.getElementById('fish-canvas');
-        const fishCtx = fishCanvas.getContext('2d');
-        let fishSpeed = 5;
-        let fishShimmer = 5;
-        
-        function drawFishAsset(ctx, x, y, time) {
-            const wobble = Math.sin(time * 0.1 * fishSpeed / 5) * 5;
-            ctx.save();
-            ctx.translate(x + wobble, y);
-            
-            ctx.fillStyle = '#ffff0044';
-            for (let i = 0; i < fishShimmer; i++) {
-                const px = Math.sin(time * 0.1 + i * 1.5) * 25;
-                const py = Math.cos(time * 0.13 + i) * 15;
-                const ps = 2 + Math.sin(time * 0.2 + i) * 1;
-                ctx.beginPath();
-                ctx.arc(px, py, ps, 0, Math.PI * 2);
-                ctx.fill();
-            }
-            
-            const gradient = ctx.createRadialGradient(0, 0, 0, 0, 0, 20);
-            gradient.addColorStop(0, '#ffdd00');
-            gradient.addColorStop(1, '#ff8800');
-            ctx.fillStyle = gradient;
-            ctx.beginPath();
-            ctx.ellipse(0, 0, 20, 12, 0, 0, Math.PI * 2);
-            ctx.fill();
-            
-            ctx.fillStyle = '#ffaa00';
-            const tailWag = Math.sin(time * 0.4) * 0.3;
-            ctx.save();
-            ctx.rotate(tailWag);
-            ctx.beginPath();
-            ctx.moveTo(-18, 0);
-            ctx.lineTo(-35, -12);
-            ctx.lineTo(-35, 12);
-            ctx.closePath();
-            ctx.fill();
-            ctx.restore();
-            
-            ctx.fillStyle = '#000';
-            ctx.beginPath();
-            ctx.arc(10, -2, 4, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.fillStyle = '#fff';
-            ctx.beginPath();
-            ctx.arc(11, -3, 1.5, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.restore();
-        }
-        
-        const hookCanvas = document.getElementById('hook-canvas');
-        const hookCtx = hookCanvas.getContext('2d');
-        let hookSwing = 10;
-        let hookLine = 100;
-        
-        function drawHookAsset(ctx, x, lineLen, swing, time) {
-            const swingAngle = Math.sin(time * 0.03 * swing / 10) * 0.4;
-            const hookX = x + Math.sin(swingAngle) * 40;
-            const hookY = lineLen;
-            
-            ctx.strokeStyle = '#666';
-            ctx.lineWidth = 2;
-            ctx.beginPath();
-            ctx.moveTo(x, 0);
-            ctx.lineTo(hookX, hookY - 15);
-            ctx.stroke();
-            
-            ctx.strokeStyle = '#ccc';
-            ctx.lineWidth = 3;
-            ctx.beginPath();
-            ctx.moveTo(hookX, hookY - 15);
-            ctx.lineTo(hookX, hookY);
-            ctx.arc(hookX - 8, hookY, 8, 0, Math.PI, false);
-            ctx.stroke();
-            
-            ctx.fillStyle = '#fff';
-            ctx.beginPath();
-            ctx.moveTo(hookX - 16, hookY);
-            ctx.lineTo(hookX - 22, hookY - 6);
-            ctx.lineTo(hookX - 14, hookY - 2);
-            ctx.fill();
-        }
-        
-        const cageCanvas = document.getElementById('cage-canvas');
-        const cageCtx = cageCanvas.getContext('2d');
-        let cageSize = 50;
-        
-        function drawCageAsset(ctx, x, y, size) {
-            ctx.strokeStyle = '#664422';
-            ctx.lineWidth = 3;
-            ctx.strokeRect(x - size/2, y - size/2, size, size * 0.8);
-            ctx.lineWidth = 2;
-            for (let i = 1; i < 4; i++) {
-                const bx = x - size/2 + (size * i / 4);
-                ctx.beginPath();
-                ctx.moveTo(bx, y - size/2);
-                ctx.lineTo(bx, y + size * 0.3);
-                ctx.stroke();
-            }
-            ctx.beginPath();
-            ctx.moveTo(x - size * 0.3, y - size/2);
-            ctx.lineTo(x, y - size * 0.2);
-            ctx.lineTo(x + size * 0.3, y - size/2);
-            ctx.stroke();
-        }
-        
-        const netCanvas = document.getElementById('net-canvas');
-        const netCtx = netCanvas.getContext('2d');
-        let netWidth = 80;
-        
-        function drawNetAsset(ctx, x, y, width) {
-            ctx.strokeStyle = '#446688';
-            ctx.lineWidth = 2;
-            const rows = 4, cols = 5;
-            for (let r = 0; r <= rows; r++) {
-                ctx.beginPath();
-                ctx.moveTo(x - width/2, y - 30 + r * 15);
-                ctx.lineTo(x + width/2, y - 30 + r * 15);
-                ctx.stroke();
-            }
-            for (let c = 0; c <= cols; c++) {
-                ctx.beginPath();
-                ctx.moveTo(x - width/2 + c * (width/cols), y - 30);
-                ctx.lineTo(x - width/2 + c * (width/cols), y + 30);
-                ctx.stroke();
-            }
-            ctx.strokeStyle = '#886644';
-            ctx.lineWidth = 4;
-            ctx.beginPath();
-            ctx.moveTo(x, y - 30);
-            ctx.lineTo(x, y - 60);
-            ctx.stroke();
-        }
-        
-        const forkCanvas = document.getElementById('fork-canvas');
-        const forkCtx = forkCanvas.getContext('2d');
-        let forkSize = 40;
-        
-        function drawForkAsset(ctx, x, y, size) {
-            ctx.fillStyle = '#ccc';
-            ctx.fillRect(x - 4, y + size * 0.3, 8, size);
-            for (let i = -1.5; i <= 1.5; i++) {
-                ctx.fillRect(x + i * 8 - 3, y - size * 0.6, 6, size * 0.9);
-            }
-            ctx.fillStyle = '#fff';
-            ctx.globalAlpha = 0.3;
-            ctx.fillRect(x - 2, y - size * 0.5, 2, size * 0.7);
-            ctx.globalAlpha = 1;
-        }
-        
-        const bubbleCanvas = document.getElementById('bubble-canvas');
-        const bubbleCtx = bubbleCanvas.getContext('2d');
-        let bubbleSize = 18;
-        let bubbleMagnet = 80;
-        
-        function drawBubbleAsset(ctx, x, y, size, time) {
-            const wobble = Math.sin(time * 0.1) * 2;
-            ctx.beginPath();
-            ctx.arc(x, y + wobble, size, 0, Math.PI * 2);
-            const gradient = ctx.createRadialGradient(x - size * 0.3, y + wobble - size * 0.3, 0, x, y + wobble, size);
-            gradient.addColorStop(0, 'rgba(200, 230, 255, 0.9)');
-            gradient.addColorStop(0.5, 'rgba(100, 180, 255, 0.5)');
-            gradient.addColorStop(1, 'rgba(50, 100, 200, 0.3)');
-            ctx.fillStyle = gradient;
-            ctx.fill();
-            ctx.fillStyle = 'rgba(255,255,255,0.8)';
-            ctx.beginPath();
-            ctx.arc(x - size * 0.3, y + wobble - size * 0.3, size * 0.2, 0, Math.PI * 2);
-            ctx.fill();
-        }
-        
-        // Backgrounds
-        const oceanBgCanvas = document.getElementById('ocean-bg-canvas');
-        const oceanBgCtx = oceanBgCanvas.getContext('2d');
-        const tankBgCanvas = document.getElementById('tank-bg-canvas');
-        const tankBgCtx = tankBgCanvas.getContext('2d');
-        const kitchenBgCanvas = document.getElementById('kitchen-bg-canvas');
-        const kitchenBgCtx = kitchenBgCanvas.getContext('2d');
-        
-        function drawOceanBgPreview(ctx, w, h, time) {
-            const gradient = ctx.createLinearGradient(0, 0, 0, h);
-            gradient.addColorStop(0, '#001830');
-            gradient.addColorStop(1, '#000810');
-            ctx.fillStyle = gradient;
-            ctx.fillRect(0, 0, w, h);
-            ctx.strokeStyle = '#1a4a2a';
-            ctx.lineWidth = 3;
-            for (let i = 0; i < 5; i++) {
-                const x = 20 + i * 40;
-                ctx.beginPath();
-                ctx.moveTo(x, h);
-                const wave = Math.sin(time * 0.02 + i) * 10;
-                ctx.quadraticCurveTo(x + wave, h - 40, x + wave * 0.5, h - 70);
-                ctx.stroke();
-            }
-            ctx.fillStyle = 'rgba(100,150,200,0.3)';
-            for (let i = 0; i < 8; i++) {
-                const bx = (i * 30 + time * 0.3) % w;
-                const by = h - (time * 0.5 + i * 50) % h;
-                ctx.beginPath();
-                ctx.arc(bx, by, 3, 0, Math.PI * 2);
-                ctx.fill();
-            }
-        }
-        
-        function drawTankBgPreview(ctx, w, h) {
-            ctx.fillStyle = '#002838';
-            ctx.fillRect(0, 0, w, h);
-            ctx.strokeStyle = 'rgba(100,200,255,0.2)';
-            ctx.lineWidth = 4;
-            ctx.strokeRect(5, 5, w - 10, h - 10);
-            ctx.fillStyle = '#334';
-            for (let i = 0; i < 20; i++) {
-                ctx.beginPath();
-                ctx.arc(10 + i * 10, h - 10, 5 + Math.random() * 3, 0, Math.PI * 2);
-                ctx.fill();
-            }
-            ctx.fillStyle = '#00aa44';
-            ctx.beginPath();
-            ctx.moveTo(w - 30, h);
-            ctx.lineTo(w - 40, h - 50);
-            ctx.lineTo(w - 20, h - 50);
-            ctx.closePath();
-            ctx.fill();
-        }
-        
-        function drawKitchenBgPreview(ctx, w, h, time) {
-            ctx.fillStyle = '#1a1510';
-            ctx.fillRect(0, 0, w, h);
-            ctx.fillStyle = '#333';
-            ctx.fillRect(0, h * 0.7, w, h * 0.3);
-            ctx.fillStyle = '#444';
-            ctx.beginPath();
-            ctx.ellipse(w * 0.3, h * 0.6, 30, 10, 0, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.fillRect(w * 0.3 - 30, h * 0.4, 60, h * 0.2);
-            ctx.strokeStyle = 'rgba(200,200,200,0.3)';
-            ctx.lineWidth = 2;
-            for (let i = 0; i < 3; i++) {
-                const sx = w * 0.3 - 15 + i * 15;
-                const wave = Math.sin(time * 0.05 + i) * 5;
-                ctx.beginPath();
-                ctx.moveTo(sx, h * 0.35);
-                ctx.quadraticCurveTo(sx + wave, h * 0.25, sx, h * 0.15);
-                ctx.stroke();
-            }
-        }
-        
-        // Mechanics
-        const magnetCanvas = document.getElementById('magnet-canvas');
-        const magnetCtx = magnetCanvas.getContext('2d');
-        let magnetRadius = 80;
-        let magnetStrength = 3;
-        
-        function drawMagnetDemo(ctx, w, h, time) {
-            ctx.fillStyle = '#000810';
-            ctx.fillRect(0, 0, w, h);
-            const cx = w / 2, cy = h / 2;
-            ctx.strokeStyle = 'rgba(100,200,255,0.3)';
-            ctx.setLineDash([5, 5]);
-            ctx.beginPath();
-            ctx.arc(cx, cy, magnetRadius * 0.8, 0, Math.PI * 2);
-            ctx.stroke();
-            ctx.setLineDash([]);
-            for (let i = 0; i < 5; i++) {
-                const angle = time * 0.02 + i * (Math.PI * 2 / 5);
-                const dist = magnetRadius * 0.7 + Math.sin(time * 0.02 * magnetStrength + i) * 20;
-                const bx = cx + Math.cos(angle) * dist;
-                const by = cy + Math.sin(angle) * dist;
-                ctx.fillStyle = 'rgba(100,180,255,0.6)';
-                ctx.beginPath();
-                ctx.arc(bx, by, 8, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.strokeStyle = 'rgba(100,200,255,0.2)';
-                ctx.beginPath();
-                ctx.moveTo(cx, cy);
-                ctx.lineTo(bx, by);
-                ctx.stroke();
-            }
-            ctx.fillStyle = '#ff4500';
-            ctx.beginPath();
-            ctx.arc(cx, cy, 12, 0, Math.PI * 2);
-            ctx.fill();
-        }
-        
-        const invincibilityCanvas = document.getElementById('invincibility-canvas');
-        const invincibilityCtx = invincibilityCanvas.getContext('2d');
-        let invulnDur = 120;
-        
-        function drawInvincibilityDemo(ctx, w, h, time) {
-            ctx.fillStyle = '#000810';
-            ctx.fillRect(0, 0, w, h);
-            const cx = w / 2, cy = h / 2;
-            const flash = Math.floor(time / 5) % 2;
-            ctx.globalAlpha = flash ? 1 : 0.4;
-            ctx.fillStyle = '#ff4500';
-            ctx.beginPath();
-            ctx.ellipse(cx, cy, 25, 15, 0, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.globalAlpha = 1;
-            ctx.strokeStyle = '#ffff0066';
-            ctx.lineWidth = 3;
-            const pulse = 1 + Math.sin(time * 0.1) * 0.1;
-            ctx.beginPath();
-            ctx.arc(cx, cy, 35 * pulse, 0, Math.PI * 2);
-            ctx.stroke();
-            const progress = (time % invulnDur) / invulnDur;
-            ctx.fillStyle = '#333';
-            ctx.fillRect(w * 0.2, h - 20, w * 0.6, 8);
-            ctx.fillStyle = '#ffff00';
-            ctx.fillRect(w * 0.2, h - 20, w * 0.6 * (1 - progress), 8);
-        }
-        
-        const difficultyCanvas = document.getElementById('difficulty-canvas');
-        const difficultyCtx = difficultyCanvas.getContext('2d');
-        
-        function drawDifficultyGraph(ctx, w, h) {
-            ctx.fillStyle = '#000810';
-            ctx.fillRect(0, 0, w, h);
-            ctx.strokeStyle = '#444';
-            ctx.lineWidth = 1;
-            ctx.beginPath();
-            ctx.moveTo(30, 20);
-            ctx.lineTo(30, h - 20);
-            ctx.lineTo(w - 20, h - 20);
-            ctx.stroke();
-            ctx.fillStyle = '#666';
-            ctx.font = '10px monospace';
-            ctx.fillText('difficulty', 35, 25);
-            ctx.fillText('score', w - 45, h - 8);
-            ctx.strokeStyle = '#ff4500';
-            ctx.lineWidth = 2;
-            ctx.beginPath();
-            ctx.moveTo(30, h - 25);
-            const thresholds = [0, 100, 200, 500, 1000];
-            const levels = [1, 1.2, 1.4, 1.6, 2.0];
-            for (let i = 0; i < thresholds.length; i++) {
-                const x = 30 + (thresholds[i] / 1000) * (w - 50);
-                const y = h - 25 - (levels[i] - 1) * (h - 50);
-                ctx.lineTo(x, y);
-            }
-            ctx.stroke();
-            ctx.fillStyle = '#ff4500';
-            for (let i = 0; i < thresholds.length; i++) {
-                const x = 30 + (thresholds[i] / 1000) * (w - 50);
-                const y = h - 25 - (levels[i] - 1) * (h - 50);
-                ctx.beginPath();
-                ctx.arc(x, y, 4, 0, Math.PI * 2);
-                ctx.fill();
-            }
-        }
-        
-        // Slider handlers
-        function setupSlider(id, callback) {
+        // Slider setup
+        function setupSlider(id, param) {
             const slider = document.getElementById(id);
-            const display = document.getElementById(id + '-val');
-            if (slider && display) {
-                slider.addEventListener('input', () => {
-                    display.textContent = slider.value;
-                    callback(parseInt(slider.value));
-                });
-            }
+            if (!slider) return;
+            const display = slider.parentElement.querySelector('.value');
+            slider.addEventListener('input', () => {
+                params[param] = parseInt(slider.value);
+                if (display) display.textContent = slider.value;
+            });
         }
         
-        setupSlider('lobster-size', v => lobsterSize = v);
-        setupSlider('lobster-wag', v => lobsterWag = v);
-        setupSlider('fish-speed', v => fishSpeed = v);
-        setupSlider('fish-shimmer', v => fishShimmer = v);
-        setupSlider('hook-swing', v => hookSwing = v);
-        setupSlider('hook-line', v => hookLine = v);
-        setupSlider('cage-size', v => cageSize = v);
-        setupSlider('net-width', v => netWidth = v);
-        setupSlider('fork-size', v => forkSize = v);
-        setupSlider('bubble-size', v => bubbleSize = v);
-        setupSlider('bubble-magnet', v => bubbleMagnet = v);
-        setupSlider('magnet-radius', v => magnetRadius = v);
-        setupSlider('magnet-strength', v => magnetStrength = v);
-        setupSlider('invuln-dur', v => { 
-            invulnDur = v; 
-            document.getElementById('invuln-dur-val').textContent = (v / 60).toFixed(1) + 's';
+        setupSlider('lobster-size', 'lobsterSize');
+        setupSlider('lobster-wag', 'lobsterWag');
+        setupSlider('fish-shimmer', 'fishShimmer');
+        setupSlider('hook-swing', 'hookSwing');
+        setupSlider('hook-line', 'hookLine');
+        setupSlider('cage-size', 'cageSize');
+        setupSlider('fork-size', 'forkSize');
+        setupSlider('bubble-size', 'bubbleSize');
+        
+        // Version tag clicks
+        document.querySelectorAll('.version').forEach(tag => {
+            tag.addEventListener('click', () => {
+                toggleCompare(tag.dataset.asset, tag.dataset.version, tag.dataset.desc);
+            });
         });
         
-        // Main animation loop
-        function animate() {
-            frame++;
-            
-            // Clear and draw all canvases
-            lobsterCtx.clearRect(0, 0, 200, 150);
-            fishCtx.clearRect(0, 0, 200, 150);
-            hookCtx.clearRect(0, 0, 200, 150);
-            cageCtx.clearRect(0, 0, 200, 150);
-            netCtx.clearRect(0, 0, 200, 150);
-            forkCtx.clearRect(0, 0, 200, 150);
-            bubbleCtx.clearRect(0, 0, 200, 150);
-            
-            drawLobsterAsset(lobsterCtx, 100, 80, lobsterSize, lobsterWag, frame);
-            drawFishAsset(fishCtx, 100, 75, frame);
-            drawHookAsset(hookCtx, 100, hookLine, hookSwing, frame);
-            drawCageAsset(cageCtx, 100, 80, cageSize);
-            drawNetAsset(netCtx, 100, 85, netWidth);
-            drawForkAsset(forkCtx, 100, 85, forkSize);
-            drawBubbleAsset(bubbleCtx, 100, 75, bubbleSize, frame);
-            
-            drawOceanBgPreview(oceanBgCtx, 200, 150, frame);
-            drawTankBgPreview(tankBgCtx, 200, 150);
-            drawKitchenBgPreview(kitchenBgCtx, 200, 150, frame);
-            
-            drawMagnetDemo(magnetCtx, 200, 150, frame);
-            drawInvincibilityDemo(invincibilityCtx, 200, 150, frame);
-            drawDifficultyGraph(difficultyCtx, 200, 150);
-            
-            // Draw comparison items
-            compareItems.forEach((item, i) => {
-                drawCompareItem(item, `compare-canvas-${i}`, frame);
-            });
-            
-            Sprites.tick();
-            requestAnimationFrame(animate);
-        }
-        
-        animate();
-        
         // Tab switching
-        // Initialize first tab
-        document.querySelector('.section').classList.add('active');
-        
         document.querySelectorAll('.nav a').forEach(a => {
             a.addEventListener('click', e => {
                 e.preventDefault();
                 const targetId = a.getAttribute('href').substring(1);
-                
-                // Hide all sections
                 document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-                
-                // Show target section
                 document.getElementById(targetId).classList.add('active');
-                
                 document.querySelectorAll('.nav a').forEach(x => x.classList.remove('active'));
                 a.classList.add('active');
             });
         });
+        
+        animate();
     </script>
 </body>
 </html>
