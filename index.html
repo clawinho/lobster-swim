@@ -44,7 +44,7 @@
         <p id="mobile-hint">Touch & drag to swim!</p>
     </div>
     <canvas id="game" width="800" height="600"></canvas>
-    <div id="version">v0.2.0 - LEVELS!</div>
+    <div id="version">v0.2.1 - levels fix</div>
     <script>
         // Music control
         let musicPlaying = false;
@@ -139,6 +139,84 @@
         loadLeaderboard();
         
         const canvas = document.getElementById('game');
+        // Level system
+        let currentLevel = 1;
+        const LEVELS = {
+            1: { name: 'The Ocean', background: '#001020', scoreThreshold: 0 },
+            2: { name: 'Seafood Tank', background: '#002030', scoreThreshold: 200 },
+            3: { name: 'The Kitchen', background: '#1a0a05', scoreThreshold: 500 }
+        };
+        
+        let nets = [];
+        let forks = [];
+        
+        function initNets() {
+            nets = [];
+            for(let i = 0; i < 2; i++) {
+                nets.push({
+                    x: i === 0 ? -100 : 900,
+                    y: Math.random() * 400 + 100,
+                    width: 80, height: 120,
+                    speed: (Math.random() * 1 + 1.5) * (i === 0 ? 1 : -1)
+                });
+            }
+        }
+        
+        function initForks() {
+            forks = [];
+            for(let i = 0; i < 3; i++) {
+                forks.push({
+                    x: Math.random() * 600 + 100, y: -50,
+                    targetY: Math.random() * 400 + 100,
+                    speed: 4, stabbing: true, waitTimer: 0
+                });
+            }
+        }
+        
+        function drawNet(n) {
+            ctx.strokeStyle = '#888';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(n.x, n.y, n.width, n.height);
+            for(let i = 1; i < 4; i++) {
+                ctx.beginPath();
+                ctx.moveTo(n.x, n.y + i * n.height/4);
+                ctx.lineTo(n.x + n.width, n.y + i * n.height/4);
+                ctx.stroke();
+                ctx.moveTo(n.x + i * n.width/4, n.y);
+                ctx.lineTo(n.x + i * n.width/4, n.y + n.height);
+                ctx.stroke();
+            }
+            ctx.lineWidth = 1;
+        }
+        
+        function drawFork(f) {
+            ctx.fillStyle = '#ccc';
+            ctx.fillRect(f.x - 4, f.y - 50, 8, 50);
+            for(let i = -1; i <= 1; i++) {
+                ctx.beginPath();
+                ctx.moveTo(f.x + i*10 - 3, f.y);
+                ctx.lineTo(f.x + i*10 + 3, f.y);
+                ctx.lineTo(f.x + i*10 + 1, f.y + 35);
+                ctx.lineTo(f.x + i*10 - 1, f.y + 35);
+                ctx.closePath();
+                ctx.fill();
+            }
+        }
+        
+        function checkLevelUp() {
+            for(let lvl = 3; lvl >= 1; lvl--) {
+                if (score >= LEVELS[lvl].scoreThreshold && currentLevel < lvl) {
+                    currentLevel = lvl;
+                    document.body.style.background = LEVELS[lvl].background;
+                    document.getElementById('level-name').textContent = LEVELS[lvl].name;
+                    if (lvl === 2) initNets();
+                    if (lvl === 3) initForks();
+                    break;
+                }
+            }
+        }
+
+
         const ctx = canvas.getContext('2d');
         
         let lobster = { x: 400, y: 300, size: 30, speed: 5, targetX: 400, targetY: 300 };
