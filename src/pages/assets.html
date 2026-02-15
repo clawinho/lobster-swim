@@ -330,7 +330,7 @@
             </div>
         </div>
     </section>
-    <bottom-nav version="1.0.11"></bottom-nav>
+    <bottom-nav version="1.0.12"></bottom-nav>
     <script type="module" src="../js/components/BottomNav.js"></script>
     <div id="toast"></div>
     
@@ -360,7 +360,7 @@
         const renderers = {
             'lobster-001': (c,x,y,s,t) => lobsterV001(c,x,y,s),
             'lobster-002': (c,x,y,s,t) => lobsterV002(c,x,y,s),
-            'lobster-003': (c,x,y,s,t) => lobsterV003(c,x,y,s,t),
+            'lobster-003': (c,x,y,s,t,wag,anim) => lobsterV003(c,x,y,s,t,wag,anim),
             'fish-001': (c,x,y,t,size,dir,shimmer) => fishV001(c,x,y,size||15,dir||1),
             'fish-002': (c,x,y,t,size,dir,shimmer) => fishV002(c,x,y,t,size||15,dir||1,shimmer||5),
             'bubble-001': (c,x,y,s,t) => bubbleV001(c,x,y,s,false),
@@ -416,25 +416,8 @@
             
             // Render based on selected version
             if(c('lobster')) {
-                const ctx = c('lobster');
                 const r = renderers[`lobster-${selectedVersions.lobster}`];
-                if(r) {
-                    ctx.save();
-                    if (params.lobsterAnim === 'invincible') {
-                        if (Math.floor(frame / 5) % 2 === 0) ctx.globalAlpha = 0.5;
-                        ctx.shadowColor = '#ffdd00';
-                        ctx.shadowBlur = 15;
-                    } else if (params.lobsterAnim === 'death') {
-                        ctx.translate(100, 80);
-                        ctx.rotate(frame * 0.15);
-                        ctx.translate(-100, -80);
-                        ctx.globalAlpha = 0.5 + Math.sin(frame * 0.1) * 0.3;
-                        ctx.shadowColor = '#ff0000';
-                        ctx.shadowBlur = 10;
-                    }
-                    r(ctx, 100, 80, params.lobsterSize, frame, params.lobsterWag);
-                    ctx.restore();
-                }
+                if(r) r(c('lobster'), 100, 80, params.lobsterSize, frame, params.lobsterWag, params.lobsterAnim);
             }
             if(c('fish')) {
                 const r = renderers[`fish-${selectedVersions.fish}`];
