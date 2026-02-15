@@ -53,6 +53,12 @@ let comboCount = 0;
 let comboTimer = 0;
 let comboPopups = []; // {x, y, text, timer, color}
 
+// Screen flash for combo milestones
+let comboFlash = 0; // Timer for screen flash
+let comboFlashColor = '#ffff00'; // Color of flash
+const COMBO_FLASH_MILESTONES = [5, 8, 10]; // Combos that trigger flash
+const COMBO_FLASH_COLORS = { 5: '#ffff00', 8: '#ff8800', 10: '#ff00ff' };
+
 const LEVEL_SUBTITLES = {
     2: "Captured... but not defeated",
     3: "Escape the pot or become dinner"
@@ -247,6 +253,7 @@ async function startGame() {
     comboCount = 0;
     comboTimer = 0;
     comboPopups = [];
+    comboFlash = 0;
     
     // Create entities
     player = new Lobster(400, 300);
@@ -387,6 +394,9 @@ function update() {
         }
     }
     
+    // Combo flash decay
+    if (comboFlash > 0) comboFlash--;
+    
     // Update combo popups
     comboPopups = comboPopups.filter(p => {
         p.timer--;
@@ -451,6 +461,13 @@ function update() {
             // Combo system
             comboCount = Math.min(comboCount + 1, COMBO_MAX);
             comboTimer = COMBO_TIMEOUT;
+            
+            // Screen flash on combo milestones!
+            if (COMBO_FLASH_MILESTONES.includes(comboCount)) {
+                comboFlash = 20; // Flash duration in frames
+                comboFlashColor = COMBO_FLASH_COLORS[comboCount];
+                screenShake = Math.min(8, comboCount); // Extra shake on milestones
+            }
             
             // Calculate points with multiplier
             const multiplier = getComboMultiplier();
@@ -645,6 +662,19 @@ function render() {
         ctx.shadowBlur = 8;
         ctx.fillText(`${comboCount}x COMBO`, CANVAS_WIDTH / 2, barY + 25);
         ctx.restore();
+    }
+    
+    // Combo milestone screen flash
+    if (comboFlash > 0) {
+        const flashAlpha = (comboFlash / 20) * 0.4;
+        ctx.fillStyle = comboFlashColor.replace(')', `, ${flashAlpha})`).replace('rgb', 'rgba').replace('#', '');
+        // Convert hex to rgba for flash
+        const hex = comboFlashColor;
+        const r = parseInt(hex.slice(1, 3), 16);
+        const g = parseInt(hex.slice(3, 5), 16);
+        const b = parseInt(hex.slice(5, 7), 16);
+        ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${flashAlpha})`;
+        ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
     }
     
     // NEW BEST! celebration text
