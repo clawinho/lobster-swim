@@ -1,19 +1,33 @@
 /**
  * Bubble.js - Collectible bubble
  * Points collectible with magnetism effect when player is nearby
- * Render: v002 (gradient + wobble + shine)
  */
+
+const COLOR_PRESETS = {
+    blue: 210,
+    pink: 320,
+    green: 140,
+    gold: 45
+};
+
+function hslToRgba(h, s, l, a) {
+    s /= 100;
+    l /= 100;
+    const k = n => (n + h / 30) % 12;
+    const f = n => l - s * Math.min(l, 1 - l) * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
+    return `rgba(${Math.round(f(0) * 255)}, ${Math.round(f(8) * 255)}, ${Math.round(f(4) * 255)}, ${a})`;
+}
 
 export class Bubble {
     static MAGNET_RADIUS = 80;
     static MAGNET_STRENGTH = 3;
-    static globalTime = 0;
+    static color = "pink";  // Default color for game
 
     constructor(x, y, size = 18) {
         this.x = x;
         this.y = y;
         this.size = size;
-        this.phase = Math.random() * Math.PI * 2; // Random wobble phase
+        this.phase = Math.random() * Math.PI * 2;
     }
 
     static create(count = 8, canvasWidth = 800, canvasHeight = 600) {
@@ -56,7 +70,11 @@ export class Bubble {
         const wobble = Math.sin(t * 0.08) * 2;
         const drawY = this.y + wobble;
 
-        // Gradient body
+        // Get hue from color setting
+        const hue = typeof Bubble.color === "number" 
+            ? Bubble.color 
+            : (COLOR_PRESETS[Bubble.color] ?? 320);
+
         const gradient = ctx.createRadialGradient(
             this.x - this.size * 0.3, drawY - this.size * 0.3, 0,
             this.x, drawY, this.size
@@ -64,13 +82,13 @@ export class Bubble {
         
         if (inRange) {
             // Brighter when in magnet range
-            gradient.addColorStop(0, 'rgba(255, 150, 220, 0.95)');
-            gradient.addColorStop(0.5, 'rgba(255, 80, 180, 0.7)');
-            gradient.addColorStop(1, 'rgba(220, 0, 120, 0.4)');
+            gradient.addColorStop(0, hslToRgba(hue, 80, 85, 0.95));
+            gradient.addColorStop(0.5, hslToRgba(hue, 85, 60, 0.7));
+            gradient.addColorStop(1, hslToRgba(hue, 75, 40, 0.4));
         } else {
-            gradient.addColorStop(0, 'rgba(255, 100, 200, 0.9)');
-            gradient.addColorStop(0.5, 'rgba(255, 50, 150, 0.5)');
-            gradient.addColorStop(1, 'rgba(200, 0, 100, 0.3)');
+            gradient.addColorStop(0, hslToRgba(hue, 70, 75, 0.9));
+            gradient.addColorStop(0.5, hslToRgba(hue, 80, 55, 0.5));
+            gradient.addColorStop(1, hslToRgba(hue, 70, 35, 0.3));
         }
 
         ctx.fillStyle = gradient;
@@ -79,14 +97,14 @@ export class Bubble {
         ctx.fill();
 
         // Shine highlight
-        ctx.fillStyle = 'rgba(255,255,255,0.8)';
+        ctx.fillStyle = "rgba(255,255,255,0.8)";
         ctx.beginPath();
         ctx.arc(this.x - this.size * 0.3, drawY - this.size * 0.3, this.size * 0.2, 0, Math.PI * 2);
         ctx.fill();
 
-        // Magnet range indicator (subtle ring when in range)
+        // Magnet range indicator
         if (inRange) {
-            ctx.strokeStyle = 'rgba(255, 100, 200, 0.4)';
+            ctx.strokeStyle = hslToRgba(hue, 70, 70, 0.4);
             ctx.lineWidth = 2;
             ctx.beginPath();
             ctx.arc(this.x, drawY, this.size + 3, 0, Math.PI * 2);

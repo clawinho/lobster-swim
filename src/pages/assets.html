@@ -157,6 +157,14 @@
                     <h3>Bubble</h3><p>Collectible. v002 has gradient!</p>
                     <div class="controls">
                         <div class="control-row"><label>Size</label><input type="range" id="bubble-size" min="10" max="30" value="18"><span class="value">18</span></div>
+                        <div class="control-row"><label>Color</label>
+                            <div class="anim-buttons" data-param="bubbleColor">
+                                <button class="anim-btn active" data-value="blue">Blue</button>
+                                <button class="anim-btn" data-value="pink">Pink</button>
+                                <button class="anim-btn" data-value="green">Green</button>
+                                <button class="anim-btn" data-value="gold">Gold</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -330,7 +338,7 @@
             </div>
         </div>
     </section>
-    <bottom-nav version="1.0.12"></bottom-nav>
+    <bottom-nav version="1.0.13"></bottom-nav>
     <script type="module" src="../js/components/BottomNav.js"></script>
     <div id="toast"></div>
     
@@ -363,8 +371,8 @@
             'lobster-003': (c,x,y,s,t,wag,anim) => lobsterV003(c,x,y,s,t,wag,anim),
             'fish-001': (c,x,y,t,size,dir,shimmer) => fishV001(c,x,y,size||15,dir||1),
             'fish-002': (c,x,y,t,size,dir,shimmer) => fishV002(c,x,y,t,size||15,dir||1,shimmer||5),
-            'bubble-001': (c,x,y,s,t) => bubbleV001(c,x,y,s,false),
-            'bubble-002': (c,x,y,s,t) => bubbleV002(c,x,y,s,t),
+            'bubble-001': (c,x,y,s,t,color) => bubbleV001(c,x,y,s,t,color),
+            'bubble-002': (c,x,y,s,t,color) => bubbleV002(c,x,y,s,t,color),
             'hook-001': (c,x,l,t,swing) => hookV001(c,x,l),
             'hook-002': (c,x,l,t,swing) => hookV002(c,x,l,t,swing||10),
             'cage-001': (c,x,y,s) => cageV001(c,x,y,s),
@@ -379,7 +387,7 @@
             fishShimmer: 5,
             hookSwing: 10, hookLine: 100,
             cageSize: 50, netWidth: 80, forkSize: 40,
-            bubbleSize: 18,
+            bubbleSize: 18, bubbleColor: "blue",
             magnetRadius: 80, magnetStrength: 3,
             invulnDur: 120,
             particleType: 'bubble', particleCount: 8
@@ -435,7 +443,7 @@
             if(c('fork')) forkV001(c('fork'), 100, 70, params.forkSize);
             if(c('bubble')) {
                 const r = renderers[`bubble-${selectedVersions.bubble}`];
-                if(r) r(c('bubble'), 100, 75, params.bubbleSize, frame);
+                if(r) r(c('bubble'), 100, 75, params.bubbleSize, frame, params.bubbleColor);
             }
             if(c('particle')) renderParticle(c('particle'), 200, 150, frame, params.particleType, params.particleCount);
             if(c('ocean')) renderOceanPreview(c('ocean'), 200, 150, frame);
@@ -463,12 +471,21 @@
                 }
             });
         });
-        // Animation state buttons for lobster
+        // Generic param buttons (animation states, colors, etc.)
         document.querySelectorAll(".anim-btn").forEach(btn => {
             btn.addEventListener("click", () => {
-                document.querySelectorAll(".anim-btn").forEach(b => b.classList.remove("active"));
+                const container = btn.closest(".anim-buttons");
+                // Clear active state within same button group
+                container.querySelectorAll(".anim-btn").forEach(b => b.classList.remove("active"));
                 btn.classList.add("active");
-                params.lobsterAnim = btn.dataset.anim;
+                // Determine which param to update
+                const paramName = container.dataset.param;
+                const value = btn.dataset.value || btn.dataset.anim;
+                if (paramName) {
+                    params[paramName] = value;
+                } else if (btn.dataset.anim) {
+                    params.lobsterAnim = btn.dataset.anim;  // backwards compat
+                }
             });
         });
         document.querySelectorAll('.nav a').forEach(a => a.addEventListener('click', e => {
