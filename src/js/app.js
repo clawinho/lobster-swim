@@ -33,6 +33,11 @@ const DEATH_QUOTES = [
     "Another one for the pot..."
 ];
 
+// Combo system constants
+const COMBO_TIMEOUT = 90; // ~1.5 seconds at 60fps
+const COMBO_MAX = 10;
+const COMBO_MESSAGES = ['', 'Nice!', 'Great!', 'Awesome!', 'Amazing!', 'INCREDIBLE!', 'UNSTOPPABLE!', 'GODLIKE!', 'LEGENDARY!', 'TRANSCENDENT!'];
+
 // Game state
 let canvas, ctx, audio;
 let player, bubbles, hooks, cages, nets, forks, fish, oceanCurrent;
@@ -42,6 +47,11 @@ let gameOver = false, gameStarted = false;
 let newBestTimer = 0; // For "NEW BEST!" celebration
 let deathAnimating = false, deathTimer = 0, deathRotation = 0; // Death animation state
 let levelTransition = false, levelTransitionTimer = 0, transitionLevel = 0; // Level transition state
+
+// Combo state
+let comboCount = 0;
+let comboTimer = 0;
+let comboPopups = []; // {x, y, text, timer, color}
 
 const LEVEL_SUBTITLES = {
     2: "Captured... but not defeated",
@@ -233,6 +243,11 @@ async function startGame() {
     levelTransitionTimer = 0;
     transitionLevel = 0;
     
+    // Reset combo
+    comboCount = 0;
+    comboTimer = 0;
+    comboPopups = [];
+    
     // Create entities
     player = new Lobster(400, 300);
     bubbles = Bubble.create(8, CANVAS_WIDTH, CANVAS_HEIGHT);
@@ -280,10 +295,30 @@ function checkLevelUp() {
     }
 }
 
+// Get combo multiplier (1x, 1.5x, 2x, 2.5x, etc)
+function getComboMultiplier() {
+    if (comboCount <= 1) return 1;
+    return 1 + (comboCount - 1) * 0.5;
+}
+
+// Get combo color based on level
+function getComboColor() {
+    if (comboCount <= 1) return '#00ffff';
+    if (comboCount <= 3) return '#00ff00';
+    if (comboCount <= 5) return '#ffff00';
+    if (comboCount <= 7) return '#ff8800';
+    return '#ff00ff';
+}
+
 function loseLife() {
     particles.push(...Particle.spawnDeathParticles(player.x, player.y));
     screenShake = 12;
     lives--;
+    
+    // Reset combo on death
+    comboCount = 0;
+    comboTimer = 0;
+    
     updateLives();
     
     if (lives <= 0) {
@@ -344,6 +379,21 @@ function update() {
         if (levelTransitionTimer <= 0) levelTransition = false;
     }
     
+    // Combo timer decay
+    if (comboTimer > 0) {
+        comboTimer--;
+        if (comboTimer <= 0) {
+            comboCount = 0; // Combo expired
+        }
+    }
+    
+    // Update combo popups
+    comboPopups = comboPopups.filter(p => {
+        p.timer--;
+        p.y -= 1.5; // Float up
+        return p.timer > 0;
+    });
+    
     const diff = getDifficulty();
     
     // Invincibility
@@ -397,7 +447,29 @@ function update() {
         if (bubble.checkCollision(player)) {
             particles.push(...Particle.spawnBubbleParticles(bubble.x, bubble.y));
             audio.playBloop();
-            score += 10;
+            
+            // Combo system
+            comboCount = Math.min(comboCount + 1, COMBO_MAX);
+            comboTimer = COMBO_TIMEOUT;
+            
+            // Calculate points with multiplier
+            const multiplier = getComboMultiplier();
+            const basePoints = 10;
+            const points = Math.floor(basePoints * multiplier);
+            score += points;
+            
+            // Spawn combo popup
+            if (comboCount > 1) {
+                const msg = COMBO_MESSAGES[Math.min(comboCount, COMBO_MESSAGES.length - 1)];
+                comboPopups.push({
+                    x: bubble.x,
+                    y: bubble.y,
+                    text: `${multiplier}x ${msg}`,
+                    timer: 60,
+                    color: getComboColor()
+                });
+            }
+            
             bubble.respawn(CANVAS_WIDTH, CANVAS_HEIGHT);
             updateScore();
             
@@ -532,6 +604,48 @@ function render() {
     
     // Particles (on top of everything)
     particles.forEach(p => p.render(ctx));
+    
+    // Combo popups
+    comboPopups.forEach(p => {
+        const alpha = Math.min(1, p.timer / 20);
+        const scale = 1 + (60 - p.timer) * 0.01;
+        ctx.save();
+        ctx.globalAlpha = alpha;
+        ctx.font = `bold ${16 * scale}px monospace`;
+        ctx.textAlign = 'center';
+        ctx.fillStyle = p.color;
+        ctx.shadowColor = p.color;
+        ctx.shadowBlur = 10;
+        ctx.fillText(p.text, p.x, p.y);
+        ctx.restore();
+    });
+    
+    // Combo meter (top of screen, only when active)
+    if (comboCount > 1 && !deathAnimating) {
+        ctx.save();
+        const barWidth = 150;
+        const barHeight = 8;
+        const barX = CANVAS_WIDTH / 2 - barWidth / 2;
+        const barY = 15;
+        const progress = comboTimer / COMBO_TIMEOUT;
+        
+        // Background
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+        ctx.fillRect(barX - 2, barY - 2, barWidth + 4, barHeight + 4);
+        
+        // Timer bar
+        ctx.fillStyle = getComboColor();
+        ctx.fillRect(barX, barY, barWidth * progress, barHeight);
+        
+        // Combo text
+        ctx.font = 'bold 14px monospace';
+        ctx.textAlign = 'center';
+        ctx.fillStyle = getComboColor();
+        ctx.shadowColor = getComboColor();
+        ctx.shadowBlur = 8;
+        ctx.fillText(`${comboCount}x COMBO`, CANVAS_WIDTH / 2, barY + 25);
+        ctx.restore();
+    }
     
     // NEW BEST! celebration text
     if (newBestTimer > 0) {
