@@ -64,7 +64,7 @@ canvas {
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(180deg, #000810 0%, #001830 50%, #002040 100%);
+    background: url('../assets/og-image.png') center center / cover no-repeat, linear-gradient(180deg, #000810 0%, #001830 50%, #002040 100%);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -379,4 +379,19 @@ canvas {
 
     #version { font-size: 16px; }
     .nav-links a { font-size: 16px; padding: 8px 16px; }
+}
+
+/* Title screen with poster background */
+#title-lobster, #title-name, #title-tagline {
+    display: none; /* Hidden - shown in background image */
+}
+
+#title-content {
+    position: absolute;
+    bottom: 15%;
+    text-align: center;
+}
+
+#title-highscore {
+    margin-bottom: 15px;
 }
