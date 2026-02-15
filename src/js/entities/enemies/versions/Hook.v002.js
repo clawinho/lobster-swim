@@ -1,30 +1,42 @@
 /**
- * Hook.v002.js - Pendulum swing + bait (CURRENT IN GAME)
+ * Hook.v002.js - Fishing hook with pendulum swing
  * @version 002
  * @current true
+ * 
+ * @param {number} x - Anchor X position (top of line)
+ * @param {number} lineLen - Length of fishing line
+ * @param {number} swingOffset - Horizontal swing offset (calculated by game class)
  */
-export function render(ctx, x, lineLen, time, swingAmount = 10) {
-    const swingAngle = Math.sin(time * 0.03 * swingAmount / 10) * 0.4;
-    const hookX = x + Math.sin(swingAngle) * 40;
+export function render(ctx, x, lineLen, swingOffset = 0) {
+    const hookX = x + swingOffset;
+    const hookY = lineLen;
     
-    ctx.strokeStyle = '#666'; ctx.lineWidth = 2;
+    // Fishing line
+    ctx.strokeStyle = "#888";
+    ctx.lineWidth = 2;
     ctx.beginPath();
     ctx.moveTo(x, 0);
-    ctx.lineTo(hookX, lineLen - 15);
+    ctx.lineTo(hookX, hookY - 20);
     ctx.stroke();
     
-    ctx.strokeStyle = '#ccc'; ctx.lineWidth = 3;
+    // Hook curve
+    ctx.strokeStyle = "#ccc";
+    ctx.lineWidth = 3;
     ctx.beginPath();
-    ctx.moveTo(hookX, lineLen - 15);
-    ctx.lineTo(hookX, lineLen);
-    ctx.arc(hookX - 8, lineLen, 8, 0, Math.PI, false);
+    ctx.moveTo(hookX, hookY - 20);
+    ctx.lineTo(hookX, hookY);
+    ctx.arc(hookX - 10, hookY, 10, 0, Math.PI, false);
     ctx.stroke();
     
-    ctx.fillStyle = '#fff';
+    // Hook point
+    ctx.fillStyle = "#fff";
     ctx.beginPath();
-    ctx.moveTo(hookX - 16, lineLen);
-    ctx.lineTo(hookX - 22, lineLen - 6);
-    ctx.lineTo(hookX - 14, lineLen - 2);
+    ctx.moveTo(hookX - 20, hookY);
+    ctx.lineTo(hookX - 25, hookY - 8);
+    ctx.lineTo(hookX - 18, hookY - 3);
     ctx.fill();
+    
+    ctx.lineWidth = 1;
 }
-export const meta = { version: '002', name: 'Pendulum', current: true, features: ['pendulum swing', 'bait'] };
+
+export const meta = { version: "002", name: "Pendulum Hook", current: true, features: ["fishing line", "curved hook", "sharp point"] };
