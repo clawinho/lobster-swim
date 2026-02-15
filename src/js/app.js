@@ -281,9 +281,12 @@ function loseLife() {
         audio.playDeath();
         // Start death animation instead of immediate game over
         deathAnimating = true;
-        deathTimer = 90; // 1.5 seconds at 60fps
+        deathTimer = 120; // 2 seconds at 60fps
         deathRotation = 0;
         screenShake = 20;
+        // Reset player to visible position for death animation
+        player.x = CANVAS_WIDTH / 2;
+        player.y = CANVAS_HEIGHT / 3;
         // Check for new high score
         if (score > highScore) {
             highScore = score;
@@ -306,11 +309,12 @@ function update() {
     // Death animation
     if (deathAnimating) {
         deathTimer--;
-        deathRotation += 0.3;
-        player.y += 2; // Fall down
+        deathRotation += 0.15; // Slower spin
+        player.y += 1.5; // Slower fall
+        player.x += Math.sin(deathTimer * 0.1) * 2; // Wobble side to side
         // Spawn trailing particles
-        if (deathTimer % 5 === 0) {
-            particles.push(...Particle.spawnDeathParticles(player.x, player.y).slice(0, 3));
+        if (deathTimer % 8 === 0) {
+            particles.push(...Particle.spawnDeathParticles(player.x, player.y).slice(0, 2));
         }
         if (deathTimer <= 0) {
             deathAnimating = false;
