@@ -64,13 +64,13 @@ export class Bubble {
         
         if (inRange) {
             // Brighter when in magnet range
-            gradient.addColorStop(0, 'rgba(220, 240, 255, 0.95)');
-            gradient.addColorStop(0.5, 'rgba(130, 200, 255, 0.7)');
-            gradient.addColorStop(1, 'rgba(80, 150, 255, 0.4)');
+            gradient.addColorStop(0, 'rgba(255, 150, 220, 0.95)');
+            gradient.addColorStop(0.5, 'rgba(255, 80, 180, 0.7)');
+            gradient.addColorStop(1, 'rgba(220, 0, 120, 0.4)');
         } else {
-            gradient.addColorStop(0, 'rgba(200, 230, 255, 0.9)');
-            gradient.addColorStop(0.5, 'rgba(100, 180, 255, 0.5)');
-            gradient.addColorStop(1, 'rgba(50, 100, 200, 0.3)');
+            gradient.addColorStop(0, 'rgba(255, 100, 200, 0.9)');
+            gradient.addColorStop(0.5, 'rgba(255, 50, 150, 0.5)');
+            gradient.addColorStop(1, 'rgba(200, 0, 100, 0.3)');
         }
 
         ctx.fillStyle = gradient;
@@ -86,7 +86,7 @@ export class Bubble {
 
         // Magnet range indicator (subtle ring when in range)
         if (inRange) {
-            ctx.strokeStyle = 'rgba(150, 220, 255, 0.4)';
+            ctx.strokeStyle = 'rgba(255, 100, 200, 0.4)';
             ctx.lineWidth = 2;
             ctx.beginPath();
             ctx.arc(this.x, drawY, this.size + 3, 0, Math.PI * 2);
