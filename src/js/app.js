@@ -37,6 +37,8 @@ let canvas, ctx, audio;
 let player, bubbles, hooks, cages, nets, forks, fish;
 let score = 0, lives = 3, highScore = 0;
 let gameOver = false, gameStarted = false;
+let newBestTimer = 0; // For "NEW BEST!" celebration
+let deathAnimating = false, deathTimer = 0, deathRotation = 0; // Death animation state
 let currentLevel = 1, invincible = true, invincibleTimer = INVINCIBLE_DURATION;
 let caught = false, caughtY = 0, screenShake = 0;
 let keys = {}, joystickDx = 0, joystickDy = 0, hasTarget = false;
@@ -209,6 +211,10 @@ function startGame() {
     lastHookThreshold = 0;
     fishSpawnTimer = 0;
     particles = [];
+    deathAnimating = false;
+    deathTimer = 0;
+    deathRotation = 0;
+    newBestTimer = 0;
     
     // Create entities
     player = new Lobster(400, 300);
@@ -259,12 +265,17 @@ function loseLife() {
     
     if (lives <= 0) {
         audio.playDeath();
-        gameOver = true;
+        // Start death animation instead of immediate game over
+        deathAnimating = true;
+        deathTimer = 90; // 1.5 seconds at 60fps
+        deathRotation = 0;
+        screenShake = 20;
+        // Check for new high score
         if (score > highScore) {
             highScore = score;
             localStorage.setItem('lobsterHighScore', highScore.toString());
+            newBestTimer = 180; // Show "NEW BEST!" for 3 seconds
         }
-        showGameOver();
     } else {
         audio.playHit();
         player.reset(400, 300);
@@ -277,6 +288,28 @@ function loseLife() {
 
 function update() {
     if (gameOver) return;
+    
+    // Death animation
+    if (deathAnimating) {
+        deathTimer--;
+        deathRotation += 0.3;
+        player.y += 2; // Fall down
+        // Spawn trailing particles
+        if (deathTimer % 5 === 0) {
+            particles.push(...Particle.spawnDeathParticles(player.x, player.y).slice(0, 3));
+        }
+        if (deathTimer <= 0) {
+            deathAnimating = false;
+            gameOver = true;
+            showGameOver();
+        }
+        // Update particles during death animation
+        particles = particles.filter(p => p.update());
+        return;
+    }
+    
+    // New best celebration timer
+    if (newBestTimer > 0) newBestTimer--;
     
     const diff = getDifficulty();
     
@@ -435,11 +468,39 @@ function render() {
     if (currentLevel >= 3) forks.forEach(f => f.render(ctx));
     if (fish) fish.render(ctx);
     
-    // Player
-    player.render(ctx, invincible, invincibleTimer);
+    // Player (with death animation rotation)
+    if (deathAnimating) {
+        ctx.save();
+        ctx.translate(player.x, player.y);
+        ctx.rotate(deathRotation);
+        ctx.translate(-player.x, -player.y);
+        player.render(ctx, false, 0);
+        ctx.restore();
+        
+        // Red flash overlay
+        if (deathTimer > 75) {
+            ctx.fillStyle = `rgba(255, 0, 0, ${(deathTimer - 75) / 15 * 0.3})`;
+            ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+        }
+    } else {
+        player.render(ctx, invincible, invincibleTimer);
+    }
     
     // Particles (on top of everything)
     particles.forEach(p => p.render(ctx));
+    
+    // NEW BEST! celebration text
+    if (newBestTimer > 0) {
+        const pulse = 1 + Math.sin(newBestTimer * 0.2) * 0.1;
+        ctx.save();
+        ctx.font = `bold ${36 * pulse}px monospace`;
+        ctx.textAlign = 'center';
+        ctx.fillStyle = '#00ff00';
+        ctx.shadowColor = '#00ff00';
+        ctx.shadowBlur = 20;
+        ctx.fillText('✨ NEW BEST! ✨', CANVAS_WIDTH / 2, 80);
+        ctx.restore();
+    }
     
     ctx.restore();
 }
@@ -500,7 +561,8 @@ function gameLoop() {
     update();
     render();
     
-    if (!gameOver) {
+    // Continue loop during death animation or normal play
+    if (!gameOver || deathAnimating) {
         requestAnimationFrame(gameLoop);
     }
 }
@@ -512,7 +574,12 @@ function updateUI() {
 }
 
 function updateScore() {
-    scoreDisplay.textContent = score;
+    // Show score with best
+    if (highScore > 0) {
+        scoreDisplay.innerHTML = `${score} <span style="color:#888;font-size:0.8em">(Best: ${highScore})</span>`;
+    } else {
+        scoreDisplay.textContent = score;
+    }
     const diff = getDifficulty();
     if (diff.name) {
         difficultyDisplay.textContent = `[${diff.name}]`;
