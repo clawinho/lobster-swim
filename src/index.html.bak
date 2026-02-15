@@ -9,25 +9,14 @@
     <meta charset="utf-8">
     <title>Lobster Swim 🦞</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <link rel="stylesheet" href="css/game.css?v=1205">
+    <link rel="stylesheet" href="css/game.css?v=1134">
 </head>
 <body>
-        <!-- TITLE SCREEN -->
+    <!-- TITLE SCREEN -->
     <div id="title-screen">
-        <!-- Sprite decorations -->
-        <img src="assets/sprites/hook-sprite.png" class="title-sprite hook-left" alt="">
-        <img src="assets/sprites/hook-sprite.png" class="title-sprite hook-right" alt="">
-        <img src="assets/sprites/cage-sprite.png" class="title-sprite cage-left" alt="">
-        <img src="assets/sprites/cage-sprite.png" class="title-sprite cage-right" alt="">
-        <img src="assets/sprites/bubbles-sprite.png" class="title-sprite bubbles-1" alt="">
-        <img src="assets/sprites/bubbles-sprite.png" class="title-sprite bubbles-2" alt="">
-        <img src="assets/sprites/fish-sprite.png" class="title-sprite fish-1" alt="">
-        <img src="assets/sprites/fish-sprite.png" class="title-sprite fish-2" alt="">
-        
-        <!-- Main content -->
         <div id="title-content">
-            <img src="assets/sprites/title-text.png" id="title-logo" alt="Lobster Swim">
-            <img src="assets/sprites/lobster-sprite.png" id="title-lobster-img" alt="Lobster">
+            <div id="title-lobster">🦞</div>
+            <h1 id="title-name">LOBSTER SWIM</h1>
             <p id="title-tagline">Escape the kitchen. Survive the void.</p>
             <div id="title-highscore">High Score: <span id="title-hs">0</span></div>
             <button id="play-btn">▶ PLAY</button>

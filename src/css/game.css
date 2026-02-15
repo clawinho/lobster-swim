@@ -58,25 +58,9 @@ canvas {
 }
 
 /* Title Screen */
-#title-screen {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: url('../assets/og-image.png') center center / cover no-repeat, linear-gradient(180deg, #000810 0%, #001830 50%, #002040 100%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-    transition: opacity 0.5s, visibility 0.5s;
-}
 
-#title-screen.hidden {
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
-}
+
+
 
 #title-content {
     text-align: center;
@@ -88,31 +72,16 @@ canvas {
     to { opacity: 1; transform: translateY(0); }
 }
 
-#title-lobster {
-    font-size: 120px;
-    animation: bob 2s ease-in-out infinite;
-    text-shadow: 0 0 50px #ff450066;
-}
+
 
 @keyframes bob {
     0%, 100% { transform: translateY(0) rotate(-5deg); }
     50% { transform: translateY(-15px) rotate(5deg); }
 }
 
-#title-name {
-    font-size: 3.5em;
-    color: #ff4500;
-    margin: 10px 0;
-    text-shadow: 0 0 30px #ff450066, 0 4px 0 #aa2200;
-    letter-spacing: 4px;
-}
 
-#title-tagline {
-    color: #668;
-    font-style: italic;
-    margin-bottom: 30px;
-    font-size: 1.1em;
-}
+
+
 
 #title-highscore {
     color: #888;
@@ -381,17 +350,85 @@ canvas {
     .nav-links a { font-size: 16px; padding: 8px 16px; }
 }
 
-/* Title screen with poster background */
-#title-lobster, #title-name, #title-tagline {
-    display: none; /* Hidden - shown in background image */
-}
-
-#title-content {
-    position: absolute;
-    bottom: 15%;
-    text-align: center;
-}
-
 #title-highscore {
     margin-bottom: 15px;
+}
+
+/* ===== TITLE SCREEN SPRITES ===== */
+#title-screen {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: linear-gradient(180deg, #000810 0%, #001830 50%, #002040 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    overflow: hidden;
+}
+
+#title-screen.hidden {
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s, visibility 0.3s;
+}
+
+.title-sprite {
+    position: absolute;
+    pointer-events: none;
+    image-rendering: pixelated;
+}
+
+.hook-left { top: -5%; left: 10%; width: 80px; transform: rotate(-15deg); }
+.hook-right { top: -5%; right: 10%; width: 80px; transform: rotate(15deg); }
+.cage-left { bottom: 15%; left: 3%; width: 100px; transform: rotate(-10deg); }
+.cage-right { bottom: 20%; right: 3%; width: 100px; transform: rotate(10deg); }
+.bubbles-1 { top: 30%; left: 8%; width: 60px; opacity: 0.8; }
+.bubbles-2 { top: 45%; right: 8%; width: 50px; opacity: 0.7; }
+.fish-1 { bottom: 35%; left: 5%; width: 50px; transform: scaleX(-1); }
+.fish-2 { top: 25%; right: 5%; width: 40px; }
+
+#title-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    z-index: 10;
+}
+
+#title-logo {
+    width: min(80vw, 400px);
+    margin-bottom: 10px;
+    image-rendering: pixelated;
+}
+
+#title-lobster-img {
+    width: min(50vw, 200px);
+    margin-bottom: 15px;
+    image-rendering: pixelated;
+    animation: lobster-bob 2s ease-in-out infinite;
+}
+
+@keyframes lobster-bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+#title-tagline {
+    color: #8899aa;
+    font-size: 14px;
+    margin-bottom: 10px;
+    font-style: italic;
+}
+
+@media (max-width: 600px) {
+    .hook-left, .hook-right { width: 50px; }
+    .cage-left, .cage-right { width: 60px; }
+    .bubbles-1, .bubbles-2 { width: 40px; }
+    .fish-1, .fish-2 { width: 35px; }
+    .cage-left { left: -2%; }
+    .cage-right { right: -2%; }
+    #title-logo { width: 85vw; }
+    #title-lobster-img { width: 45vw; }
+    #title-tagline { font-size: 12px; }
 }
