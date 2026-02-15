@@ -39,6 +39,12 @@ let score = 0, lives = 3, highScore = 0;
 let gameOver = false, gameStarted = false;
 let newBestTimer = 0; // For "NEW BEST!" celebration
 let deathAnimating = false, deathTimer = 0, deathRotation = 0; // Death animation state
+let levelTransition = false, levelTransitionTimer = 0, transitionLevel = 0; // Level transition state
+
+const LEVEL_SUBTITLES = {
+    2: "Captured... but not defeated",
+    3: "Escape the pot or become dinner"
+};
 let currentLevel = 1, invincible = true, invincibleTimer = INVINCIBLE_DURATION;
 let caught = false, caughtY = 0, screenShake = 0;
 let keys = {}, joystickDx = 0, joystickDy = 0, hasTarget = false;
@@ -215,6 +221,9 @@ function startGame() {
     deathTimer = 0;
     deathRotation = 0;
     newBestTimer = 0;
+    levelTransition = false;
+    levelTransitionTimer = 0;
+    transitionLevel = 0;
     
     // Create entities
     player = new Lobster(400, 300);
@@ -252,6 +261,11 @@ function checkLevelUp() {
             if (lvl === 3) forks = Fork.create(3, CANVAS_WIDTH, CANVAS_HEIGHT);
             audio.startLevelMusic(lvl);
             audio.playLevelUp();
+            
+            // Trigger level transition effect
+            levelTransition = true;
+            levelTransitionTimer = 120; // 2 seconds at 60fps
+            transitionLevel = lvl;
             break;
         }
     }
@@ -310,6 +324,12 @@ function update() {
     
     // New best celebration timer
     if (newBestTimer > 0) newBestTimer--;
+    
+    // Level transition timer
+    if (levelTransitionTimer > 0) {
+        levelTransitionTimer--;
+        if (levelTransitionTimer <= 0) levelTransition = false;
+    }
     
     const diff = getDifficulty();
     
@@ -499,6 +519,45 @@ function render() {
         ctx.shadowColor = '#00ff00';
         ctx.shadowBlur = 20;
         ctx.fillText('✨ NEW BEST! ✨', CANVAS_WIDTH / 2, 80);
+        ctx.restore();
+    }
+    
+    // Level transition effect
+    if (levelTransition && levelTransitionTimer > 0) {
+        ctx.save();
+        
+        // White flash (fades out)
+        if (levelTransitionTimer > 100) {
+            const flashAlpha = (levelTransitionTimer - 100) / 20 * 0.8;
+            ctx.fillStyle = `rgba(255, 255, 255, ${Math.min(flashAlpha, 0.8)})`;
+            ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+        }
+        
+        // Level name announcement
+        const progress = 1 - (levelTransitionTimer / 120);
+        const slideIn = progress < 0.2 ? progress / 0.2 : 1;
+        const fadeOut = progress > 0.7 ? 1 - (progress - 0.7) / 0.3 : 1;
+        const alpha = slideIn * fadeOut;
+        
+        ctx.globalAlpha = alpha;
+        ctx.textAlign = 'center';
+        
+        // Big glowing level name
+        const pulse = 1 + Math.sin(levelTransitionTimer * 0.15) * 0.05;
+        ctx.font = `bold ${48 * pulse}px monospace`;
+        ctx.fillStyle = '#fff';
+        ctx.shadowColor = '#ff4500';
+        ctx.shadowBlur = 30;
+        ctx.fillText(LEVELS[transitionLevel].name.toUpperCase(), CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2 - 20);
+        
+        // Subtitle
+        if (LEVEL_SUBTITLES[transitionLevel]) {
+            ctx.font = '18px monospace';
+            ctx.shadowBlur = 10;
+            ctx.fillStyle = '#ffaa00';
+            ctx.fillText(LEVEL_SUBTITLES[transitionLevel], CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2 + 25);
+        }
+        
         ctx.restore();
     }
     
