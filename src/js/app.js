@@ -5,6 +5,7 @@
 import { Lobster, Hook, Cage, Bubble, GoldenFish, Net, Fork } from './entities/index.js';
 import { Particle } from './entities/effects/Particle.js';
 import { Audio } from './audio-module.js';
+import { OceanCurrent } from './entities/mechanics/OceanCurrent.js';
 
 // Constants
 const CANVAS_WIDTH = 800;
@@ -34,7 +35,7 @@ const DEATH_QUOTES = [
 
 // Game state
 let canvas, ctx, audio;
-let player, bubbles, hooks, cages, nets, forks, fish;
+let player, bubbles, hooks, cages, nets, forks, fish, oceanCurrent;
 let gameSessionId = null;
 let score = 0, lives = 3, highScore = 0;
 let gameOver = false, gameStarted = false;
@@ -240,6 +241,7 @@ async function startGame() {
     nets = [];
     forks = [];
     fish = null;
+    oceanCurrent = new OceanCurrent(0.4); // Ocean currents push player gently
     
     updateUI();
     gameLoop();
@@ -381,6 +383,12 @@ function update() {
         }
     }
     
+    // Ocean current (level 1 only - the ocean)
+    if (currentLevel === 1 && oceanCurrent) {
+        const diff = getDifficulty();
+        oceanCurrent.applyToPlayer(player, diff.speedMult, CANVAS_WIDTH, CANVAS_HEIGHT);
+    }
+    
     player.clamp(CANVAS_WIDTH, CANVAS_HEIGHT);
     
     // Bubbles
@@ -489,6 +497,11 @@ function render() {
     
     // Background
     renderBackground();
+    
+    // Ocean current visual (level 1 only)
+    if (currentLevel === 1 && oceanCurrent) {
+        oceanCurrent.render(ctx, CANVAS_WIDTH, CANVAS_HEIGHT);
+    }
     
     // Entities
     bubbles.forEach(b => b.render(ctx, player.x, player.y));
