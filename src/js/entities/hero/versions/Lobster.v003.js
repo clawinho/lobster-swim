@@ -1,95 +1,61 @@
 /**
- * Lobster.v003.js - Full animation with tail physics
+ * Lobster.v003.js - Full animation with tail physics (CURRENT IN GAME)
  * @version 003
  * @current true
  * 
- * Animation states: "normal", "invincible", "death"
- * 
- * @param {object} options - Optional params object
- * @param {string} options.animState - Animation state
- * @param {number} options.angle - Rotation angle (from game physics)
- * @param {Array} options.tailSegments - [{x,y,angle},...] from game physics
+ * Animation states:
+ * - "normal": default swimming animation
+ * - "invincible": golden shimmer with flicker
+ * - "death": spinning with red glow and fade
  */
-export function render(ctx, x, y, size, time, tailWag = 8, options = {}) {
-    const { animState = "normal", angle = 0, tailSegments = null } = 
-        typeof options === "string" ? { animState: options } : options;
-    
+export function render(ctx, x, y, size, time, tailWag = 8, animState = "normal") {
     ctx.save();
     
-    // Animation state effects
+    // Apply animation state effects BEFORE drawing
     let extraRotation = 0;
     if (animState === "invincible") {
-        if (Math.floor(time / 5) % 2 === 0) ctx.globalAlpha = 0.6;
+        // Flicker effect
+        if (Math.floor(time / 5) % 2 === 0) {
+            ctx.globalAlpha = 0.6;
+        }
+        // Golden glow
         ctx.shadowColor = "#ffdd00";
         ctx.shadowBlur = 20;
     } else if (animState === "death") {
+        // Spin
         extraRotation = time * 0.15;
+        // Pulsing fade
         ctx.globalAlpha = 0.4 + Math.sin(time * 0.1) * 0.3;
+        // Red glow
         ctx.shadowColor = "#ff0000";
         ctx.shadowBlur = 15;
     }
     
-    // Draw tail segments
+    const tailAngle = Math.sin(time * 0.05 * tailWag / 8) * 0.3;
+    ctx.translate(x, y);
+    ctx.rotate(extraRotation);
+    
+    // Tail segments
     ctx.fillStyle = "#cc3300";
-    if (tailSegments && tailSegments.length >= 3) {
-        // Physics-based tail (from game class)
-        ctx.save();
-        ctx.translate(tailSegments[0].x, tailSegments[0].y);
-        ctx.rotate(tailSegments[0].angle);
+    for (let i = 0; i < 3; i++) {
+        const segX = -size * (0.6 + i * 0.4);
+        const segY = Math.sin(time * 0.05 + i * 0.5) * tailWag;
+        const segSize = size * (0.5 - i * 0.12);
         ctx.beginPath();
-        ctx.ellipse(0, 0, size * 0.5, size * 0.35, 0, 0, Math.PI * 2);
+        ctx.ellipse(segX, segY, segSize, segSize * 0.7, tailAngle * (i + 1), 0, Math.PI * 2);
         ctx.fill();
-        ctx.restore();
-        
-        ctx.save();
-        ctx.translate(tailSegments[1].x, tailSegments[1].y);
-        ctx.rotate(tailSegments[1].angle);
-        ctx.beginPath();
-        ctx.ellipse(0, 0, size * 0.35, size * 0.25, 0, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.restore();
-        
-        // Tail fan
-        ctx.fillStyle = "#ff4500";
-        ctx.save();
-        ctx.translate(tailSegments[2].x, tailSegments[2].y);
-        ctx.rotate(tailSegments[2].angle);
-        for (let i = -2; i <= 2; i++) {
-            ctx.beginPath();
-            ctx.ellipse(-8, i * 4, 8, 3, 0, 0, Math.PI * 2);
-            ctx.fill();
-        }
-        ctx.restore();
-    } else {
-        // Simple time-based tail (for asset library preview)
-        ctx.save();
-        ctx.translate(x, y);
-        ctx.rotate(angle + extraRotation);
-        const tailAngle = Math.sin(time * 0.05 * tailWag / 8) * 0.3;
-        for (let i = 0; i < 3; i++) {
-            const segX = -size * (0.6 + i * 0.4);
-            const segY = Math.sin(time * 0.05 + i * 0.5) * tailWag;
-            const segSize = size * (0.5 - i * 0.12);
-            ctx.beginPath();
-            ctx.ellipse(segX, segY, segSize, segSize * 0.7, tailAngle * (i + 1), 0, Math.PI * 2);
-            ctx.fill();
-        }
-        ctx.fillStyle = "#ff4500";
-        const fanX = -size * 1.8, fanY = Math.sin(time * 0.05 + 1.5) * tailWag;
-        for (let i = -2; i <= 2; i++) {
-            ctx.beginPath();
-            ctx.ellipse(fanX, fanY + i * 4, 8, 3, tailAngle * 3, 0, Math.PI * 2);
-            ctx.fill();
-        }
-        ctx.restore();
     }
     
-    // Draw body (at position, with rotation)
-    ctx.save();
-    ctx.translate(x, y);
-    ctx.rotate(angle + extraRotation);
-    
+    // Tail fan
     ctx.fillStyle = "#ff4500";
+    const fanX = -size * 1.8, fanY = Math.sin(time * 0.05 + 1.5) * tailWag;
+    for (let i = -2; i <= 2; i++) {
+        ctx.beginPath();
+        ctx.ellipse(fanX, fanY + i * 4, 8, 3, tailAngle * 3, 0, Math.PI * 2);
+        ctx.fill();
+    }
+    
+    // Body
     ctx.beginPath();
     ctx.ellipse(0, 0, size, size * 0.6, 0, 0, Math.PI * 2);
     ctx.fill();
@@ -148,12 +114,11 @@ export function render(ctx, x, y, size, time, tailWag = 8, options = {}) {
     ctx.fill();
     
     ctx.restore();
-    ctx.restore();
 }
 
 export const meta = { 
     version: "003", 
     name: "Tail Physics", 
     current: true, 
-    features: ["tail physics", "animated claws", "antennae", "animation states", "physics tail support"] 
+    features: ["tail physics", "animated claws", "antennae", "animation states"] 
 };

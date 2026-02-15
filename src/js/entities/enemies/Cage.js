@@ -1,9 +1,7 @@
 /**
  * Cage.js - Lobster trap enemy
  * Floating traps that move around and catch the player
- * Rendering delegated to versioned renderer (DRY)
  */
-import { render as renderCage } from "./versions/Cage.v002.js";
 
 export class Cage {
     constructor(x, y, size = 40) {
@@ -28,16 +26,57 @@ export class Cage {
         this.x += this.baseDx * difficultyMult;
         this.y += this.baseDy * difficultyMult;
 
+        // Bounce off walls
         if (this.x < 0 || this.x > canvasWidth) this.baseDx *= -1;
         if (this.y < 0 || this.y > canvasHeight) this.baseDy *= -1;
 
+        // Clamp position
         this.x = Math.max(0, Math.min(canvasWidth, this.x));
         this.y = Math.max(0, Math.min(canvasHeight, this.y));
     }
 
     render(ctx) {
-        renderCage(ctx, this.x, this.y, this.size);
-        return { width: this.size * 1.8, height: this.size * 1.2 };
+        ctx.save();
+        ctx.translate(this.x, this.y);
+        
+        const w = this.size * 1.8;
+        const h = this.size * 1.2;
+
+        // Background
+        ctx.fillStyle = '#1a0a0066';
+        ctx.fillRect(-w / 2, -h / 2, w, h);
+
+        // Frame
+        ctx.strokeStyle = '#8B4513';
+        ctx.lineWidth = 3;
+        ctx.strokeRect(-w / 2, -h / 2, w, h);
+
+        // Bars
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = '#666';
+        for (let i = -w / 2 + w / 5; i < w / 2; i += w / 5) {
+            ctx.beginPath();
+            ctx.moveTo(i, -h / 2);
+            ctx.lineTo(i, h / 2);
+            ctx.stroke();
+        }
+        ctx.beginPath();
+        ctx.moveTo(-w / 2, 0);
+        ctx.lineTo(w / 2, 0);
+        ctx.stroke();
+
+        // Entrance
+        ctx.strokeStyle = '#8B4513';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(w / 2, -h / 3);
+        ctx.lineTo(w / 4, 0);
+        ctx.lineTo(w / 2, h / 3);
+        ctx.stroke();
+
+        ctx.restore();
+
+        return { width: w, height: h };
     }
 
     getBounds() {
@@ -55,9 +94,12 @@ export class Cage {
 
     checkCollision(player, invincible = false) {
         if (invincible) return false;
+        
+        const bounds = this.getBounds();
         const dx = player.x - this.x;
         const dy = player.y - this.y;
         const dist = Math.sqrt(dx * dx + dy * dy);
+        
         return dist < player.size + this.size * 0.8;
     }
 }

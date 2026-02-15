@@ -1,9 +1,8 @@
 /**
  * GoldenFish.js - Extra life pickup
  * Rare fish that grants an extra life, but runs away from the player
- * Rendering delegated to versioned renderer (DRY)
+ * Render: v002 (shimmer particles + gradient + tail wag)
  */
-import { render as renderGoldenFish } from "./versions/GoldenFish.v002.js";
 
 export class GoldenFish {
     static SPAWN_INTERVAL = 300;
@@ -17,7 +16,7 @@ export class GoldenFish {
         this.x = this.direction > 0 ? -30 : canvasWidth + 30;
         this.y = Math.random() * 400 + 100;
         this.wobble = 0;
-        this.animTime = Math.random() * 1000;
+        this.animTime = Math.random() * 1000; // Start at random phase
     }
 
     update(playerX, playerY, canvasWidth = 800) {
@@ -44,7 +43,58 @@ export class GoldenFish {
     }
 
     render(ctx) {
-        renderGoldenFish(ctx, this.x, this.y, this.animTime, this.size, this.direction, GoldenFish.SHIMMER_COUNT);
+        const t = this.animTime;
+        const visualWobble = Math.sin(t * 0.1) * 3;
+        
+        ctx.save();
+        ctx.translate(this.x + visualWobble, this.y);
+        ctx.scale(this.direction, 1);
+
+        // Shimmer particles
+        ctx.fillStyle = '#ffff0044';
+        for (let i = 0; i < GoldenFish.SHIMMER_COUNT; i++) {
+            const px = Math.sin(t * 0.1 + i * 1.5) * 25;
+            const py = Math.cos(t * 0.13 + i) * 15;
+            const ps = 2 + Math.sin(t * 0.2 + i);
+            ctx.beginPath();
+            ctx.arc(px, py, ps, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        // Gradient body
+        const gradient = ctx.createRadialGradient(0, 0, 0, 0, 0, this.size);
+        gradient.addColorStop(0, '#ffdd00');
+        gradient.addColorStop(1, '#ff8800');
+        ctx.fillStyle = gradient;
+        ctx.beginPath();
+        ctx.ellipse(0, 0, this.size, this.size * 0.6, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Animated tail
+        ctx.fillStyle = '#ffaa00';
+        ctx.save();
+        ctx.rotate(Math.sin(t * 0.4) * 0.3);
+        ctx.beginPath();
+        ctx.moveTo(-this.size, 0);
+        ctx.lineTo(-this.size * 1.8, -this.size * 0.6);
+        ctx.lineTo(-this.size * 1.8, this.size * 0.6);
+        ctx.closePath();
+        ctx.fill();
+        ctx.restore();
+
+        // Eye
+        ctx.fillStyle = '#000';
+        ctx.beginPath();
+        ctx.arc(this.size * 0.5, -this.size * 0.1, 3, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Eye highlight
+        ctx.fillStyle = '#fff';
+        ctx.beginPath();
+        ctx.arc(this.size * 0.55, -this.size * 0.15, 1.5, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.restore();
     }
 
     checkCollision(player) {
