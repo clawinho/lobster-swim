@@ -203,3 +203,46 @@ git log --oneline -5
 ```
 Don't trust LLM memory or context - it gets compacted and loses track of versions.
 Check the actual git history, not what you think you remember.
+
+## Code Quality Rules (added 2026-02-15)
+
+### 1. DRY — Don't Repeat Yourself
+- If you write the same code twice, **STOP** and extract it to a shared module
+- Utility functions (color conversion, math helpers, etc.) go in `entities/utils/`
+- Constants and presets should exist in ONE place only
+
+### 2. Encapsulation
+- Each entity owns its own rendering and behavior
+- Pass parameters IN, don't reach OUT for config
+- Entity signature: `render(ctx, x, y, ...entitySpecificParams)`
+- Animation states, colors, variants = parameters, not external if/else
+
+### 3. Single Source of Truth
+- Versioned renderers (`v001`, `v002`) are the source for how entities look
+- Game classes should IMPORT and USE versioned renderers, not duplicate drawing code
+- Asset library imports same renderers — if it works in assets, it works in game
+
+### 4. Be Honest
+- When asked "did you duplicate code?" — check and answer truthfully
+- When taking shortcuts, acknowledge them upfront
+- Don't claim something is "encapsulated" when it's actually copy-pasted
+
+### 5. Refactor First
+- Before adding features, check if existing code follows these rules
+- Fix violations before adding more tech debt
+- "Quick fix now, refactor later" = never refactored
+
+### File Structure for Shared Code
+```
+src/js/entities/
+├── utils/
+│   ├── colors.js      # hslToRgba, COLOR_PRESETS
+│   ├── math.js        # lerp, clamp, distance, etc.
+│   └── animation.js   # easing functions, state helpers
+├── hero/
+│   ├── Lobster.js     # Game class (imports from versions/)
+│   └── versions/      # Renderers only
+├── pickups/
+│   ├── Bubble.js      # Game class (imports renderer + utils)
+│   └── versions/      # Renderers (import from ../utils/)
+```
