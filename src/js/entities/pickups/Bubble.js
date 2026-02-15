@@ -1,27 +1,14 @@
 /**
- * Bubble.js - Collectible bubble
+ * Bubble.js - Collectible bubble (game class)
  * Points collectible with magnetism effect when player is nearby
+ * Rendering delegated to versioned renderer (DRY)
  */
-
-const COLOR_PRESETS = {
-    blue: 210,
-    pink: 320,
-    green: 140,
-    gold: 45
-};
-
-function hslToRgba(h, s, l, a) {
-    s /= 100;
-    l /= 100;
-    const k = n => (n + h / 30) % 12;
-    const f = n => l - s * Math.min(l, 1 - l) * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
-    return `rgba(${Math.round(f(0) * 255)}, ${Math.round(f(8) * 255)}, ${Math.round(f(4) * 255)}, ${a})`;
-}
+import { render as renderBubble } from "./versions/Bubble.v002.js";
 
 export class Bubble {
     static MAGNET_RADIUS = 80;
     static MAGNET_STRENGTH = 3;
-    static color = "pink";  // Default color for game
+    static color = "pink";  // Game default color
 
     constructor(x, y, size = 18) {
         this.x = x;
@@ -66,51 +53,11 @@ export class Bubble {
         const dist = Math.sqrt(dx * dx + dy * dy);
         const inRange = dist < Bubble.MAGNET_RADIUS;
         
-        const t = Date.now() * 0.01 + this.phase * 100;
-        const wobble = Math.sin(t * 0.08) * 2;
-        const drawY = this.y + wobble;
-
-        // Get hue from color setting
-        const hue = typeof Bubble.color === "number" 
-            ? Bubble.color 
-            : (COLOR_PRESETS[Bubble.color] ?? 320);
-
-        const gradient = ctx.createRadialGradient(
-            this.x - this.size * 0.3, drawY - this.size * 0.3, 0,
-            this.x, drawY, this.size
-        );
+        // Use time based on instance phase for varied animation
+        const time = Date.now() * 0.01 + this.phase * 100;
         
-        if (inRange) {
-            // Brighter when in magnet range
-            gradient.addColorStop(0, hslToRgba(hue, 80, 85, 0.95));
-            gradient.addColorStop(0.5, hslToRgba(hue, 85, 60, 0.7));
-            gradient.addColorStop(1, hslToRgba(hue, 75, 40, 0.4));
-        } else {
-            gradient.addColorStop(0, hslToRgba(hue, 70, 75, 0.9));
-            gradient.addColorStop(0.5, hslToRgba(hue, 80, 55, 0.5));
-            gradient.addColorStop(1, hslToRgba(hue, 70, 35, 0.3));
-        }
-
-        ctx.fillStyle = gradient;
-        ctx.beginPath();
-        ctx.arc(this.x, drawY, this.size, 0, Math.PI * 2);
-        ctx.fill();
-
-        // Shine highlight
-        ctx.fillStyle = "rgba(255,255,255,0.8)";
-        ctx.beginPath();
-        ctx.arc(this.x - this.size * 0.3, drawY - this.size * 0.3, this.size * 0.2, 0, Math.PI * 2);
-        ctx.fill();
-
-        // Magnet range indicator
-        if (inRange) {
-            ctx.strokeStyle = hslToRgba(hue, 70, 70, 0.4);
-            ctx.lineWidth = 2;
-            ctx.beginPath();
-            ctx.arc(this.x, drawY, this.size + 3, 0, Math.PI * 2);
-            ctx.stroke();
-            ctx.lineWidth = 1;
-        }
+        // Delegate to versioned renderer
+        renderBubble(ctx, this.x, this.y, this.size, time, Bubble.color, inRange);
     }
 
     checkCollision(player) {
