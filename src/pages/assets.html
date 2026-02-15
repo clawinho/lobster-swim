@@ -42,6 +42,10 @@
         #toast.show { opacity: 1; }
         .audio-btn { background: #ff4500; border: none; color: #000; padding: 8px 20px; border-radius: 20px; cursor: pointer; font-weight: bold; font-size: 14px; }
         .audio-btn:hover { background: #ff6633; transform: scale(1.05); }
+        .anim-buttons { display: flex; gap: 4px; }
+        .anim-btn { padding: 4px 8px; font-size: 11px; border: 1px solid #555; background: #222; color: #aaa; cursor: pointer; border-radius: 3px; }
+        .anim-btn:hover { background: #333; }
+        .anim-btn.active { background: #ff6600; color: #000; border-color: #ff6600; }
     </style>
 </head>
 <body>
@@ -71,8 +75,14 @@
                     <div class="controls">
                         <div class="control-row"><label>Size</label><input type="range" id="lobster-size" min="15" max="60" value="30"><span class="value">30</span></div>
                         <div class="control-row"><label>Tail wag</label><input type="range" id="lobster-wag" min="1" max="20" value="8"><span class="value">8</span></div>
+                        <div class="control-row"><label>Animation</label>
+                            <div class="anim-buttons">
+                                <button class="anim-btn active" data-anim="normal">Normal</button>
+                                <button class="anim-btn" data-anim="invincible">Invincible</button>
+                                <button class="anim-btn" data-anim="death">Death</button>
+                            </div>
+                        </div>
                     </div>
-                </div>
             </div>
         </div>
     </section>
@@ -320,7 +330,7 @@
             </div>
         </div>
     </section>
-    <bottom-nav version="1.0.10"></bottom-nav>
+    <bottom-nav version="1.0.11"></bottom-nav>
     <script type="module" src="../js/components/BottomNav.js"></script>
     <div id="toast"></div>
     
@@ -365,7 +375,7 @@
         
         
         let frame = 0, params = {
-            lobsterSize: 30, lobsterWag: 8,
+            lobsterSize: 30, lobsterWag: 8, lobsterAnim: "normal",
             fishShimmer: 5,
             hookSwing: 10, hookLine: 100,
             cageSize: 50, netWidth: 80, forkSize: 40,
@@ -406,8 +416,25 @@
             
             // Render based on selected version
             if(c('lobster')) {
+                const ctx = c('lobster');
                 const r = renderers[`lobster-${selectedVersions.lobster}`];
-                if(r) r(c('lobster'), 100, 80, params.lobsterSize, frame, params.lobsterWag);
+                if(r) {
+                    ctx.save();
+                    if (params.lobsterAnim === 'invincible') {
+                        if (Math.floor(frame / 5) % 2 === 0) ctx.globalAlpha = 0.5;
+                        ctx.shadowColor = '#ffdd00';
+                        ctx.shadowBlur = 15;
+                    } else if (params.lobsterAnim === 'death') {
+                        ctx.translate(100, 80);
+                        ctx.rotate(frame * 0.15);
+                        ctx.translate(-100, -80);
+                        ctx.globalAlpha = 0.5 + Math.sin(frame * 0.1) * 0.3;
+                        ctx.shadowColor = '#ff0000';
+                        ctx.shadowBlur = 10;
+                    }
+                    r(ctx, 100, 80, params.lobsterSize, frame, params.lobsterWag);
+                    ctx.restore();
+                }
             }
             if(c('fish')) {
                 const r = renderers[`fish-${selectedVersions.fish}`];
@@ -451,6 +478,14 @@
                     card.querySelectorAll('.version-tab').forEach(t => t.classList.remove('active'));
                     tab.classList.add('active');
                 }
+            });
+        });
+        // Animation state buttons for lobster
+        document.querySelectorAll(".anim-btn").forEach(btn => {
+            btn.addEventListener("click", () => {
+                document.querySelectorAll(".anim-btn").forEach(b => b.classList.remove("active"));
+                btn.classList.add("active");
+                params.lobsterAnim = btn.dataset.anim;
             });
         });
         document.querySelectorAll('.nav a').forEach(a => a.addEventListener('click', e => {
