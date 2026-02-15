@@ -195,3 +195,11 @@ To find old music/assets:
 git log --oneline --all -- '*filename*'
 git show <commit>:path/to/file > restored_file
 ```
+
+### 9. Pre-dev reality check (added 2026-02-15)
+**ALWAYS run this before any dev work:**
+```bash
+git log --oneline -5
+```
+Don't trust LLM memory or context - it gets compacted and loses track of versions.
+Check the actual git history, not what you think you remember.
