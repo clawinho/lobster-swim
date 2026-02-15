@@ -35,6 +35,7 @@ const DEATH_QUOTES = [
 // Game state
 let canvas, ctx, audio;
 let player, bubbles, hooks, cages, nets, forks, fish;
+let gameSessionId = null;
 let score = 0, lives = 3, highScore = 0;
 let gameOver = false, gameStarted = false;
 let newBestTimer = 0; // For "NEW BEST!" celebration
@@ -200,7 +201,13 @@ function handleCanvasTouch(e) {
     hasTarget = true;
 }
 
-function startGame() {
+async function startGame() {
+    // Get anti-cheat session
+    try {
+        const res = await fetch("/api/scores/start");
+        const data = await res.json();
+        gameSessionId = data.session;
+    } catch(e) { gameSessionId = null; }
     titleScreen.classList.add('hidden');
     audio.init();
     audio.startLevelMusic(1);
@@ -676,7 +683,7 @@ async function submitScore() {
         await fetch('/api/scores', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name, score })
+            body: JSON.stringify({ name, score, session: gameSessionId })
         });
         fetchLeaderboard();
     } catch (err) {
