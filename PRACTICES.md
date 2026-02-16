@@ -64,57 +64,37 @@ export const meta = {
 Add to `src/js/entities/<category>/index.js` or create main `<Name>.js` that imports the current version.
 
 ### 4. Add to assets library (REQUIRED)
-Every entity must be previewable in the assets page:
+Create a `preview.js` in your entity directory. The asset library auto-discovers it via `import.meta.glob`.
 
-a) Add canvas in HTML:
-```html
-<div class="asset-card" data-entity="name">
-    <div class="version-tabs">
-        <span class="version-tab active" data-version="001">v001<span class="star">★</span></span>
-    </div>
-    <div class="asset-preview"><canvas id="name-canvas" width="200" height="150"></canvas></div>
-    <div class="asset-info">
-        <h3>Name</h3><p>Description</p>
-        <div class="controls">
-            <div class="control-row"><label>Param</label><input type="range" id="name-param" min="0" max="100" value="50"><span class="value">50</span></div>
-        </div>
-    </div>
-</div>
-```
-
-b) Import renderer in assets.html:
 ```js
-import { render as nameV001 } from '../js/entities/<category>/versions/<Name>.v001.js';
+// src/js/entities/<category>/<name>/preview.js
+import { render as v001 } from './render/<Name>.v001.js';
+
+export const manifest = {
+    id: 'name',               // unique id
+    name: 'Display Name',     // shown in card
+    description: 'What it does.',
+    category: '<category>',   // hero | enemies | pickups | environments | mechanics
+    tags: [],                 // optional display tags
+    configKey: 'configKey',   // key into ENTITY_CONFIG (null if none)
+};
+
+export const defaults = { size: 50 };  // mutable state for sliders + preview
+
+export const versions = [
+    {
+        meta: { version: '001', name: 'Version Name', current: true },
+        preview: (ctx, w, h, frame, state) => v001(ctx, w / 2, h / 2, state.size),
+    },
+];
+
+// Optional: render-only controls not in ENTITY_CONFIG
+export const renderControls = [
+    { key: 'size', type: 'range', min: 10, max: 100, value: 50, label: 'Size' },
+];
 ```
 
-c) Add to renderers object:
-```js
-'name-001': (c,x,y,param) => nameV001(c,x,y,param),
-```
-
-d) Add to params and selectedVersions:
-```js
-params.nameParam = 50;
-selectedVersions.name = '001';
-```
-
-e) Add canvas to canvases object:
-```js
-canvases.name = document.getElementById('name-canvas');
-```
-
-f) Add render call in animate():
-```js
-if(c('name')) {
-    const r = renderers[`name-${selectedVersions.name}`];
-    if(r) r(c('name'), 100, 75, params.nameParam);
-}
-```
-
-g) Wire slider in sliderConfig:
-```js
-['name-param', 'nameParam'],
-```
+That's it — no HTML, no manual wiring. The `asset-library.js` module handles canvas creation, version tabs, slider generation, and the animate loop.
 
 ### 5. Version iteration
 When improving an entity:
@@ -135,28 +115,14 @@ When improving an entity:
 - NOT from `/var/www/html/`
 - Check nginx config if confused: `cat /etc/nginx/sites-enabled/default`
 
-### 3. Asset page slider wiring pattern
-When adding a slider to assets.html:
-1. Add HTML slider with id: `<input type="range" id="entity-param">`
-2. Add to params object: `params.entityParam = defaultValue`
-3. Add to sliderConfig array: `['entity-param', 'entityParam']`
-4. Pass param to renderer in animate(): `renderer(ctx, x, y, params.entityParam)`
-5. **Update renderer wrapper** in renderers object to accept and pass the param
-
-Common mistake: Renderer wrapper ignores extra params!
-```js
-// BAD - ignores shimmer:
-'fish-002': (c,x,y,t) => fishV002(c,x,y,t,15,1,5)
-
-// GOOD - passes shimmer through:
-'fish-002': (c,x,y,t,size,dir,shimmer) => fishV002(c,x,y,t,size||15,dir||1,shimmer||5)
-```
+### 3. Asset library is auto-discovered
+The asset library (`pages/assets.html`) uses `import.meta.glob` to find all `preview.js` files.
+No manual slider wiring, canvas registration, or renderers object needed.
+See "Add to assets library" above for the `preview.js` contract.
 
 ### 4. Entity version tabs
-- Each card needs `data-entity="name"` attribute
-- Tabs need `data-version="00X"` attribute
-- selectedVersions object tracks current version per entity
-- animate() uses `renderers[\`entity-${selectedVersions.entity}\`]`
+Version tabs are generated automatically from the `versions` array in each `preview.js`.
+Mark the active version with `current: true` in the version's `meta` object.
 
 ### 5. Web Components (like BottomNav)
 - Use Shadow DOM for style encapsulation
