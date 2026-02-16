@@ -1,6 +1,6 @@
 /**
  * Environment exports
  */
-export { OceanLevel } from './OceanLevel.js';
-export { TankLevel } from './TankLevel.js';
-export { KitchenLevel } from './KitchenLevel.js';
+export { Ocean } from './ocean/actor/Ocean.js';
+export { Tank } from './tank/actor/Tank.js';
+export { Kitchen } from './kitchen/actor/Kitchen.js';
