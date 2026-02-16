@@ -21,6 +21,21 @@ export function buildAssetLibrary(container) {
     const entities = [];
     for (const [, mod] of Object.entries(modules)) {
         const state = { ...mod.defaults };
+
+        // Auto-populate missing actor props from ENTITY_CONFIG
+        const configKey = mod.manifest.configKey;
+        if (configKey && ENTITY_CONFIG[configKey]) {
+            for (const prop of ENTITY_CONFIG[configKey].props) {
+                if (!(prop.key in state)) {
+                    if (prop.readOnly) {
+                        state[prop.key] = '—';
+                    } else {
+                        state[prop.key] = prop.min;
+                    }
+                }
+            }
+        }
+
         const currentIdx = mod.versions.findIndex(v => v.meta.current);
         entities.push({
             manifest: mod.manifest,
