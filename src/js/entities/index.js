@@ -3,7 +3,7 @@
  */
 
 // Hero
-export { Lobster } from './hero/Lobster.js';
+export { Lobster } from './hero/lobster/actor/Lobster.js';
 
 // Enemies
 export { Hook } from './enemies/hook/actor/Hook.js';

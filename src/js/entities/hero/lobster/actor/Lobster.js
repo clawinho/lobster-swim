@@ -3,7 +3,7 @@
  * The main character with animated claws, tail physics, and invincibility effects
  */
 
-import { render as renderLobster } from './versions/Lobster.v004.js';
+import { render as renderLobster } from '../render/Lobster.v004.js';
 
 export class Lobster {
     static TAIL_SEGMENTS = 3;
