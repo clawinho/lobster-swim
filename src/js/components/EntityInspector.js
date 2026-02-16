@@ -167,6 +167,9 @@ class EntityInspector extends HTMLElement {
                     color: #666;
                     font-size: 11px;
                     margin: 6px 0 2px;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
                 }
 
                 .prop-row {
@@ -209,6 +212,25 @@ class EntityInspector extends HTMLElement {
                     padding: 4px 0;
                     font-style: italic;
                 }
+
+                .header-actions {
+                    display: flex;
+                    align-items: center;
+                    gap: 6px;
+                }
+                .copy-btn {
+                    background: none;
+                    border: 1px solid #ff450044;
+                    color: #ff4500;
+                    font-size: 13px;
+                    cursor: pointer;
+                    padding: 0 4px;
+                    border-radius: 3px;
+                    line-height: 1.2;
+                    font-family: monospace;
+                }
+                .copy-btn:hover { background: #ff450022; }
+                .copy-btn.copied { color: #0f0; border-color: #0f044; }
 
                 ::-webkit-scrollbar { width: 6px; }
                 ::-webkit-scrollbar-track { background: #001020; }
@@ -268,7 +290,10 @@ class EntityInspector extends HTMLElement {
                 section.innerHTML = `
                     <div class="section-header" data-key="${key}">
                         <span>${config.label}</span>
-                        <span class="arrow ${isCollapsed ? 'collapsed' : ''}">▼</span>
+                        <span class="header-actions">
+                            ${!isNull ? `<button class="copy-btn" data-copy-key="${key}" title="Copy params as JSON">⎘</button>` : ''}
+                            <span class="arrow ${isCollapsed ? 'collapsed' : ''}">▼</span>
+                        </span>
                     </div>
                     <div class="section-body ${isCollapsed ? 'collapsed' : ''}" data-section="${key}">
                         ${isNull ? '<div class="not-spawned">Not spawned</div>' : ''}
@@ -286,7 +311,9 @@ class EntityInspector extends HTMLElement {
                 section.innerHTML = `
                     <div class="section-header" data-key="${key}">
                         <span>${config.label} (${selectedIndices.length}/${arr.length})</span>
-                        <span class="arrow ${isCollapsed ? 'collapsed' : ''}">▼</span>
+                        <span class="header-actions">
+                            <span class="arrow ${isCollapsed ? 'collapsed' : ''}">▼</span>
+                        </span>
                     </div>
                     <div class="section-body ${isCollapsed ? 'collapsed' : ''}" data-section="${key}"></div>
                 `;
@@ -296,7 +323,7 @@ class EntityInspector extends HTMLElement {
                 for (const i of selectedIndices) {
                     const label = document.createElement('div');
                     label.className = 'instance-label';
-                    label.textContent = `#${i + 1}`;
+                    label.innerHTML = `<span>#${i + 1}</span><button class="copy-btn" data-copy-key="${key}" data-copy-index="${i}" title="Copy params as JSON">⎘</button>`;
                     body.appendChild(label);
                     this._buildProps(body, `${key}[${i}]`, arr[i], config.props);
                 }
@@ -310,6 +337,16 @@ class EntityInspector extends HTMLElement {
                 body.classList.toggle('collapsed');
                 arrow.classList.toggle('collapsed');
             });
+
+            // Copy buttons
+            for (const btn of section.querySelectorAll('.copy-btn')) {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const copyKey = btn.dataset.copyKey;
+                    const copyIndex = btn.dataset.copyIndex !== undefined ? parseInt(btn.dataset.copyIndex) : null;
+                    this._copyEntityParams(copyKey, copyIndex, ENTITY_CONFIG[copyKey], btn);
+                });
+            }
         }
     }
 
@@ -393,6 +430,31 @@ class EntityInspector extends HTMLElement {
         }
 
         if (needsRebuild) this._buildAll();
+    }
+
+    _copyEntityParams(key, index, config, btn) {
+        const entities = window.gameDevGetEntities?.();
+        if (!entities) return;
+
+        const entity = index !== null ? entities[key]?.[index] : entities[key];
+        if (!entity) return;
+
+        const props = {};
+        for (const prop of config.props) {
+            const val = entity[prop.key];
+            if (val !== undefined) props[prop.key] = val;
+        }
+
+        const label = index !== null ? `${key}[${index}]` : key;
+        const json = JSON.stringify({ [label]: props }, null, 2);
+        navigator.clipboard.writeText(json);
+
+        btn.textContent = '✓';
+        btn.classList.add('copied');
+        setTimeout(() => {
+            btn.textContent = '⎘';
+            btn.classList.remove('copied');
+        }, 1000);
     }
 
     _resolveRef(ref, entities) {
