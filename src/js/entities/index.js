@@ -10,6 +10,7 @@ export { Hook } from './enemies/Hook.js';
 export { Cage } from './enemies/Cage.js';
 export { Net } from './enemies/Net.js';
 export { Fork } from './enemies/Fork.js';
+export { BeachBall } from './enemies/BeachBall.js';
 
 // Pickups
 export { Bubble } from './pickups/Bubble.js';

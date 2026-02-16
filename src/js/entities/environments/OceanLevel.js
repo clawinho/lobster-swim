@@ -11,7 +11,7 @@ export class OceanLevel {
         background: '#001020',
         scoreThreshold: 0,
         musicTrack: 'assets/music/music_ocean.mp3',
-        enemies: { hooks: 2 },
+        enemies: { hooks: 2, beachBalls: 2 },
         spawnOnEnter: {},
         mechanics: ['oceanCurrent'],
     };

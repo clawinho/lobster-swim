@@ -2,7 +2,7 @@
  * app.js - Main application (uses regular DOM, modular entities)
  */
 
-import { Lobster, Hook, Cage, Bubble, GoldenFish, Net, Fork, Pearl } from './entities/index.js';
+import { Lobster, Hook, Cage, Bubble, GoldenFish, Net, Fork, Pearl, BeachBall } from './entities/index.js';
 import { Particle } from './entities/effects/Particle.js';
 import { Audio } from './audio-module.js';
 import { OceanCurrent } from './entities/mechanics/OceanCurrent.js';
@@ -42,7 +42,7 @@ const COMBO_MESSAGES = ['', 'Nice!', 'Great!', 'Awesome!', 'Amazing!', 'INCREDIB
 
 // Game state
 let canvas, ctx, audio;
-let player, bubbles, hooks, cages, nets, forks, fish, pearl, oceanCurrent;
+let player, bubbles, hooks, cages, nets, forks, fish, pearl, oceanCurrent, beachBalls;
 let gameSessionId = null;
 let score = 0, lives = 3, highScore = 0;
 let gameOver = false, gameStarted = false;
@@ -262,6 +262,7 @@ async function startGame() {
     hooks = Hook.create(CANVAS_WIDTH, 2);
     nets = [];
     forks = [];
+    beachBalls = BeachBall.create(LEVELS[1].enemies.beachBalls || 0, CANVAS_WIDTH, CANVAS_HEIGHT);
     fish = null;
     pearl = null;
     pearlSpawnTimer = 0;
@@ -569,6 +570,23 @@ function update() {
         });
     }
     
+    // Beach Balls (active in ocean level - knockback only, not death)
+    if (LEVELS[currentLevel].enemies.beachBalls) {
+        beachBalls.forEach(ball => {
+            ball.update(diff.speedMult, CANVAS_WIDTH, CANVAS_HEIGHT);
+            const knockback = ball.checkCollision(player, invincible);
+            if (knockback) {
+                // Apply knockback to player
+                player.x += knockback.x;
+                player.y += knockback.y;
+                player.clamp(CANVAS_WIDTH, CANVAS_HEIGHT);
+                screenShake = 6;
+                // Reset combo on knockback (penalty for getting hit)
+                comboCount = Math.max(0, comboCount - 2);
+            }
+        });
+    }
+    
     // Golden fish
     fishSpawnTimer++;
     if (!fish && fishSpawnTimer > GoldenFish.SPAWN_INTERVAL && lives < 3) {
@@ -681,6 +699,7 @@ function render() {
 
     if (LEVELS[currentLevel].enemies.nets) nets.forEach(n => n.render(ctx));
     if (LEVELS[currentLevel].enemies.forks) forks.forEach(f => f.render(ctx));
+    if (LEVELS[currentLevel].enemies.beachBalls) beachBalls.forEach(b => b.render(ctx));
     if (fish) fish.render(ctx);
     if (pearl) pearl.render(ctx);
     
