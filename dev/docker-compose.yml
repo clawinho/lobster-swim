@@ -1,0 +1,8 @@
+services:
+  dev:
+    build: .
+    ports:
+      - "5177:5173"
+    volumes:
+      - ../src:/app/src
+    tty: true
