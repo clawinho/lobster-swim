@@ -737,21 +737,23 @@ function render() {
     // Particles (on top of everything)
     particles.forEach(p => p.render(ctx));
 
-    // Dev mode: draw selection bounding box
-    const sel = window.gameDevSelectedEntity;
-    if (sel && devPanelOpen) {
+    // Dev mode: draw selection bounding boxes
+    const sels = window.gameDevSelectedEntities;
+    if (sels.length > 0 && devPanelOpen) {
         const entities = window.gameDevGetEntities();
-        const raw = entities[sel.key];
-        const entity = sel.index !== null ? raw?.[sel.index] : raw;
-        const bounds = entity ? getEntityBounds(sel.key, entity) : null;
-        if (bounds) {
-            ctx.save();
-            ctx.strokeStyle = '#ff4500';
-            ctx.lineWidth = 2;
-            ctx.setLineDash([6, 3]);
-            ctx.strokeRect(bounds.x - 4, bounds.y - 4, bounds.width + 8, bounds.height + 8);
-            ctx.restore();
+        ctx.save();
+        ctx.strokeStyle = '#ff4500';
+        ctx.lineWidth = 2;
+        ctx.setLineDash([6, 3]);
+        for (const sel of sels) {
+            const raw = entities[sel.key];
+            const entity = sel.index !== null ? raw?.[sel.index] : raw;
+            const bounds = entity ? getEntityBounds(sel.key, entity) : null;
+            if (bounds) {
+                ctx.strokeRect(bounds.x - 4, bounds.y - 4, bounds.width + 8, bounds.height + 8);
+            }
         }
+        ctx.restore();
     }
 
     // Score popups
@@ -1119,7 +1121,8 @@ window.gameDevGetEntities = () => ({
     player, bubbles, hooks, cages, nets, forks, fish, pearl, oceanCurrent, particles
 });
 
-window.gameDevSelectedEntity = null;
+window.gameDevSelectedEntities = [];
+window._gameDevLastSelected = null;
 
 function getEntityBounds(key, entity) {
     if (!entity) return null;

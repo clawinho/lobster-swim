@@ -147,7 +147,7 @@ class EntityOutliner extends HTMLElement {
 
     hide() {
         this.classList.remove('visible');
-        window.gameDevSelectedEntity = null;
+        window.gameDevSelectedEntities = [];
         if (this._refreshInterval) {
             clearInterval(this._refreshInterval);
             this._refreshInterval = null;
@@ -218,7 +218,7 @@ class EntityOutliner extends HTMLElement {
                         <span class="type-label">${config.label}</span>
                         <span class="singleton-coords" data-coords="${key}">${coords}</span>
                     `;
-                    row.addEventListener('click', () => this._toggleSelect(key, null));
+                    row.addEventListener('click', (e) => this._handleSelect(key, null, e));
                 } else {
                     row.innerHTML = `<span class="type-label">${config.label}</span>`;
                 }
@@ -264,7 +264,7 @@ class EntityOutliner extends HTMLElement {
                 `;
                 instRow.addEventListener('click', (e) => {
                     e.stopPropagation();
-                    this._toggleSelect(key, i);
+                    this._handleSelect(key, i, e);
                 });
                 instList.appendChild(instRow);
             });
@@ -283,29 +283,52 @@ class EntityOutliner extends HTMLElement {
         body.appendChild(wrapper);
     }
 
-    _toggleSelect(key, index) {
-        const sel = window.gameDevSelectedEntity;
-        if (sel && sel.key === key && sel.index === index) {
-            window.gameDevSelectedEntity = null;
+    _handleSelect(key, index, event) {
+        const sels = window.gameDevSelectedEntities;
+        const entry = { key, index };
+        const isSelected = sels.some(s => s.key === key && s.index === index);
+
+        if (event.ctrlKey || event.metaKey) {
+            if (isSelected) {
+                window.gameDevSelectedEntities = sels.filter(s => !(s.key === key && s.index === index));
+            } else {
+                window.gameDevSelectedEntities = [...sels, entry];
+            }
+        } else if (event.shiftKey && window._gameDevLastSelected) {
+            const anchor = window._gameDevLastSelected;
+            if (anchor.key === key && anchor.index !== null && index !== null) {
+                const lo = Math.min(anchor.index, index);
+                const hi = Math.max(anchor.index, index);
+                const range = [];
+                for (let i = lo; i <= hi; i++) {
+                    range.push({ key, index: i });
+                }
+                const existing = sels.filter(s => s.key !== key);
+                window.gameDevSelectedEntities = [...existing, ...range];
+            } else {
+                window.gameDevSelectedEntities = [...sels, entry];
+            }
         } else {
-            window.gameDevSelectedEntity = { key, index };
+            if (isSelected && sels.length === 1) {
+                window.gameDevSelectedEntities = [];
+            } else {
+                window.gameDevSelectedEntities = [entry];
+            }
         }
+
+        window._gameDevLastSelected = entry;
         this._syncSelection();
     }
 
     _syncSelection() {
-        const sel = window.gameDevSelectedEntity;
+        const sels = window.gameDevSelectedEntities;
         const rows = this.shadowRoot.querySelectorAll('[data-select]');
         rows.forEach(row => {
             const attr = row.getAttribute('data-select');
-            let matches = false;
-            if (sel) {
-                if (sel.index !== null) {
-                    matches = attr === `${sel.key}[${sel.index}]`;
-                } else {
-                    matches = attr === sel.key;
-                }
-            }
+            const matches = sels.some(sel => {
+                if (sel.index !== null) return attr === `${sel.key}[${sel.index}]`;
+                return attr === sel.key;
+            });
             row.classList.toggle('selected', matches);
         });
     }

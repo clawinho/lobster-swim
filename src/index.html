@@ -116,7 +116,7 @@
             document.getElementById('dev-panel').style.display = devPanelOpen ? 'flex' : 'none';
             if (!devPanelOpen) {
                 // Closing dev panel: unpause and hide inspector
-                window.gameDevSelectedEntity = null;
+                window.gameDevSelectedEntities = [];
                 window.gameDevSetPaused?.(false);
                 document.getElementById('pause-btn').textContent = '⏸ PAUSE';
                 document.querySelector('entity-inspector')?.hide();
@@ -163,7 +163,7 @@
         function devAddLife() { window.gameDevAddLife?.(); }
         function devRemoveLife() { window.gameDevRemoveLife?.(); }
 
-        // Canvas click: pick entity in dev mode
+        // Canvas click: pick entity in dev mode (supports Ctrl/Shift multi-select)
         document.getElementById('game').addEventListener('click', (e) => {
             if (!devPanelOpen) return;
             const el = document.getElementById('game');
@@ -173,7 +173,35 @@
             const cx = (e.clientX - rect.left) * scaleX;
             const cy = (e.clientY - rect.top) * scaleY;
             const hit = window.gameDevPickEntityAt?.(cx, cy);
-            window.gameDevSelectedEntity = hit;
+
+            if (e.ctrlKey || e.metaKey) {
+                if (hit) {
+                    const sels = window.gameDevSelectedEntities;
+                    const exists = sels.some(s => s.key === hit.key && s.index === hit.index);
+                    if (exists) {
+                        window.gameDevSelectedEntities = sels.filter(s => !(s.key === hit.key && s.index === hit.index));
+                    } else {
+                        window.gameDevSelectedEntities = [...sels, hit];
+                    }
+                    window._gameDevLastSelected = hit;
+                }
+            } else if (e.shiftKey && window._gameDevLastSelected && hit) {
+                const anchor = window._gameDevLastSelected;
+                if (anchor.key === hit.key && anchor.index !== null && hit.index !== null) {
+                    const lo = Math.min(anchor.index, hit.index);
+                    const hi = Math.max(anchor.index, hit.index);
+                    const range = [];
+                    for (let i = lo; i <= hi; i++) range.push({ key: hit.key, index: i });
+                    const existing = window.gameDevSelectedEntities.filter(s => s.key !== hit.key);
+                    window.gameDevSelectedEntities = [...existing, ...range];
+                } else if (hit) {
+                    window.gameDevSelectedEntities = [...window.gameDevSelectedEntities, hit];
+                }
+                window._gameDevLastSelected = hit;
+            } else {
+                window.gameDevSelectedEntities = hit ? [hit] : [];
+                window._gameDevLastSelected = hit;
+            }
         });
     </script>
 
