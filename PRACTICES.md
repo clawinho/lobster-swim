@@ -16,12 +16,17 @@ src/
 │   │   ├── GameOver.js
 │   │   └── Leaderboard.js
 │   └── entities/
-│       ├── hero/           # Lobster + versions
-│       ├── enemies/        # Hook, Cage, Net, Fork + versions
-│       ├── pickups/        # Bubble, GoldenFish + versions
-│       ├── effects/        # Particle.js
-│       ├── mechanics/      # Magnetism, Invincibility, Difficulty
-│       └── environments/   # Ocean, Tank, Kitchen backgrounds
+│       ├── utils/              # Shared helpers (colors.js, etc.)
+│       ├── hero/
+│       │   └── lobster/
+│       │       ├── actor/Lobster.js        # Game class
+│       │       ├── render/Lobster.v001.js  # Versioned renderers
+│       │       └── preview.js              # Asset library manifest
+│       ├── enemies/            # hook/, cage/, net/, fork/, seagull/, beachball/
+│       ├── pickups/            # bubble/, goldfish/, pearl/
+│       ├── effects/            # particle/
+│       ├── mechanics/          # magnetism/, invincibility/, difficulty/, ocean-current/
+│       └── environments/       # ocean/, tank/, kitchen/
 ├── pages/
 │   ├── assets.html     # Asset library with live previews
 │   ├── commits.html    # Changelog
@@ -34,15 +39,19 @@ src/
 
 When adding something new to the game, **always follow the entity pattern**:
 
-### 1. Create versioned entity file
+### 1. Create entity folder
 ```
-src/js/entities/<category>/versions/<Name>.v001.js
+src/js/entities/<category>/<entity-name>/
+├── actor/<Name>.js       # Game class (imports current renderer)
+├── render/<Name>.v001.js # Versioned renderer (pure drawing)
+└── preview.js            # Asset library manifest (auto-discovered)
 ```
 
 Categories: `hero`, `enemies`, `pickups`, `effects`, `mechanics`, `environments`
 
-### 2. Entity file structure
+### 2. Add versioned renderer
 ```js
+// src/js/entities/<category>/<entity-name>/render/<Name>.v001.js
 /**
  * <Name>.v001.js - Description
  * @version 001
@@ -52,77 +61,64 @@ export function render(ctx, x, y, ...params) {
     // Drawing code
 }
 
-export const meta = { 
-    version: "001", 
-    name: "Entity Name", 
+export const meta = {
+    version: "001",
+    name: "Entity Name",
     current: true,
-    features: ["feature1", "feature2"] 
+    features: ["feature1", "feature2"]
 };
 ```
 
-### 3. Export from index
-Add to `src/js/entities/<category>/index.js` or create main `<Name>.js` that imports the current version.
-
-### 4. Add to assets library (REQUIRED)
-Every entity must be previewable in the assets page:
-
-a) Add canvas in HTML:
-```html
-<div class="asset-card" data-entity="name">
-    <div class="version-tabs">
-        <span class="version-tab active" data-version="001">v001<span class="star">★</span></span>
-    </div>
-    <div class="asset-preview"><canvas id="name-canvas" width="200" height="150"></canvas></div>
-    <div class="asset-info">
-        <h3>Name</h3><p>Description</p>
-        <div class="controls">
-            <div class="control-row"><label>Param</label><input type="range" id="name-param" min="0" max="100" value="50"><span class="value">50</span></div>
-        </div>
-    </div>
-</div>
-```
-
-b) Import renderer in assets.html:
+### 3. Add actor (game class)
 ```js
-import { render as nameV001 } from '../js/entities/<category>/versions/<Name>.v001.js';
+// src/js/entities/<category>/<entity-name>/actor/<Name>.js
+import { render } from '../render/<Name>.v001.js';
+// Owns state, physics, collision detection. Delegates drawing to renderer.
 ```
 
-c) Add to renderers object:
+### 4. Export from category index
+Add to `src/js/entities/<category>/index.js`.
+
+### 5. Add to assets library (REQUIRED)
+Create a `preview.js` in your entity directory. The asset library auto-discovers it via `import.meta.glob`.
+
 ```js
-'name-001': (c,x,y,param) => nameV001(c,x,y,param),
+// src/js/entities/<category>/<name>/preview.js
+import { render as v001 } from './render/<Name>.v001.js';
+
+export const manifest = {
+    id: 'name',               // unique id
+    name: 'Display Name',     // shown in card
+    description: 'What it does.',
+    category: '<category>',   // hero | enemies | pickups | environments | mechanics
+    tags: [],                 // optional display tags
+    configKey: 'configKey',   // key into ENTITY_CONFIG (null if none)
+};
+
+export const defaults = { size: 50 };  // mutable state for sliders + preview
+
+export const versions = [
+    {
+        meta: { version: '001', name: 'Version Name', current: true },
+        preview: (ctx, w, h, frame, state) => v001(ctx, w / 2, h / 2, state.size),
+    },
+];
+
+// Optional: render-only controls not in ENTITY_CONFIG
+export const renderControls = [
+    { key: 'size', type: 'range', min: 10, max: 100, value: 50, label: 'Size' },
+];
 ```
 
-d) Add to params and selectedVersions:
-```js
-params.nameParam = 50;
-selectedVersions.name = '001';
-```
+That's it — no HTML, no manual wiring. The `asset-library.js` module handles canvas creation, version tabs, slider generation, and the animate loop.
 
-e) Add canvas to canvases object:
-```js
-canvases.name = document.getElementById('name-canvas');
-```
-
-f) Add render call in animate():
-```js
-if(c('name')) {
-    const r = renderers[`name-${selectedVersions.name}`];
-    if(r) r(c('name'), 100, 75, params.nameParam);
-}
-```
-
-g) Wire slider in sliderConfig:
-```js
-['name-param', 'nameParam'],
-```
-
-### 5. Version iteration
+### 6. Version iteration
 When improving an entity:
-- Create `<Name>.v002.js` with improvements
-- Add new version tab to assets page
-- Update renderers object with new version
-- Test both versions work via tabs
+- Create `render/<Name>.v002.js` with improvements
+- Add the new version to the `versions` array in `preview.js`
+- Test both versions work via tabs in the asset library
 - Set `@current true` on new version when ready
+- Update the actor's import to point to the new renderer
 
 ## Critical Lessons Learned
 
@@ -135,28 +131,14 @@ When improving an entity:
 - NOT from `/var/www/html/`
 - Check nginx config if confused: `cat /etc/nginx/sites-enabled/default`
 
-### 3. Asset page slider wiring pattern
-When adding a slider to assets.html:
-1. Add HTML slider with id: `<input type="range" id="entity-param">`
-2. Add to params object: `params.entityParam = defaultValue`
-3. Add to sliderConfig array: `['entity-param', 'entityParam']`
-4. Pass param to renderer in animate(): `renderer(ctx, x, y, params.entityParam)`
-5. **Update renderer wrapper** in renderers object to accept and pass the param
-
-Common mistake: Renderer wrapper ignores extra params!
-```js
-// BAD - ignores shimmer:
-'fish-002': (c,x,y,t) => fishV002(c,x,y,t,15,1,5)
-
-// GOOD - passes shimmer through:
-'fish-002': (c,x,y,t,size,dir,shimmer) => fishV002(c,x,y,t,size||15,dir||1,shimmer||5)
-```
+### 3. Asset library is auto-discovered
+The asset library (`pages/assets.html`) uses `import.meta.glob` to find all `preview.js` files.
+No manual slider wiring, canvas registration, or renderers object needed.
+See "Add to assets library" above for the `preview.js` contract.
 
 ### 4. Entity version tabs
-- Each card needs `data-entity="name"` attribute
-- Tabs need `data-version="00X"` attribute
-- selectedVersions object tracks current version per entity
-- animate() uses `renderers[\`entity-${selectedVersions.entity}\`]`
+Version tabs are generated automatically from the `versions` array in each `preview.js`.
+Mark the active version with `current: true` in the version's `meta` object.
 
 ### 5. Web Components (like BottomNav)
 - Use Shadow DOM for style encapsulation
@@ -236,13 +218,15 @@ Check the actual git history, not what you think you remember.
 ```
 src/js/entities/
 ├── utils/
-│   ├── colors.js      # hslToRgba, COLOR_PRESETS
-│   ├── math.js        # lerp, clamp, distance, etc.
-│   └── animation.js   # easing functions, state helpers
+│   └── colors.js          # hslToRgba, COLOR_PRESETS
 ├── hero/
-│   ├── Lobster.js     # Game class (imports from versions/)
-│   └── versions/      # Renderers only
+│   └── lobster/
+│       ├── actor/Lobster.js        # Game class (imports renderer + utils)
+│       ├── render/Lobster.v004.js  # Current renderer (import from ../../utils/)
+│       └── preview.js
 ├── pickups/
-│   ├── Bubble.js      # Game class (imports renderer + utils)
-│   └── versions/      # Renderers (import from ../utils/)
+│   └── bubble/
+│       ├── actor/Bubble.js         # Game class (imports renderer + utils)
+│       ├── render/Bubble.v002.js   # Current renderer
+│       └── preview.js
 ```

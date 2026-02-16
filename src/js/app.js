@@ -45,7 +45,7 @@ let canvas, ctx, audio;
 let player, bubbles, hooks, cages, nets, forks, seagulls, fish, pearl, oceanCurrent, beachBalls;
 let gameSessionId = null;
 let score = 0, lives = 3, highScore = 0;
-let gameOver = false, gameStarted = false;
+let gameOver = false, gameStarted = false, paused = false;
 let newBestTimer = 0; // For "NEW BEST!" celebration
 let deathAnimating = false, deathTimer = 0, deathRotation = 0; // Death animation state
 let levelTransition = false, levelTransitionTimer = 0, transitionLevel = 0; // Level transition state
@@ -240,6 +240,7 @@ async function startGame() {
     lastHookThreshold = 0;
     fishSpawnTimer = 0;
     particles = [];
+    paused = false;
     deathAnimating = false;
     deathTimer = 0;
     deathRotation = 0;
@@ -735,7 +736,26 @@ function render() {
     
     // Particles (on top of everything)
     particles.forEach(p => p.render(ctx));
-    
+
+    // Dev mode: draw selection bounding boxes
+    const sels = window.gameDevSelectedEntities;
+    if (sels.length > 0 && devPanelOpen) {
+        const entities = window.gameDevGetEntities();
+        ctx.save();
+        ctx.strokeStyle = '#ff4500';
+        ctx.lineWidth = 2;
+        ctx.setLineDash([6, 3]);
+        for (const sel of sels) {
+            const raw = entities[sel.key];
+            const entity = sel.index !== null ? raw?.[sel.index] : raw;
+            const bounds = entity ? getEntityBounds(sel.key, entity) : null;
+            if (bounds) {
+                ctx.strokeRect(bounds.x - 4, bounds.y - 4, bounds.width + 8, bounds.height + 8);
+            }
+        }
+        ctx.restore();
+    }
+
     // Score popups
     scorePopups.forEach(p => {
         const alpha = Math.min(1, p.timer / 15);
@@ -917,6 +937,21 @@ function render() {
         ctx.restore();
     }
     
+    // Paused overlay
+    if (paused) {
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+        ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+        ctx.save();
+        ctx.font = 'bold 48px monospace';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillStyle = '#ff4500';
+        ctx.shadowColor = '#ff4500';
+        ctx.shadowBlur = 20;
+        ctx.fillText('PAUSED', CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2);
+        ctx.restore();
+    }
+
     ctx.restore();
 }
 
@@ -926,10 +961,10 @@ function renderBackground() {
 
 function gameLoop() {
     if (!gameStarted) return;
-    
-    update();
+
+    if (!paused) update();
     render();
-    
+
     // Continue loop during death animation or normal play
     if (!gameOver || deathAnimating) {
         requestAnimationFrame(gameLoop);
@@ -1074,4 +1109,63 @@ window.gameDevAddLife = () => {
 window.gameDevRemoveLife = () => {
     if (!gameStarted) return;
     loseLife();
+};
+
+window.gameDevSetPaused = (val) => {
+    if (!gameStarted || gameOver) return;
+    paused = val;
+};
+window.gameDevIsPaused = () => paused;
+
+window.gameDevGetEntities = () => ({
+    player, bubbles, hooks, cages, nets, forks, fish, pearl, oceanCurrent, particles
+});
+
+window.gameDevSelectedEntities = [];
+window._gameDevLastSelected = null;
+
+function getEntityBounds(key, entity) {
+    if (!entity) return null;
+    if (entity.getBounds) return entity.getBounds();
+    if (entity.getHitbox) return entity.getHitbox();
+    if (entity.getHookPosition) {
+        const p = entity.getHookPosition();
+        return { x: p.x - p.radius, y: p.y - p.radius, width: p.radius * 2, height: p.radius * 2 };
+    }
+    if (entity.x !== undefined && entity.y !== undefined) {
+        const s = entity.size || 10;
+        return { x: entity.x - s, y: entity.y - s, width: s * 2, height: s * 2 };
+    }
+    return null;
+}
+
+window.gameDevPickEntityAt = (canvasX, canvasY) => {
+    const entities = window.gameDevGetEntities();
+    if (!entities) return null;
+
+    let best = null;
+    let bestArea = Infinity;
+
+    const check = (key, entity, index) => {
+        const bounds = getEntityBounds(key, entity);
+        if (!bounds) return;
+        if (canvasX >= bounds.x && canvasX <= bounds.x + bounds.width &&
+            canvasY >= bounds.y && canvasY <= bounds.y + bounds.height) {
+            const area = bounds.width * bounds.height;
+            if (area < bestArea) {
+                bestArea = area;
+                best = { key, index };
+            }
+        }
+    };
+
+    const arrayKeys = ['hooks', 'cages', 'nets', 'forks', 'bubbles', 'particles'];
+    for (const key of arrayKeys) {
+        (entities[key] || []).forEach((e, i) => check(key, e, i));
+    }
+    if (entities.player) check('player', entities.player, null);
+    if (entities.fish) check('fish', entities.fish, null);
+    if (entities.pearl) check('pearl', entities.pearl, null);
+
+    return best;
 };
