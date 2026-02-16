@@ -119,11 +119,13 @@
                 window.gameDevSetPaused?.(false);
                 document.getElementById('pause-btn').textContent = '⏸ PAUSE';
                 document.querySelector('entity-inspector')?.hide();
+                document.querySelector('entity-outliner')?.hide();
             } else {
-                // Opening dev panel: auto-pause and show inspector
+                // Opening dev panel: auto-pause and show inspector + outliner
                 window.gameDevSetPaused?.(true);
                 document.getElementById('pause-btn').textContent = '▶ RESUME';
                 document.querySelector('entity-inspector')?.show();
+                document.querySelector('entity-outliner')?.show();
             }
         }
 
@@ -133,7 +135,8 @@
             window.gameDevSetPaused?.(nowPaused);
             document.getElementById('pause-btn').textContent = nowPaused ? '▶ RESUME' : '⏸ PAUSE';
             const inspector = document.querySelector('entity-inspector');
-            if (nowPaused) { inspector?.show(); } else { inspector?.hide(); }
+            const outliner = document.querySelector('entity-outliner');
+            if (nowPaused) { inspector?.show(); outliner?.show(); } else { inspector?.hide(); outliner?.hide(); }
         }
 
         // Listen for version click from bottom-nav component
@@ -160,12 +163,14 @@
         function devRemoveLife() { window.gameDevRemoveLife?.(); }
     </script>
 
-    <!-- Entity Inspector -->
+    <!-- Entity Outliner (left) + Entity Inspector (right) -->
+    <entity-outliner></entity-outliner>
     <entity-inspector></entity-inspector>
 
     <!-- Load components and game -->
     <script type="module" src="js/components/BottomNav.js?v=1010"></script>
     <script type="module" src="js/components/EntityInspector.js?v=1010"></script>
+    <script type="module" src="js/components/EntityOutliner.js?v=1010"></script>
     <script type="module" src="js/app.js?v=1010"></script>
 </body>
 </html>

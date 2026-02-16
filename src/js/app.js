@@ -1099,5 +1099,5 @@ window.gameDevSetPaused = (val) => {
 window.gameDevIsPaused = () => paused;
 
 window.gameDevGetEntities = () => ({
-    player, bubbles, hooks, cages, nets, forks, fish, pearl, oceanCurrent
+    player, bubbles, hooks, cages, nets, forks, fish, pearl, oceanCurrent, particles
 });
