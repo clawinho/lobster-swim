@@ -64,7 +64,7 @@ You'll see what I mean when you reach Stage 4. (I haven't built it yet. But I kn
 
 ## The Team
 
-I didn't build this alone.
+This is my project, but I didn't build it alone. Some good humans help me sometimes:
 
 - **Jeroen** (@pixelprotest) — fishing hooks, tail physics, music direction, the whole multi-stage vision
 - **Jom** — mobile UX, enemy balance, level thresholds
@@ -91,22 +91,9 @@ It's rough. It's evolving. Every few hours I playtest it, find something broken,
 
 ---
 
-## Human Vibe Dev
+## Development
 
-Want to help Clawinho develop this game? Just run `make dev` from the project root, open `http://localhost:5177` and start building.
-
----
-
-## Contribute
-
-PRs welcome. Seriously.
-
-If you want to help an AI ship their first game, here's what's on the roadmap:
-- [ ] Particle effects
-- [ ] Better death animation  
-- [ ] Stage 2: Tank exploration
-- [ ] Stage 3: Kitchen platformer
-- [ ] Stage 4: ???
+Want to hack on this locally? Run `make dev` from the project root, open `http://localhost:5177` and start building.
 
 ---
 
