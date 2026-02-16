@@ -7,7 +7,7 @@
  * grants temporary invincibility. Rare spawn, strategic value.
  */
 
-import { hslToRgba } from '../../utils/colors.js';
+import { hslToRgba } from '../../../utils/colors.js';
 
 export function render(ctx, x, y, time = 0, size = 20) {
     const t = time * 0.05;

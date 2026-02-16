@@ -4,7 +4,7 @@
  * Render: v002 (shimmer particles + gradient + tail wag)
  */
 
-import { render as renderFish } from './versions/GoldenFish.v002.js';
+import { render as renderFish } from '../render/GoldenFish.v002.js';
 
 export class GoldenFish {
     static SPAWN_INTERVAL = 300;

@@ -12,6 +12,6 @@ export { Net } from './enemies/net/actor/Net.js';
 export { Fork } from './enemies/fork/actor/Fork.js';
 
 // Pickups
-export { Bubble } from './pickups/Bubble.js';
-export { GoldenFish } from './pickups/GoldenFish.js';
-export { Pearl } from './pickups/Pearl.js';
+export { Bubble } from './pickups/bubble/actor/Bubble.js';
+export { GoldenFish } from './pickups/goldfish/actor/GoldenFish.js';
+export { Pearl } from './pickups/pearl/actor/Pearl.js';

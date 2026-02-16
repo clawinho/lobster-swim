@@ -3,7 +3,7 @@
  * @version 002
  * @current true
  */
-import { hslToRgba, resolveHue, COLOR_PRESETS } from "../../utils/colors.js";
+import { hslToRgba, resolveHue, COLOR_PRESETS } from "../../../utils/colors.js";
 
 /**
  * @param {CanvasRenderingContext2D} ctx

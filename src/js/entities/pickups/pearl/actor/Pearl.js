@@ -3,7 +3,7 @@
  * Imports renderer from versioned file (DRY principle)
  */
 
-import { render as renderPearl } from './versions/Pearl.v001.js';
+import { render as renderPearl } from '../render/Pearl.v001.js';
 
 export class Pearl {
     constructor(x, y) {

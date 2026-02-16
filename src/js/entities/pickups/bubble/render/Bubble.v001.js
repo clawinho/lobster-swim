@@ -2,7 +2,7 @@
  * Bubble.v001.js - Simple solid bubble
  * @version 001
  */
-import { hslToRgba, resolveHue } from "../../utils/colors.js";
+import { hslToRgba, resolveHue } from "../../../utils/colors.js";
 
 export function render(ctx, x, y, size, time, color = "blue") {
     const hue = resolveHue(color);

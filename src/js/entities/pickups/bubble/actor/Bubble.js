@@ -3,7 +3,7 @@
  * Points collectible with magnetism effect when player is nearby
  * Rendering delegated to versioned renderer (DRY)
  */
-import { render as renderBubble } from "./versions/Bubble.v002.js";
+import { render as renderBubble } from "../render/Bubble.v002.js";
 
 export class Bubble {
     static MAGNET_RADIUS = 80;
