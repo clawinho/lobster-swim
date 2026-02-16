@@ -3,7 +3,7 @@
  */
 
 import { Lobster, Hook, Cage, Bubble, GoldenFish, Net, Fork, Pearl } from './entities/index.js';
-import { Particle } from './entities/effects/Particle.js';
+import { Particle } from './entities/effects/particle/actor/Particle.js';
 import { Audio } from './audio-module.js';
 import { OceanCurrent } from './entities/mechanics/ocean-current/actor/OceanCurrent.js';
 import { Ocean } from './entities/environments/ocean/actor/Ocean.js';
