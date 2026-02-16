@@ -2,7 +2,7 @@
  * app.js - Main application (uses regular DOM, modular entities)
  */
 
-import { Lobster, Hook, Cage, Bubble, GoldenFish, Net, Fork, Pearl } from './entities/index.js';
+import { Lobster, Hook, Cage, Bubble, GoldenFish, Net, Fork, Pearl, Seagull } from './entities/index.js';
 import { Particle } from './entities/effects/particle/actor/Particle.js';
 import { Audio } from './audio-module.js';
 import { OceanCurrent } from './entities/mechanics/ocean-current/actor/OceanCurrent.js';
@@ -42,7 +42,7 @@ const COMBO_MESSAGES = ['', 'Nice!', 'Great!', 'Awesome!', 'Amazing!', 'INCREDIB
 
 // Game state
 let canvas, ctx, audio;
-let player, bubbles, hooks, cages, nets, forks, fish, pearl, oceanCurrent;
+let player, bubbles, hooks, cages, nets, forks, seagulls, fish, pearl, oceanCurrent;
 let gameSessionId = null;
 let score = 0, lives = 3, highScore = 0;
 let gameOver = false, gameStarted = false;
@@ -262,6 +262,7 @@ async function startGame() {
     hooks = Hook.create(CANVAS_WIDTH, 2);
     nets = [];
     forks = [];
+    seagulls = Seagull.create(CANVAS_WIDTH, CANVAS_HEIGHT, 2); // Diving seagulls
     fish = null;
     pearl = null;
     pearlSpawnTimer = 0;
@@ -568,6 +569,16 @@ function update() {
             }
         });
     }
+
+    // Seagulls (Ocean level only - Beach Shallows danger)
+    if (currentLevel === 1 && seagulls) {
+        seagulls.forEach(gull => {
+            gull.update(player.x, player.y, CANVAS_WIDTH, CANVAS_HEIGHT);
+            if (gull.checkCollision(player, invincible)) {
+                loseLife();
+            }
+        });
+    }
     
     // Golden fish
     fishSpawnTimer++;
@@ -681,6 +692,7 @@ function render() {
 
     if (LEVELS[currentLevel].enemies.nets) nets.forEach(n => n.render(ctx));
     if (LEVELS[currentLevel].enemies.forks) forks.forEach(f => f.render(ctx));
+    if (currentLevel === 1 && seagulls) seagulls.forEach(g => g.render(ctx));
     if (fish) fish.render(ctx);
     if (pearl) pearl.render(ctx);
     
