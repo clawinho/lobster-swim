@@ -67,21 +67,14 @@
                 <div class="version-tabs">
                     <span class="version-tab" data-version="001">v001</span>
                     <span class="version-tab" data-version="002">v002</span>
-                    <span class="version-tab active" data-version="003">v003<span class="star">★</span></span>
+                    <span class="version-tab" data-version="003">v003</span>
+                    <span class="version-tab active" data-version="004">v004<span class="star">★</span></span>
                 </div>
                 <div class="asset-preview"><canvas id="lobster-canvas" width="200" height="150"></canvas></div>
                 <div class="asset-info">
                     <h3>Lobster</h3><p>Player character with tail physics.</p>
                     <div class="controls">
                         <div class="control-row"><label>Size</label><input type="range" id="lobster-size" min="15" max="60" value="30"><span class="value">30</span></div>
-                        <div class="control-row"><label>Tail wag</label><input type="range" id="lobster-wag" min="1" max="20" value="8"><span class="value">8</span></div>
-                        <div class="control-row"><label>Animation</label>
-                            <div class="anim-buttons">
-                                <button class="anim-btn active" data-anim="normal">Normal</button>
-                                <button class="anim-btn" data-anim="invincible">Invincible</button>
-                                <button class="anim-btn" data-anim="death">Death</button>
-                            </div>
-                        </div>
                     </div>
             </div>
         </div>
@@ -208,24 +201,21 @@
         <div class="asset-grid">
             <div class="asset-card" data-entity="ocean">
                 <div class="version-tabs">
-                    <span class="version-tab active" data-version="preview">Preview</span>
-                    <span class="version-tab" data-version="v001">v001<span class="star">★</span></span>
+                    <span class="version-tab active" data-version="v001">v001<span class="star">★</span></span>
                 </div>
                 <div class="asset-preview"><canvas id="ocean-bg" width="200" height="150"></canvas></div>
                 <div class="asset-info"><h3>Ocean</h3><p>Level 1 — The Ocean</p></div>
             </div>
             <div class="asset-card" data-entity="tank">
                 <div class="version-tabs">
-                    <span class="version-tab active" data-version="preview">Preview</span>
-                    <span class="version-tab" data-version="v001">v001<span class="star">★</span></span>
+                    <span class="version-tab active" data-version="v001">v001<span class="star">★</span></span>
                 </div>
                 <div class="asset-preview"><canvas id="tank-bg" width="200" height="150"></canvas></div>
                 <div class="asset-info"><h3>Tank</h3><p>Level 2 — Seafood Tank</p></div>
             </div>
             <div class="asset-card" data-entity="kitchen">
                 <div class="version-tabs">
-                    <span class="version-tab active" data-version="preview">Preview</span>
-                    <span class="version-tab" data-version="v001">v001<span class="star">★</span></span>
+                    <span class="version-tab active" data-version="v001">v001<span class="star">★</span></span>
                 </div>
                 <div class="asset-preview"><canvas id="kitchen-bg" width="200" height="150"></canvas></div>
                 <div class="asset-info"><h3>Kitchen</h3><p>Level 3 — The Kitchen</p></div>
@@ -359,6 +349,7 @@
         import { render as lobsterV001 } from '../js/entities/hero/versions/Lobster.v001.js';
         import { render as lobsterV002 } from '../js/entities/hero/versions/Lobster.v002.js';
         import { render as lobsterV003 } from '../js/entities/hero/versions/Lobster.v003.js';
+        import { render as lobsterV004 } from '../js/entities/hero/versions/Lobster.v004.js';
         import { render as fishV001 } from '../js/entities/pickups/versions/GoldenFish.v001.js';
         import { render as fishV002 } from '../js/entities/pickups/versions/GoldenFish.v002.js';
         import { render as bubbleV001 } from '../js/entities/pickups/versions/Bubble.v001.js';
@@ -367,12 +358,9 @@
         import { render as hookV002 } from '../js/entities/enemies/versions/Hook.v002.js';
         import { render as cageV001 } from '../js/entities/enemies/versions/Cage.v001.js';
         import { render as cageV002 } from '../js/entities/enemies/versions/Cage.v002.js';
-        import { renderOceanPreview } from '../js/entities/environments/Ocean.js';
-        import { renderTankPreview } from '../js/entities/environments/Tank.js';
-        import { renderKitchenPreview } from '../js/entities/environments/Kitchen.js';
-        import { render as oceanLevelV001 } from '../js/entities/environments/versions/OceanLevel.v001.js';
-        import { render as tankLevelV001 } from '../js/entities/environments/versions/TankLevel.v001.js';
-        import { render as kitchenLevelV001 } from '../js/entities/environments/versions/KitchenLevel.v001.js';
+        import { render as oceanV001 } from '../js/entities/environments/versions/Ocean.v001.js';
+        import { render as tankV001 } from '../js/entities/environments/versions/Tank.v001.js';
+        import { render as kitchenV001 } from '../js/entities/environments/versions/Kitchen.v001.js';
         import { OceanLevel } from '../js/entities/environments/OceanLevel.js';
         import { TankLevel } from '../js/entities/environments/TankLevel.js';
         import { KitchenLevel } from '../js/entities/environments/KitchenLevel.js';
@@ -386,13 +374,28 @@
         const renderers = {
             'lobster-001': (c,x,y,s,t) => lobsterV001(c,x,y,s),
             'lobster-002': (c,x,y,s,t) => lobsterV002(c,x,y,s),
-            'lobster-003': (c,x,y,s,t,wag,anim) => lobsterV003(c,x,y,s,t,wag,anim),
+            'lobster-003': (c,x,y,s,t) => {
+                const angle = 0;
+                const segs = [];
+                for (let i = 0; i < 3; i++) {
+                    segs.push({ x: x - s * (0.6 + i * 0.4), y: y, angle: 0 });
+                }
+                lobsterV003(c, x, y, s, angle, segs, false, 0);
+            },
+            'lobster-004': (c,x,y,s,t) => {
+                const angle = 0;
+                const segs = [];
+                for (let i = 0; i < 3; i++) {
+                    segs.push({ x: x - s * (0.6 + i * 0.4), y: y, angle: 0 });
+                }
+                lobsterV004(c, x, y, s, angle, segs, false, 0);
+            },
             'fish-001': (c,x,y,t,size,dir,shimmer) => fishV001(c,x,y,size||15,dir||1),
             'fish-002': (c,x,y,t,size,dir,shimmer) => fishV002(c,x,y,t,size||15,dir||1,shimmer||5),
             'bubble-001': (c,x,y,s,t,color) => bubbleV001(c,x,y,s,t,color),
             'bubble-002': (c,x,y,s,t,color) => bubbleV002(c,x,y,s,t,color),
             'hook-001': (c,x,l,t,swing) => hookV001(c,x,l),
-            'hook-002': (c,x,l,t,swing) => hookV002(c,x,l,t,swing||10),
+            'hook-002': (c,x,l,t,swing) => { const hx = x + Math.sin(t * 0.03 * (swing||10) / 10) * 15; hookV002(c,x,hx,l); },
             'cage-001': (c,x,y,s) => cageV001(c,x,y,s),
             'cage-002': (c,x,y,s) => cageV002(c,x,y,s),
         };
@@ -401,7 +404,7 @@
         
         
         let frame = 0, params = {
-            lobsterSize: 30, lobsterWag: 8, lobsterAnim: "normal",
+            lobsterSize: 30,
             fishShimmer: 5,
             hookSwing: 10, hookLine: 100,
             cageSize: 50, netWidth: 80, forkSize: 40,
@@ -413,7 +416,7 @@
         
         // Track selected version per entity
         const selectedVersions = {
-            lobster: '003',
+            lobster: '004',
             fish: '001',
             bubble: '001',
             hook: '002',
@@ -421,9 +424,9 @@
             net: '001',
             fork: '001',
             particle: '001',
-            ocean: 'preview',
-            tank: 'preview',
-            kitchen: 'preview'
+            ocean: 'v001',
+            tank: 'v001',
+            kitchen: 'v001'
         };
         
         const canvases = {};
@@ -446,7 +449,7 @@
             // Render based on selected version
             if(c('lobster')) {
                 const r = renderers[`lobster-${selectedVersions.lobster}`];
-                if(r) r(c('lobster'), 100, 80, params.lobsterSize, frame, params.lobsterWag, params.lobsterAnim);
+                if(r) r(c('lobster'), 100, 80, params.lobsterSize, frame);
             }
             if(c('fish')) {
                 const r = renderers[`fish-${selectedVersions.fish}`];
@@ -460,7 +463,7 @@
                 const r = renderers[`cage-${selectedVersions.cage}`];
                 if(r) r(c('cage'), 100, 75, params.cageSize);
             }
-            if(c('net')) netV001(c('net'), 100, 75, params.netWidth);
+            if(c('net')) netV001(c('net'), 100 - params.netWidth/2, 45, params.netWidth, 60);
             if(c('fork')) forkV001(c('fork'), 100, 70, params.forkSize);
             if(c('bubble')) {
                 const r = renderers[`bubble-${selectedVersions.bubble}`];
@@ -468,31 +471,19 @@
             }
             if(c('particle')) renderParticle(c('particle'), 200, 150, frame, params.particleType, params.particleCount);
             if(c('ocean')) {
-                if (selectedVersions.ocean === 'v001') {
-                    c('ocean').fillStyle = OceanLevel.config.background;
-                    c('ocean').fillRect(0, 0, 200, 150);
-                    oceanLevelV001(c('ocean'), 200, 150, frame * 0.5);
-                } else {
-                    renderOceanPreview(c('ocean'), 200, 150, frame);
-                }
+                c('ocean').fillStyle = OceanLevel.config.background;
+                c('ocean').fillRect(0, 0, 200, 150);
+                oceanV001(c('ocean'), 200, 150, frame * 0.5);
             }
             if(c('tank')) {
-                if (selectedVersions.tank === 'v001') {
-                    c('tank').fillStyle = TankLevel.config.background;
-                    c('tank').fillRect(0, 0, 200, 150);
-                    tankLevelV001(c('tank'), 200, 150);
-                } else {
-                    renderTankPreview(c('tank'), 200, 150);
-                }
+                c('tank').fillStyle = TankLevel.config.background;
+                c('tank').fillRect(0, 0, 200, 150);
+                tankV001(c('tank'), 200, 150);
             }
             if(c('kitchen')) {
-                if (selectedVersions.kitchen === 'v001') {
-                    c('kitchen').fillStyle = KitchenLevel.config.background;
-                    c('kitchen').fillRect(0, 0, 200, 150);
-                    kitchenLevelV001(c('kitchen'), 200, 150);
-                } else {
-                    renderKitchenPreview(c('kitchen'), 200, 150, frame);
-                }
+                c('kitchen').fillStyle = KitchenLevel.config.background;
+                c('kitchen').fillRect(0, 0, 200, 150);
+                kitchenV001(c('kitchen'), 200, 150);
             }
             if(c('magnet')) renderMagnetism(c('magnet'), 200, 150, frame, params.magnetRadius, params.magnetStrength);
             if(c('invincibility')) renderInvincibility(c('invincibility'), 200, 150, frame, params.invulnDur);
@@ -528,8 +519,6 @@
                 const value = btn.dataset.value || btn.dataset.anim;
                 if (paramName) {
                     params[paramName] = value;
-                } else if (btn.dataset.anim) {
-                    params.lobsterAnim = btn.dataset.anim;  // backwards compat
                 }
             });
         });
@@ -543,7 +532,6 @@
         // Wire up ALL sliders
         const sliderConfig = [
             ['lobster-size', 'lobsterSize'],
-            ['lobster-wag', 'lobsterWag'],
             ['fish-shimmer', 'fishShimmer'],
             ['hook-swing', 'hookSwing'],
             ['hook-line', 'hookLine'],

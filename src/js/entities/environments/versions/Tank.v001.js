@@ -1,5 +1,5 @@
 /**
- * TankLevel.v001.js - Seafood Tank background (Level 2)
+ * Tank.v001.js - Seafood Tank background (Level 2)
  * Extracted from app.js renderBackground
  * @version 001
  * @current true

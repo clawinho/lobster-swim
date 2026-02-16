@@ -1,5 +1,5 @@
 /**
- * KitchenLevel.v001.js - Kitchen background (Level 3)
+ * Kitchen.v001.js - Kitchen background (Level 3)
  * Extracted from app.js renderBackground
  * @version 001
  * @current true

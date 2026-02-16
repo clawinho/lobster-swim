@@ -1,50 +1,45 @@
 /**
- * Lobster.v003.js - Game class rendering with real tail physics
- * @version 003
- * @current false
+ * Lobster.v004.js - Game renderer with rotated tail ellipses and bigger eyes
+ * @version 004
+ * @current true
  *
  * Renders the lobster using pre-computed tail segment positions from the game class.
- * Uses Date.now() for claw wave and antenna wave to match original game behavior.
+ * Visual style: varying segment proportions, sine-rotated ellipses, bigger eyes at (0.3, ±0.2).
+ * Uses Date.now() for claw wave, antenna wave, and subtle tail rotation.
  */
 export function render(ctx, x, y, size, angle, tailSegments, invincible, invincibleTimer) {
     if (invincible && Math.floor(invincibleTimer / 5) % 2 === 0) {
         ctx.globalAlpha = 0.4;
     }
 
-    // Draw tail segments first (behind body)
+    const tailAngle = Math.sin(Date.now() / 300) * 0.3;
+
+    // Tail segments (behind body) — v004 style: varying proportions, rotated ellipses
     ctx.fillStyle = '#cc3300';
+    for (let i = 0; i < 2; i++) {
+        const segSize = size * (0.5 - i * 0.12);
+        ctx.save();
+        ctx.translate(tailSegments[i].x, tailSegments[i].y);
+        ctx.rotate(tailSegments[i].angle);
+        ctx.beginPath();
+        ctx.ellipse(0, 0, segSize, segSize * 0.7, tailAngle * (i + 1), 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+    }
 
-    // Segment 1 (closest to body)
-    ctx.save();
-    ctx.translate(tailSegments[0].x, tailSegments[0].y);
-    ctx.rotate(tailSegments[0].angle);
-    ctx.beginPath();
-    ctx.ellipse(0, 0, size * 0.5, size * 0.35, 0, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.restore();
-
-    // Segment 2
-    ctx.save();
-    ctx.translate(tailSegments[1].x, tailSegments[1].y);
-    ctx.rotate(tailSegments[1].angle);
-    ctx.beginPath();
-    ctx.ellipse(0, 0, size * 0.35, size * 0.25, 0, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.restore();
-
-    // Tail fan (segment 3)
+    // Tail fan at segment 3 — v004 style: sine-rotated petals
     ctx.fillStyle = '#ff4500';
     ctx.save();
     ctx.translate(tailSegments[2].x, tailSegments[2].y);
     ctx.rotate(tailSegments[2].angle);
     for (let i = -2; i <= 2; i++) {
         ctx.beginPath();
-        ctx.ellipse(-8, i * 4, 8, 3, 0, 0, Math.PI * 2);
+        ctx.ellipse(-8, i * 4, 8, 3, tailAngle * 3, 0, Math.PI * 2);
         ctx.fill();
     }
     ctx.restore();
 
-    // Draw body
+    // Body
     ctx.save();
     ctx.translate(x, y);
     ctx.rotate(angle);
@@ -54,6 +49,7 @@ export function render(ctx, x, y, size, angle, tailSegments, invincible, invinci
     ctx.ellipse(0, 0, size, size * 0.6, 0, 0, Math.PI * 2);
     ctx.fill();
 
+    // Claws
     let clawWave = Math.sin(Date.now() / 200) * 0.15;
 
     // Upper claw
@@ -88,17 +84,16 @@ export function render(ctx, x, y, size, angle, tailSegments, invincible, invinci
     ctx.fill();
     ctx.restore();
 
-    // Eyes
+    // Eyes — v004 style: bigger (radius 4) at (0.3, ±0.2)
     ctx.fillStyle = '#000';
     ctx.beginPath();
-    ctx.arc(size * 0.4, -size * 0.25, 3, 0, Math.PI * 2);
-    ctx.arc(size * 0.4, size * 0.25, 3, 0, Math.PI * 2);
+    ctx.arc(size * 0.3, -size * 0.2, 4, 0, Math.PI * 2);
+    ctx.arc(size * 0.3, size * 0.2, 4, 0, Math.PI * 2);
     ctx.fill();
-
     ctx.fillStyle = '#fff';
     ctx.beginPath();
-    ctx.arc(size * 0.42, -size * 0.27, 1.5, 0, Math.PI * 2);
-    ctx.arc(size * 0.42, size * 0.23, 1.5, 0, Math.PI * 2);
+    ctx.arc(size * 0.32, -size * 0.22, 1.5, 0, Math.PI * 2);
+    ctx.arc(size * 0.32, size * 0.18, 1.5, 0, Math.PI * 2);
     ctx.fill();
 
     // Antennae
@@ -130,8 +125,8 @@ export function render(ctx, x, y, size, angle, tailSegments, invincible, invinci
 }
 
 export const meta = {
-    version: "003",
-    name: "Game Renderer (Real Tail Physics)",
-    current: true,
-    features: ["real tail physics", "animated claws", "antennae", "invincibility shield"]
+    version: "004",
+    name: "Game Renderer (Rotated Tail, Big Eyes)",
+    current: false,
+    features: ["real tail physics", "rotated tail ellipses", "bigger eyes", "animated claws", "antennae", "invincibility shield"]
 };

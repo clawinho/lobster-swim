@@ -1,7 +1,10 @@
 /**
  * Fork.js - Kitchen fork enemy (Level 3)
  * Falls from sky like danger from above
+ * Render: v001 (wooden handle, metal prongs, shine)
  */
+
+import { render as renderFork } from './versions/Fork.v001.js';
 
 export class Fork {
     constructor(x, canvasHeight = 600) {
@@ -45,27 +48,7 @@ export class Fork {
     }
 
     render(ctx) {
-        // Handle
-        ctx.fillStyle = '#8B4513';  // Brown wooden handle
-        ctx.fillRect(this.x - 4, this.y - 50, 8, 50);
-
-        // Metal part
-        ctx.fillStyle = '#c0c0c0';
-        
-        // Prongs
-        for (let i = -1; i <= 1; i++) {
-            ctx.beginPath();
-            ctx.moveTo(this.x + i * 10 - 3, this.y);
-            ctx.lineTo(this.x + i * 10 + 3, this.y);
-            ctx.lineTo(this.x + i * 10 + 1, this.y + 35);
-            ctx.lineTo(this.x + i * 10 - 1, this.y + 35);
-            ctx.closePath();
-            ctx.fill();
-        }
-        
-        // Add shine
-        ctx.fillStyle = '#ffffff44';
-        ctx.fillRect(this.x - 2, this.y, 2, 30);
+        renderFork(ctx, this.x, this.y);
     }
 
     getBounds() {
