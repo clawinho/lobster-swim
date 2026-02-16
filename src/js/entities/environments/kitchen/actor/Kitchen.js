@@ -1,10 +1,10 @@
 /**
- * KitchenLevel.js - Level 3 game class
+ * Kitchen.js - Level 3 game class
  * Self-contained level entity following the game-class + versioned-renderer pattern.
  */
-import { render as renderKitchenBg } from './versions/Kitchen.v001.js';
+import { render as renderKitchenBg } from '../render/Kitchen.v001.js';
 
-export class KitchenLevel {
+export class Kitchen {
     static config = {
         name: 'The Kitchen',
         subtitle: 'Escape the pot or become dinner',
@@ -17,7 +17,7 @@ export class KitchenLevel {
     };
 
     renderBackground(ctx, w, h, scrollX) {
-        ctx.fillStyle = KitchenLevel.config.background;
+        ctx.fillStyle = Kitchen.config.background;
         ctx.fillRect(0, 0, w, h);
         renderKitchenBg(ctx, w, h);
     }

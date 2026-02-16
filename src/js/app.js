@@ -6,9 +6,9 @@ import { Lobster, Hook, Cage, Bubble, GoldenFish, Net, Fork, Pearl } from './ent
 import { Particle } from './entities/effects/Particle.js';
 import { Audio } from './audio-module.js';
 import { OceanCurrent } from './entities/mechanics/OceanCurrent.js';
-import { OceanLevel } from './entities/environments/OceanLevel.js';
-import { TankLevel } from './entities/environments/TankLevel.js';
-import { KitchenLevel } from './entities/environments/KitchenLevel.js';
+import { Ocean } from './entities/environments/ocean/actor/Ocean.js';
+import { Tank } from './entities/environments/tank/actor/Tank.js';
+import { Kitchen } from './entities/environments/kitchen/actor/Kitchen.js';
 
 // Constants
 const CANVAS_WIDTH = 800;
@@ -16,7 +16,7 @@ const CANVAS_HEIGHT = 600;
 const INVINCIBLE_DURATION = 120;
 
 // Level entities — ordered by scoreThreshold descending for checkLevelUp iteration
-const LEVEL_ENTITIES = [new OceanLevel(), new TankLevel(), new KitchenLevel()];
+const LEVEL_ENTITIES = [new Ocean(), new Tank(), new Kitchen()];
 const LEVELS = Object.fromEntries(LEVEL_ENTITIES.map((lvl, i) => [i + 1, lvl.constructor.config]));
 
 

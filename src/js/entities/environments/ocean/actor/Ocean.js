@@ -1,10 +1,10 @@
 /**
- * OceanLevel.js - Level 1 game class
+ * Ocean.js - Level 1 game class
  * Self-contained level entity following the game-class + versioned-renderer pattern.
  */
-import { render as renderOceanBg } from './versions/Ocean.v001.js';
+import { render as renderOceanBg } from '../render/Ocean.v001.js';
 
-export class OceanLevel {
+export class Ocean {
     static config = {
         name: 'The Ocean',
         subtitle: null,
@@ -17,7 +17,7 @@ export class OceanLevel {
     };
 
     renderBackground(ctx, w, h, scrollX) {
-        ctx.fillStyle = OceanLevel.config.background;
+        ctx.fillStyle = Ocean.config.background;
         ctx.fillRect(0, 0, w, h);
         renderOceanBg(ctx, w, h, scrollX);
     }

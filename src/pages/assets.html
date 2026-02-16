@@ -358,12 +358,12 @@
         import { render as hookV002 } from '../js/entities/enemies/hook/render/Hook.v002.js';
         import { render as cageV001 } from '../js/entities/enemies/cage/render/Cage.v001.js';
         import { render as cageV002 } from '../js/entities/enemies/cage/render/Cage.v002.js';
-        import { render as oceanV001 } from '../js/entities/environments/versions/Ocean.v001.js';
-        import { render as tankV001 } from '../js/entities/environments/versions/Tank.v001.js';
-        import { render as kitchenV001 } from '../js/entities/environments/versions/Kitchen.v001.js';
-        import { OceanLevel } from '../js/entities/environments/OceanLevel.js';
-        import { TankLevel } from '../js/entities/environments/TankLevel.js';
-        import { KitchenLevel } from '../js/entities/environments/KitchenLevel.js';
+        import { render as oceanV001 } from '../js/entities/environments/ocean/render/Ocean.v001.js';
+        import { render as tankV001 } from '../js/entities/environments/tank/render/Tank.v001.js';
+        import { render as kitchenV001 } from '../js/entities/environments/kitchen/render/Kitchen.v001.js';
+        import { Ocean } from '../js/entities/environments/ocean/actor/Ocean.js';
+        import { Tank } from '../js/entities/environments/tank/actor/Tank.js';
+        import { Kitchen } from '../js/entities/environments/kitchen/actor/Kitchen.js';
         import { render as netV001 } from '../js/entities/enemies/net/render/Net.v001.js';
         import { render as forkV001 } from '../js/entities/enemies/fork/render/Fork.v001.js';
         import { render as renderMagnetism } from '../js/entities/mechanics/Magnetism.js';
@@ -471,17 +471,17 @@
             }
             if(c('particle')) renderParticle(c('particle'), 200, 150, frame, params.particleType, params.particleCount);
             if(c('ocean')) {
-                c('ocean').fillStyle = OceanLevel.config.background;
+                c('ocean').fillStyle = Ocean.config.background;
                 c('ocean').fillRect(0, 0, 200, 150);
                 oceanV001(c('ocean'), 200, 150, frame * 0.5);
             }
             if(c('tank')) {
-                c('tank').fillStyle = TankLevel.config.background;
+                c('tank').fillStyle = Tank.config.background;
                 c('tank').fillRect(0, 0, 200, 150);
                 tankV001(c('tank'), 200, 150);
             }
             if(c('kitchen')) {
-                c('kitchen').fillStyle = KitchenLevel.config.background;
+                c('kitchen').fillStyle = Kitchen.config.background;
                 c('kitchen').fillRect(0, 0, 200, 150);
                 kitchenV001(c('kitchen'), 200, 150);
             }

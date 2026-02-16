@@ -1,10 +1,10 @@
 /**
- * TankLevel.js - Level 2 game class
+ * Tank.js - Level 2 game class
  * Self-contained level entity following the game-class + versioned-renderer pattern.
  */
-import { render as renderTankBg } from './versions/Tank.v001.js';
+import { render as renderTankBg } from '../render/Tank.v001.js';
 
-export class TankLevel {
+export class Tank {
     static config = {
         name: 'Seafood Tank',
         subtitle: 'Captured... but not defeated',
@@ -17,7 +17,7 @@ export class TankLevel {
     };
 
     renderBackground(ctx, w, h, scrollX) {
-        ctx.fillStyle = TankLevel.config.background;
+        ctx.fillStyle = Tank.config.background;
         ctx.fillRect(0, 0, w, h);
         renderTankBg(ctx, w, h);
     }
