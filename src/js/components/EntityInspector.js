@@ -110,6 +110,7 @@ class EntityInspector extends HTMLElement {
         this.attachShadow({ mode: 'open' });
         this._refreshInterval = null;
         this._collapsed = {};
+        this._lastSelectionKey = '';
     }
 
     connectedCallback() {
@@ -196,6 +197,13 @@ class EntityInspector extends HTMLElement {
                 }
                 .prop-value.readonly { color: #666; }
 
+                .empty-hint {
+                    color: #444;
+                    font-style: italic;
+                    padding: 20px 12px;
+                    text-align: center;
+                }
+
                 .not-spawned {
                     color: #444;
                     padding: 4px 0;
@@ -233,11 +241,26 @@ class EntityInspector extends HTMLElement {
         content.innerHTML = '';
         this._sliderRefs = [];
 
-        for (const [key, config] of Object.entries(ENTITY_CONFIG)) {
+        const sels = window.gameDevSelectedEntities;
+        if (!sels || sels.length === 0) {
+            content.innerHTML = '<div class="empty-hint">Select an entity to inspect</div>';
+            return;
+        }
+
+        // Group selections by key, preserving order of first appearance
+        const groups = new Map();
+        for (const sel of sels) {
+            if (!groups.has(sel.key)) groups.set(sel.key, []);
+            groups.get(sel.key).push(sel.index);
+        }
+
+        for (const [key, indices] of groups) {
+            const config = ENTITY_CONFIG[key];
+            if (!config) continue;
             const entity = entities[key];
+
             const section = document.createElement('div');
             section.className = 'section';
-
             const isCollapsed = this._collapsed[key] ?? false;
 
             if (config.singleton) {
@@ -259,9 +282,10 @@ class EntityInspector extends HTMLElement {
                 }
             } else {
                 const arr = entity || [];
+                const selectedIndices = indices.filter(i => i !== null && i < arr.length);
                 section.innerHTML = `
                     <div class="section-header" data-key="${key}">
-                        <span>${config.label} (${arr.length})</span>
+                        <span>${config.label} (${selectedIndices.length}/${arr.length})</span>
                         <span class="arrow ${isCollapsed ? 'collapsed' : ''}">▼</span>
                     </div>
                     <div class="section-body ${isCollapsed ? 'collapsed' : ''}" data-section="${key}"></div>
@@ -269,13 +293,13 @@ class EntityInspector extends HTMLElement {
                 content.appendChild(section);
 
                 const body = section.querySelector(`[data-section="${key}"]`);
-                arr.forEach((inst, i) => {
+                for (const i of selectedIndices) {
                     const label = document.createElement('div');
                     label.className = 'instance-label';
                     label.textContent = `#${i + 1}`;
                     body.appendChild(label);
-                    this._buildProps(body, `${key}[${i}]`, inst, config.props);
-                });
+                    this._buildProps(body, `${key}[${i}]`, arr[i], config.props);
+                }
             }
 
             // Toggle collapse
@@ -323,6 +347,15 @@ class EntityInspector extends HTMLElement {
         const entities = window.gameDevGetEntities?.();
         if (!entities) return;
 
+        // Rebuild when selection changes
+        const sels = window.gameDevSelectedEntities;
+        const selKey = JSON.stringify(sels);
+        if (selKey !== this._lastSelectionKey) {
+            this._lastSelectionKey = selKey;
+            this._buildAll();
+            return;
+        }
+
         // Refresh all value displays
         const allValues = this.shadowRoot.querySelectorAll('[data-ref]');
         for (const span of allValues) {
@@ -340,22 +373,22 @@ class EntityInspector extends HTMLElement {
             if (current !== undefined) slider.value = current;
         }
 
-        // Rebuild if array lengths or nullable states changed
+        // Check for stale data on currently rendered (selected) entities
         let needsRebuild = false;
-        for (const [key, config] of Object.entries(ENTITY_CONFIG)) {
-            const entity = entities[key];
-            const sectionHeader = this.shadowRoot.querySelector(`[data-key="${key}"] span`);
-            if (!sectionHeader) continue;
+        if (sels && sels.length > 0) {
+            for (const sel of sels) {
+                const config = ENTITY_CONFIG[sel.key];
+                if (!config) continue;
+                const entity = entities[sel.key];
 
-            if (!config.singleton) {
-                const arr = entity || [];
-                const displayed = sectionHeader.textContent;
-                const expected = `${config.label} (${arr.length})`;
-                if (displayed !== expected) { needsRebuild = true; break; }
-            } else if (config.nullable) {
-                const body = this.shadowRoot.querySelector(`[data-section="${key}"]`);
-                const hasNotSpawned = body?.querySelector('.not-spawned');
-                if ((entity == null) !== !!hasNotSpawned) { needsRebuild = true; break; }
+                if (!config.singleton && sel.index !== null) {
+                    const arr = entity || [];
+                    if (sel.index >= arr.length) { needsRebuild = true; break; }
+                } else if (config.nullable) {
+                    const body = this.shadowRoot.querySelector(`[data-section="${sel.key}"]`);
+                    const hasNotSpawned = body?.querySelector('.not-spawned');
+                    if ((entity == null) !== !!hasNotSpawned) { needsRebuild = true; break; }
+                }
             }
         }
 
