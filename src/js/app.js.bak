@@ -531,17 +531,9 @@ function update() {
         }
     });
     
-    // Hooks - with smart dropping behavior
+    // Hooks
     hooks.forEach(hook => {
         hook.update(diff.speedMult);
-        
-        // Smart drop: if player swims beneath hook, chance to drop and snag them!
-        const hookPos = hook.getHookPosition();
-        const playerBeneath = Math.abs(player.x - hookPos.x) < 80 && player.y > hookPos.y;
-        if (playerBeneath && !hook.dropping && Math.random() < 0.003 * diff.speedMult) {
-            hook.drop();
-        }
-        
         if (hook.checkCollision(player, invincible)) {
             caught = true;
             caughtY = player.y;
