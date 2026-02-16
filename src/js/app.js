@@ -6,17 +6,19 @@ import { Lobster, Hook, Cage, Bubble, GoldenFish, Net, Fork, Pearl } from './ent
 import { Particle } from './entities/effects/Particle.js';
 import { Audio } from './audio-module.js';
 import { OceanCurrent } from './entities/mechanics/OceanCurrent.js';
+import { OceanLevel } from './entities/environments/OceanLevel.js';
+import { TankLevel } from './entities/environments/TankLevel.js';
+import { KitchenLevel } from './entities/environments/KitchenLevel.js';
 
 // Constants
 const CANVAS_WIDTH = 800;
 const CANVAS_HEIGHT = 600;
 const INVINCIBLE_DURATION = 120;
 
-const LEVELS = {
-    1: { name: 'The Ocean', background: '#001020', scoreThreshold: 0 },
-    2: { name: 'Seafood Tank', background: '#002030', scoreThreshold: 200 },
-    3: { name: 'The Kitchen', background: '#1a0a05', scoreThreshold: 500 }
-};
+// Level entities — ordered by scoreThreshold descending for checkLevelUp iteration
+const LEVEL_ENTITIES = [new OceanLevel(), new TankLevel(), new KitchenLevel()];
+const LEVELS = Object.fromEntries(LEVEL_ENTITIES.map((lvl, i) => [i + 1, lvl.constructor.config]));
+
 
 const DIFFICULTY = {
     THRESHOLDS: [100, 200, 500, 1000],
@@ -60,10 +62,6 @@ let comboFlashColor = '#ffff00'; // Color of flash
 const COMBO_FLASH_MILESTONES = [5, 8, 10]; // Combos that trigger flash
 const COMBO_FLASH_COLORS = { 5: '#ffff00', 8: '#ff8800', 10: '#ff00ff' };
 
-const LEVEL_SUBTITLES = {
-    2: "Captured... but not defeated",
-    3: "Escape the pot or become dinner"
-};
 let currentLevel = 1, invincible = true, invincibleTimer = INVINCIBLE_DURATION;
 let caught = false, caughtY = 0, screenShake = 0;
 let keys = {}, joystickDx = 0, joystickDy = 0, hasTarget = false;
@@ -228,7 +226,7 @@ async function startGame() {
     } catch(e) { gameSessionId = null; }
     titleScreen.classList.add('hidden');
     audio.init();
-    audio.startLevelMusic(1);
+    audio.startLevelMusic(LEVELS[1].musicTrack);
     
     // Reset game state
     score = 0;
@@ -288,15 +286,18 @@ function getDifficulty() {
 
 function checkLevelUp() {
     for (let lvl = 3; lvl >= 1; lvl--) {
-        if (score >= LEVELS[lvl].scoreThreshold && currentLevel < lvl) {
+        const config = LEVELS[lvl];
+        if (score >= config.scoreThreshold && currentLevel < lvl) {
             currentLevel = lvl;
-            document.body.style.background = LEVELS[lvl].background;
-            levelDisplay.textContent = LEVELS[lvl].name;
-            if (lvl === 2) nets = Net.create(2, CANVAS_WIDTH, CANVAS_HEIGHT);
-            if (lvl === 3) forks = Fork.create(3, CANVAS_WIDTH, CANVAS_HEIGHT);
-            audio.startLevelMusic(lvl);
+            document.body.style.background = config.background;
+            levelDisplay.textContent = config.name;
+            // Spawn enemies defined in spawnOnEnter
+            const spawn = config.spawnOnEnter;
+            if (spawn.nets) nets = Net.create(spawn.nets, CANVAS_WIDTH, CANVAS_HEIGHT);
+            if (spawn.forks) forks = Fork.create(spawn.forks, CANVAS_WIDTH, CANVAS_HEIGHT);
+            audio.startLevelMusic(config.musicTrack);
             audio.playLevelUp();
-            
+
             // Trigger level transition effect
             levelTransition = true;
             levelTransitionTimer = 120; // 2 seconds at 60fps
@@ -454,8 +455,8 @@ function update() {
         }
     }
     
-    // Ocean current (level 1 only - the ocean)
-    if (currentLevel === 1 && oceanCurrent) {
+    // Ocean current (only in levels with oceanCurrent mechanic)
+    if (LEVELS[currentLevel].mechanics.includes('oceanCurrent') && oceanCurrent) {
         const diff = getDifficulty();
         oceanCurrent.applyToPlayer(player, diff.speedMult, CANVAS_WIDTH, CANVAS_HEIGHT);
     }
@@ -540,8 +541,8 @@ function update() {
         }
     });
     
-    // Nets (level 2+)
-    if (currentLevel >= 2) {
+    // Nets (active when level config includes nets)
+    if (LEVELS[currentLevel].enemies.nets) {
         nets.forEach(net => {
             net.update(diff.speedMult, CANVAS_WIDTH, CANVAS_HEIGHT);
             if (net.checkCollision(player, invincible)) {
@@ -549,9 +550,9 @@ function update() {
             }
         });
     }
-    
-    // Forks (level 3)
-    if (currentLevel >= 3) {
+
+    // Forks (active when level config includes forks)
+    if (LEVELS[currentLevel].enemies.forks) {
         forks.forEach(fork => {
             fork.update(diff.speedMult, CANVAS_WIDTH, CANVAS_HEIGHT);
             if (fork.checkCollision(player, invincible)) {
@@ -660,18 +661,18 @@ function render() {
     // Background
     renderBackground();
     
-    // Ocean current visual (level 1 only)
-    if (currentLevel === 1 && oceanCurrent) {
+    // Ocean current visual (only in levels with oceanCurrent mechanic)
+    if (LEVELS[currentLevel].mechanics.includes('oceanCurrent') && oceanCurrent) {
         oceanCurrent.render(ctx, CANVAS_WIDTH, CANVAS_HEIGHT);
     }
-    
+
     // Entities
     bubbles.forEach(b => b.render(ctx, player.x, player.y));
     cages.forEach(c => c.render(ctx));
     hooks.forEach(h => h.render(ctx));
-    
-    if (currentLevel >= 2) nets.forEach(n => n.render(ctx));
-    if (currentLevel >= 3) forks.forEach(f => f.render(ctx));
+
+    if (LEVELS[currentLevel].enemies.nets) nets.forEach(n => n.render(ctx));
+    if (LEVELS[currentLevel].enemies.forks) forks.forEach(f => f.render(ctx));
     if (fish) fish.render(ctx);
     if (pearl) pearl.render(ctx);
     
@@ -806,13 +807,13 @@ function render() {
         ctx.shadowColor = '#ff4500';
         ctx.shadowBlur = 30;
         ctx.fillText(LEVELS[transitionLevel].name.toUpperCase(), CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2 - 20);
-        
+
         // Subtitle
-        if (LEVEL_SUBTITLES[transitionLevel]) {
+        if (LEVELS[transitionLevel].subtitle) {
             ctx.font = '18px monospace';
             ctx.shadowBlur = 10;
             ctx.fillStyle = '#ffaa00';
-            ctx.fillText(LEVEL_SUBTITLES[transitionLevel], CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2 + 25);
+            ctx.fillText(LEVELS[transitionLevel].subtitle, CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2 + 25);
         }
         
         ctx.restore();
@@ -822,53 +823,7 @@ function render() {
 }
 
 function renderBackground() {
-    const level = LEVELS[currentLevel];
-    ctx.fillStyle = level.background;
-    ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-    
-    if (currentLevel === 1) {
-        // Sandy floor
-        ctx.fillStyle = '#3d2817';
-        ctx.fillRect(0, 500, CANVAS_WIDTH, 100);
-        // Seaweed
-        ctx.fillStyle = '#2d5a2d';
-        for (let i = 0; i < 8; i++) {
-            const x = (i * 120 + bgScrollX * 0.2) % (CANVAS_WIDTH + 100) - 50;
-            for (let j = 0; j < 5; j++) {
-                const sway = Math.sin(Date.now() / 500 + i + j) * 10;
-                ctx.beginPath();
-                ctx.ellipse(x + sway, 520 - j * 30, 8, 25, 0.2 + sway * 0.02, 0, Math.PI * 2);
-                ctx.fill();
-            }
-        }
-    } else if (currentLevel === 2) {
-        ctx.fillStyle = '#4a4a4a';
-        ctx.fillRect(0, 520, CANVAS_WIDTH, 80);
-        ctx.fillStyle = '#666';
-        ctx.fillRect(30, 450, 60, 70);
-        ctx.fillStyle = '#888';
-        ctx.beginPath();
-        ctx.moveTo(30, 450);
-        ctx.lineTo(60, 420);
-        ctx.lineTo(90, 450);
-        ctx.fill();
-    } else if (currentLevel === 3) {
-        ctx.fillStyle = '#8B4513';
-        ctx.fillRect(0, 500, CANVAS_WIDTH, 100);
-        ctx.strokeStyle = '#ffffff22';
-        for (let x = 0; x < CANVAS_WIDTH; x += 50) {
-            ctx.beginPath();
-            ctx.moveTo(x, 0);
-            ctx.lineTo(x, 500);
-            ctx.stroke();
-        }
-        for (let y = 0; y < 500; y += 50) {
-            ctx.beginPath();
-            ctx.moveTo(0, y);
-            ctx.lineTo(CANVAS_WIDTH, y);
-            ctx.stroke();
-        }
-    }
+    LEVEL_ENTITIES[currentLevel - 1].renderBackground(ctx, CANVAS_WIDTH, CANVAS_HEIGHT, bgScrollX);
 }
 
 function gameLoop() {
@@ -983,15 +938,14 @@ let godMode = false;
 
 window.gameDevSetLevel = (lvl) => {
     if (!gameStarted) return;
+    const config = LEVELS[lvl];
+    if (!config) return;
     currentLevel = lvl;
-    const level = LEVELS[lvl];
-    if (level) {
-        document.body.style.background = level.background;
-        document.getElementById('level-name').textContent = level.name;
-        if (lvl >= 2 && nets.length === 0) nets = Net.create(2, CANVAS_WIDTH, CANVAS_HEIGHT);
-        if (lvl >= 3 && forks.length === 0) forks = Fork.create(3, CANVAS_WIDTH, CANVAS_HEIGHT);
-        audio.startLevelMusic(lvl);
-    }
+    document.body.style.background = config.background;
+    document.getElementById('level-name').textContent = config.name;
+    if (config.enemies.nets && nets.length === 0) nets = Net.create(config.enemies.nets, CANVAS_WIDTH, CANVAS_HEIGHT);
+    if (config.enemies.forks && forks.length === 0) forks = Fork.create(config.enemies.forks, CANVAS_WIDTH, CANVAS_HEIGHT);
+    audio.startLevelMusic(config.musicTrack);
 };
 
 window.gameDevAddScore = (pts) => {
