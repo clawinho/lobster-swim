@@ -5,7 +5,7 @@
 import { Lobster, Hook, Cage, Bubble, GoldenFish, Net, Fork, Pearl } from './entities/index.js';
 import { Particle } from './entities/effects/Particle.js';
 import { Audio } from './audio-module.js';
-import { OceanCurrent } from './entities/mechanics/OceanCurrent.js';
+import { OceanCurrent } from './entities/mechanics/ocean-current/actor/OceanCurrent.js';
 import { Ocean } from './entities/environments/ocean/actor/Ocean.js';
 import { Tank } from './entities/environments/tank/actor/Tank.js';
 import { Kitchen } from './entities/environments/kitchen/actor/Kitchen.js';

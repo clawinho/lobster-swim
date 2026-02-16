@@ -3,7 +3,7 @@
  * Pushes player gently in shifting directions
  */
 
-import { render as renderCurrent } from './versions/OceanCurrent.v001.js';
+import { render as renderCurrent } from '../render/OceanCurrent.v001.js';
 
 export class OceanCurrent {
     constructor(baseStrength = 0.3) {
