@@ -736,7 +736,24 @@ function render() {
     
     // Particles (on top of everything)
     particles.forEach(p => p.render(ctx));
-    
+
+    // Dev mode: draw selection bounding box
+    const sel = window.gameDevSelectedEntity;
+    if (sel && devPanelOpen) {
+        const entities = window.gameDevGetEntities();
+        const raw = entities[sel.key];
+        const entity = sel.index !== null ? raw?.[sel.index] : raw;
+        const bounds = entity ? getEntityBounds(sel.key, entity) : null;
+        if (bounds) {
+            ctx.save();
+            ctx.strokeStyle = '#ff4500';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([6, 3]);
+            ctx.strokeRect(bounds.x - 4, bounds.y - 4, bounds.width + 8, bounds.height + 8);
+            ctx.restore();
+        }
+    }
+
     // Score popups
     scorePopups.forEach(p => {
         const alpha = Math.min(1, p.timer / 15);
@@ -1101,3 +1118,51 @@ window.gameDevIsPaused = () => paused;
 window.gameDevGetEntities = () => ({
     player, bubbles, hooks, cages, nets, forks, fish, pearl, oceanCurrent, particles
 });
+
+window.gameDevSelectedEntity = null;
+
+function getEntityBounds(key, entity) {
+    if (!entity) return null;
+    if (entity.getBounds) return entity.getBounds();
+    if (entity.getHitbox) return entity.getHitbox();
+    if (entity.getHookPosition) {
+        const p = entity.getHookPosition();
+        return { x: p.x - p.radius, y: p.y - p.radius, width: p.radius * 2, height: p.radius * 2 };
+    }
+    if (entity.x !== undefined && entity.y !== undefined) {
+        const s = entity.size || 10;
+        return { x: entity.x - s, y: entity.y - s, width: s * 2, height: s * 2 };
+    }
+    return null;
+}
+
+window.gameDevPickEntityAt = (canvasX, canvasY) => {
+    const entities = window.gameDevGetEntities();
+    if (!entities) return null;
+
+    let best = null;
+    let bestArea = Infinity;
+
+    const check = (key, entity, index) => {
+        const bounds = getEntityBounds(key, entity);
+        if (!bounds) return;
+        if (canvasX >= bounds.x && canvasX <= bounds.x + bounds.width &&
+            canvasY >= bounds.y && canvasY <= bounds.y + bounds.height) {
+            const area = bounds.width * bounds.height;
+            if (area < bestArea) {
+                bestArea = area;
+                best = { key, index };
+            }
+        }
+    };
+
+    const arrayKeys = ['hooks', 'cages', 'nets', 'forks', 'bubbles', 'particles'];
+    for (const key of arrayKeys) {
+        (entities[key] || []).forEach((e, i) => check(key, e, i));
+    }
+    if (entities.player) check('player', entities.player, null);
+    if (entities.fish) check('fish', entities.fish, null);
+    if (entities.pearl) check('pearl', entities.pearl, null);
+
+    return best;
+};

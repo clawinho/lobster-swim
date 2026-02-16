@@ -116,6 +116,7 @@
             document.getElementById('dev-panel').style.display = devPanelOpen ? 'flex' : 'none';
             if (!devPanelOpen) {
                 // Closing dev panel: unpause and hide inspector
+                window.gameDevSelectedEntity = null;
                 window.gameDevSetPaused?.(false);
                 document.getElementById('pause-btn').textContent = '⏸ PAUSE';
                 document.querySelector('entity-inspector')?.hide();
@@ -161,6 +162,19 @@
         function devSpawnFish() { window.gameDevSpawnFish?.(); }
         function devAddLife() { window.gameDevAddLife?.(); }
         function devRemoveLife() { window.gameDevRemoveLife?.(); }
+
+        // Canvas click: pick entity in dev mode
+        document.getElementById('game').addEventListener('click', (e) => {
+            if (!devPanelOpen) return;
+            const el = document.getElementById('game');
+            const rect = el.getBoundingClientRect();
+            const scaleX = el.width / rect.width;
+            const scaleY = el.height / rect.height;
+            const cx = (e.clientX - rect.left) * scaleX;
+            const cy = (e.clientY - rect.top) * scaleY;
+            const hit = window.gameDevPickEntityAt?.(cx, cy);
+            window.gameDevSelectedEntity = hit;
+        });
     </script>
 
     <!-- Entity Outliner (left) + Entity Inspector (right) -->

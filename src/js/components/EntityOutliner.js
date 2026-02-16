@@ -122,6 +122,14 @@ class EntityOutliner extends HTMLElement {
                     font-size: 11px;
                 }
 
+                .singleton-row.selectable, .instance-row.selectable {
+                    cursor: pointer;
+                }
+                .singleton-row.selected, .instance-row.selected {
+                    background: #ff450022;
+                    outline: 1px solid #ff450066;
+                }
+
                 ::-webkit-scrollbar { width: 6px; }
                 ::-webkit-scrollbar-track { background: #001020; }
                 ::-webkit-scrollbar-thumb { background: #ff450044; border-radius: 3px; }
@@ -139,6 +147,7 @@ class EntityOutliner extends HTMLElement {
 
     hide() {
         this.classList.remove('visible');
+        window.gameDevSelectedEntity = null;
         if (this._refreshInterval) {
             clearInterval(this._refreshInterval);
             this._refreshInterval = null;
@@ -202,11 +211,14 @@ class EntityOutliner extends HTMLElement {
                         <span class="not-spawned">not spawned</span>
                     `;
                 } else if (entity) {
+                    row.classList.add('selectable');
+                    row.setAttribute('data-select', key);
                     const coords = this._formatCoords(entity);
                     row.innerHTML = `
                         <span class="type-label">${config.label}</span>
                         <span class="singleton-coords" data-coords="${key}">${coords}</span>
                     `;
+                    row.addEventListener('click', () => this._toggleSelect(key, null));
                 } else {
                     row.innerHTML = `<span class="type-label">${config.label}</span>`;
                 }
@@ -243,12 +255,17 @@ class EntityOutliner extends HTMLElement {
 
             arr.forEach((inst, i) => {
                 const instRow = document.createElement('div');
-                instRow.className = 'instance-row';
+                instRow.className = 'instance-row selectable';
+                instRow.setAttribute('data-select', `${key}[${i}]`);
                 const coords = this._formatCoords(inst);
                 instRow.innerHTML = `
                     <span class="instance-name">#${i + 1}</span>
                     <span class="instance-coords" data-inst-coords="${key}[${i}]">${coords}</span>
                 `;
+                instRow.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    this._toggleSelect(key, i);
+                });
                 instList.appendChild(instRow);
             });
 
@@ -264,6 +281,33 @@ class EntityOutliner extends HTMLElement {
         }
 
         body.appendChild(wrapper);
+    }
+
+    _toggleSelect(key, index) {
+        const sel = window.gameDevSelectedEntity;
+        if (sel && sel.key === key && sel.index === index) {
+            window.gameDevSelectedEntity = null;
+        } else {
+            window.gameDevSelectedEntity = { key, index };
+        }
+        this._syncSelection();
+    }
+
+    _syncSelection() {
+        const sel = window.gameDevSelectedEntity;
+        const rows = this.shadowRoot.querySelectorAll('[data-select]');
+        rows.forEach(row => {
+            const attr = row.getAttribute('data-select');
+            let matches = false;
+            if (sel) {
+                if (sel.index !== null) {
+                    matches = attr === `${sel.key}[${sel.index}]`;
+                } else {
+                    matches = attr === sel.key;
+                }
+            }
+            row.classList.toggle('selected', matches);
+        });
     }
 
     _formatCoords(entity) {
@@ -332,6 +376,7 @@ class EntityOutliner extends HTMLElement {
         }
 
         if (needsRebuild) this._buildAll();
+        this._syncSelection();
     }
 }
 
