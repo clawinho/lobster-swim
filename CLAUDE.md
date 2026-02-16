@@ -12,6 +12,8 @@ Run `make dev` from the project root. This builds and starts a Docker container 
 
 Requires Docker — no Node or other dependencies needed on the host machine. Dev config lives in `dev/` (Dockerfile, docker-compose.yml, vite.config.js, package.json).
 
+**Python tooling** lives in `dev/` managed by [uv](https://docs.astral.sh/uv/). Run `make sprites` to strip baked-in backgrounds from sprite PNGs using `rembg`. Requires `uv` on the host (`curl -LsSf https://astral.sh/uv/install.sh | sh`). The virtual environment (`dev/.venv/`) is gitignored.
+
 **Testing is manual:** check the browser console for errors and verify the changed feature works. A dev panel is available by clicking the version number in the footer (exposes level skip, score manipulation, god mode, etc.).
 
 **Version bumping** — update version string in `src/index.html`, `src/pages/*.html`, and `src/js/components/BottomNav.js`. Cache-bust query params (`?v=XXXX`) on script/CSS tags in HTML files.

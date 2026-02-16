@@ -1,0 +1,14 @@
+[project]
+name = "lobster-swim-tools"
+version = "0.1.0"
+requires-python = ">=3.10,<3.13"
+dependencies = [
+    "rembg[cpu]",
+]
+
+[tool.uv]
+override-dependencies = [
+    "pymatting>=1.1.15",
+    "numba>=0.59",
+    "llvmlite>=0.42",
+]
