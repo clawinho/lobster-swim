@@ -340,36 +340,36 @@
             </div>
         </div>
     </section>
-    <bottom-nav version="1.0.21"></bottom-nav>
+    <bottom-nav version="1.0.23"></bottom-nav>
     <script type="module" src="../js/components/BottomNav.js"></script>
     <div id="toast"></div>
     
     <script src="../js/audio.js"></script>
     <script type="module">
-        import { render as lobsterV001 } from '../js/entities/hero/versions/Lobster.v001.js';
-        import { render as lobsterV002 } from '../js/entities/hero/versions/Lobster.v002.js';
-        import { render as lobsterV003 } from '../js/entities/hero/versions/Lobster.v003.js';
-        import { render as lobsterV004 } from '../js/entities/hero/versions/Lobster.v004.js';
-        import { render as fishV001 } from '../js/entities/pickups/versions/GoldenFish.v001.js';
-        import { render as fishV002 } from '../js/entities/pickups/versions/GoldenFish.v002.js';
-        import { render as bubbleV001 } from '../js/entities/pickups/versions/Bubble.v001.js';
-        import { render as bubbleV002 } from '../js/entities/pickups/versions/Bubble.v002.js';
-        import { render as hookV001 } from '../js/entities/enemies/versions/Hook.v001.js';
-        import { render as hookV002 } from '../js/entities/enemies/versions/Hook.v002.js';
-        import { render as cageV001 } from '../js/entities/enemies/versions/Cage.v001.js';
-        import { render as cageV002 } from '../js/entities/enemies/versions/Cage.v002.js';
-        import { render as oceanV001 } from '../js/entities/environments/versions/Ocean.v001.js';
-        import { render as tankV001 } from '../js/entities/environments/versions/Tank.v001.js';
-        import { render as kitchenV001 } from '../js/entities/environments/versions/Kitchen.v001.js';
-        import { OceanLevel } from '../js/entities/environments/OceanLevel.js';
-        import { TankLevel } from '../js/entities/environments/TankLevel.js';
-        import { KitchenLevel } from '../js/entities/environments/KitchenLevel.js';
-        import { render as netV001 } from '../js/entities/enemies/versions/Net.v001.js';
-        import { render as forkV001 } from '../js/entities/enemies/versions/Fork.v001.js';
-        import { render as renderMagnetism } from '../js/entities/mechanics/Magnetism.js';
-        import { render as renderInvincibility } from '../js/entities/mechanics/Invincibility.js';
-        import { render as renderDifficulty } from '../js/entities/mechanics/Difficulty.js';
-        import { render as renderParticle } from '../js/entities/effects/Particle.js';
+        import { render as lobsterV001 } from '../js/entities/hero/lobster/render/Lobster.v001.js';
+        import { render as lobsterV002 } from '../js/entities/hero/lobster/render/Lobster.v002.js';
+        import { render as lobsterV003 } from '../js/entities/hero/lobster/render/Lobster.v003.js';
+        import { render as lobsterV004 } from '../js/entities/hero/lobster/render/Lobster.v004.js';
+        import { render as fishV001 } from '../js/entities/pickups/goldfish/render/GoldenFish.v001.js';
+        import { render as fishV002 } from '../js/entities/pickups/goldfish/render/GoldenFish.v002.js';
+        import { render as bubbleV001 } from '../js/entities/pickups/bubble/render/Bubble.v001.js';
+        import { render as bubbleV002 } from '../js/entities/pickups/bubble/render/Bubble.v002.js';
+        import { render as hookV001 } from '../js/entities/enemies/hook/render/Hook.v001.js';
+        import { render as hookV002 } from '../js/entities/enemies/hook/render/Hook.v002.js';
+        import { render as cageV001 } from '../js/entities/enemies/cage/render/Cage.v001.js';
+        import { render as cageV002 } from '../js/entities/enemies/cage/render/Cage.v002.js';
+        import { render as oceanV001 } from '../js/entities/environments/ocean/render/Ocean.v001.js';
+        import { render as tankV001 } from '../js/entities/environments/tank/render/Tank.v001.js';
+        import { render as kitchenV001 } from '../js/entities/environments/kitchen/render/Kitchen.v001.js';
+        import { Ocean } from '../js/entities/environments/ocean/actor/Ocean.js';
+        import { Tank } from '../js/entities/environments/tank/actor/Tank.js';
+        import { Kitchen } from '../js/entities/environments/kitchen/actor/Kitchen.js';
+        import { render as netV001 } from '../js/entities/enemies/net/render/Net.v001.js';
+        import { render as forkV001 } from '../js/entities/enemies/fork/render/Fork.v001.js';
+        import { render as renderMagnetism } from '../js/entities/mechanics/magnetism/render/Magnetism.js';
+        import { render as renderInvincibility } from '../js/entities/mechanics/invincibility/render/Invincibility.js';
+        import { render as renderDifficulty } from '../js/entities/mechanics/difficulty/render/Difficulty.js';
+        import { render as renderParticle } from '../js/entities/effects/particle/render/Particle.js';
         
         const renderers = {
             'lobster-001': (c,x,y,s,t) => lobsterV001(c,x,y,s),
@@ -471,19 +471,28 @@
             }
             if(c('particle')) renderParticle(c('particle'), 200, 150, frame, params.particleType, params.particleCount);
             if(c('ocean')) {
-                c('ocean').fillStyle = OceanLevel.config.background;
+                c('ocean').fillStyle = Ocean.config.background;
                 c('ocean').fillRect(0, 0, 200, 150);
-                oceanV001(c('ocean'), 200, 150, frame * 0.5);
+                c('ocean').save();
+                c('ocean').scale(200/600, 150/600);
+                oceanV001(c('ocean'), 600, 600, frame * 0.5);
+                c('ocean').restore();
             }
             if(c('tank')) {
-                c('tank').fillStyle = TankLevel.config.background;
+                c('tank').fillStyle = Tank.config.background;
                 c('tank').fillRect(0, 0, 200, 150);
-                tankV001(c('tank'), 200, 150);
+                c('tank').save();
+                c('tank').scale(200/600, 150/600);
+                tankV001(c('tank'), 600, 600);
+                c('tank').restore();
             }
             if(c('kitchen')) {
-                c('kitchen').fillStyle = KitchenLevel.config.background;
+                c('kitchen').fillStyle = Kitchen.config.background;
                 c('kitchen').fillRect(0, 0, 200, 150);
-                kitchenV001(c('kitchen'), 200, 150);
+                c('kitchen').save();
+                c('kitchen').scale(200/600, 150/600);
+                kitchenV001(c('kitchen'), 600, 600);
+                c('kitchen').restore();
             }
             if(c('magnet')) renderMagnetism(c('magnet'), 200, 150, frame, params.magnetRadius, params.magnetStrength);
             if(c('invincibility')) renderInvincibility(c('invincibility'), 200, 150, frame, params.invulnDur);

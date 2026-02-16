@@ -2,13 +2,13 @@
  * app.js - Main application (uses regular DOM, modular entities)
  */
 
-import { Lobster, Hook, Cage, Bubble, GoldenFish, Net, Fork, Pearl, BeachBall } from './entities/index.js';
-import { Particle } from './entities/effects/Particle.js';
+import { Lobster, Hook, Cage, Bubble, GoldenFish, Net, Fork, Pearl, Seagull, BeachBall } from './entities/index.js';
+import { Particle } from './entities/effects/particle/actor/Particle.js';
 import { Audio } from './audio-module.js';
-import { OceanCurrent } from './entities/mechanics/OceanCurrent.js';
-import { OceanLevel } from './entities/environments/OceanLevel.js';
-import { TankLevel } from './entities/environments/TankLevel.js';
-import { KitchenLevel } from './entities/environments/KitchenLevel.js';
+import { OceanCurrent } from './entities/mechanics/ocean-current/actor/OceanCurrent.js';
+import { Ocean } from './entities/environments/ocean/actor/Ocean.js';
+import { Tank } from './entities/environments/tank/actor/Tank.js';
+import { Kitchen } from './entities/environments/kitchen/actor/Kitchen.js';
 
 // Constants
 const CANVAS_WIDTH = 800;
@@ -16,7 +16,7 @@ const CANVAS_HEIGHT = 600;
 const INVINCIBLE_DURATION = 120;
 
 // Level entities — ordered by scoreThreshold descending for checkLevelUp iteration
-const LEVEL_ENTITIES = [new OceanLevel(), new TankLevel(), new KitchenLevel()];
+const LEVEL_ENTITIES = [new Ocean(), new Tank(), new Kitchen()];
 const LEVELS = Object.fromEntries(LEVEL_ENTITIES.map((lvl, i) => [i + 1, lvl.constructor.config]));
 
 
@@ -42,7 +42,7 @@ const COMBO_MESSAGES = ['', 'Nice!', 'Great!', 'Awesome!', 'Amazing!', 'INCREDIB
 
 // Game state
 let canvas, ctx, audio;
-let player, bubbles, hooks, cages, nets, forks, fish, pearl, oceanCurrent, beachBalls;
+let player, bubbles, hooks, cages, nets, forks, seagulls, fish, pearl, oceanCurrent, beachBalls;
 let gameSessionId = null;
 let score = 0, lives = 3, highScore = 0;
 let gameOver = false, gameStarted = false;
@@ -262,6 +262,7 @@ async function startGame() {
     hooks = Hook.create(CANVAS_WIDTH, 2);
     nets = [];
     forks = [];
+    seagulls = Seagull.create(CANVAS_WIDTH, CANVAS_HEIGHT, 2); // Diving seagulls
     beachBalls = BeachBall.create(LEVELS[1].enemies.beachBalls || 0, CANVAS_WIDTH, CANVAS_HEIGHT);
     fish = null;
     pearl = null;
@@ -569,6 +570,16 @@ function update() {
             }
         });
     }
+
+    // Seagulls (Ocean level only - Beach Shallows danger)
+    if (currentLevel === 1 && seagulls) {
+        seagulls.forEach(gull => {
+            gull.update(player.x, player.y, CANVAS_WIDTH, CANVAS_HEIGHT);
+            if (gull.checkCollision(player, invincible)) {
+                loseLife();
+            }
+        });
+    }
     
     // Beach Balls (active in ocean level - knockback only, not death)
     if (LEVELS[currentLevel].enemies.beachBalls) {
@@ -699,6 +710,7 @@ function render() {
 
     if (LEVELS[currentLevel].enemies.nets) nets.forEach(n => n.render(ctx));
     if (LEVELS[currentLevel].enemies.forks) forks.forEach(f => f.render(ctx));
+    if (currentLevel === 1 && seagulls) seagulls.forEach(g => g.render(ctx));
     if (LEVELS[currentLevel].enemies.beachBalls) beachBalls.forEach(b => b.render(ctx));
     if (fish) fish.render(ctx);
     if (pearl) pearl.render(ctx);
@@ -778,6 +790,65 @@ function render() {
         ctx.shadowColor = getComboColor();
         ctx.shadowBlur = 8;
         ctx.fillText(`${comboCount}x COMBO`, CANVAS_WIDTH / 2, barY + 25);
+        ctx.restore();
+    }
+    
+    // Ocean current direction indicator (bottom-left compass)
+    if (LEVELS[currentLevel].mechanics.includes('oceanCurrent') && oceanCurrent && !deathAnimating) {
+        ctx.save();
+        const compassX = 50;
+        const compassY = CANVAS_HEIGHT - 50;
+        const compassRadius = 25;
+        const info = oceanCurrent.getInfo();
+        
+        // Outer ring (dark with glow)
+        ctx.beginPath();
+        ctx.arc(compassX, compassY, compassRadius, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(0, 20, 40, 0.7)';
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(68, 136, 170, 0.6)';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        
+        // Direction arrow (points where current pushes you)
+        ctx.save();
+        ctx.translate(compassX, compassY);
+        ctx.rotate(info.angle);
+        
+        // Arrow body
+        ctx.beginPath();
+        ctx.moveTo(-compassRadius * 0.6, 0);
+        ctx.lineTo(compassRadius * 0.6, 0);
+        ctx.strokeStyle = '#4488ff';
+        ctx.lineWidth = 3;
+        ctx.lineCap = 'round';
+        ctx.stroke();
+        
+        // Arrow head
+        ctx.beginPath();
+        ctx.moveTo(compassRadius * 0.6, 0);
+        ctx.lineTo(compassRadius * 0.3, -compassRadius * 0.25);
+        ctx.moveTo(compassRadius * 0.6, 0);
+        ctx.lineTo(compassRadius * 0.3, compassRadius * 0.25);
+        ctx.stroke();
+        
+        ctx.restore();
+        
+        // Strength indicator (pulsing outer glow)
+        const pulse = 0.5 + Math.sin(Date.now() * 0.003) * 0.3;
+        const glowSize = compassRadius + 5 + (info.strength * 10 * pulse);
+        ctx.beginPath();
+        ctx.arc(compassX, compassY, glowSize, 0, Math.PI * 2);
+        ctx.strokeStyle = `rgba(68, 136, 255, ${0.2 * pulse})`;
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        
+        // "CURRENT" label
+        ctx.font = '9px monospace';
+        ctx.textAlign = 'center';
+        ctx.fillStyle = 'rgba(68, 136, 170, 0.8)';
+        ctx.fillText('CURRENT', compassX, compassY + compassRadius + 12);
+        
         ctx.restore();
     }
     
