@@ -52,6 +52,7 @@ let levelTransition = false, levelTransitionTimer = 0, transitionLevel = 0; // L
 let comboCount = 0;
 let comboTimer = 0;
 let comboPopups = []; // {x, y, text, timer, color}
+let scorePopups = []; // {x, y, text, timer, color, startY}
 
 // Screen flash for combo milestones
 let comboFlash = 0; // Timer for screen flash
@@ -253,6 +254,7 @@ async function startGame() {
     comboCount = 0;
     comboTimer = 0;
     comboPopups = [];
+    scorePopups = [];
     comboFlash = 0;
     
     // Create entities
@@ -404,6 +406,13 @@ function update() {
         return p.timer > 0;
     });
     
+    // Update score popups
+    scorePopups = scorePopups.filter(p => {
+        p.timer--;
+        p.y -= 2; // Float up faster
+        return p.timer > 0;
+    });
+    
     const diff = getDifficulty();
     
     // Invincibility
@@ -474,6 +483,16 @@ function update() {
             const basePoints = 10;
             const points = Math.floor(basePoints * multiplier);
             score += points;
+            
+            // Score popup
+            scorePopups.push({
+                x: bubble.x,
+                y: bubble.y,
+                text: "+" + points,
+                timer: 45,
+                color: comboCount > 1 ? getComboColor() : "#00ffff",
+                startY: bubble.y
+            });
             
             // Spawn combo popup
             if (comboCount > 1) {
@@ -557,6 +576,14 @@ function update() {
             audio.playExtraLife();
             lives++;
             score += 50;
+            scorePopups.push({
+                x: fish.x,
+                y: fish.y,
+                text: "+50 +❤️",
+                timer: 60,
+                color: "#ffd700",
+                startY: fish.y
+            });
             updateLives();
             updateScore();
             fish = null;
@@ -621,6 +648,21 @@ function render() {
     
     // Particles (on top of everything)
     particles.forEach(p => p.render(ctx));
+    
+    // Score popups
+    scorePopups.forEach(p => {
+        const alpha = Math.min(1, p.timer / 15);
+        const rise = (45 - p.timer) * 0.8;
+        ctx.save();
+        ctx.globalAlpha = alpha;
+        ctx.font = "bold 18px monospace";
+        ctx.textAlign = "center";
+        ctx.fillStyle = p.color;
+        ctx.shadowColor = "#000";
+        ctx.shadowBlur = 4;
+        ctx.fillText(p.text, p.x, p.startY - rise);
+        ctx.restore();
+    });
     
     // Combo popups
     comboPopups.forEach(p => {
