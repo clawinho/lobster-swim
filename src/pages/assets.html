@@ -68,6 +68,7 @@
                     <span class="version-tab" data-version="001">v001</span>
                     <span class="version-tab" data-version="002">v002</span>
                     <span class="version-tab active" data-version="003">v003<span class="star">★</span></span>
+                    <span class="version-tab" data-version="004">v004</span>
                 </div>
                 <div class="asset-preview"><canvas id="lobster-canvas" width="200" height="150"></canvas></div>
                 <div class="asset-info">
@@ -356,6 +357,7 @@
         import { render as lobsterV001 } from '../js/entities/hero/versions/Lobster.v001.js';
         import { render as lobsterV002 } from '../js/entities/hero/versions/Lobster.v002.js';
         import { render as lobsterV003 } from '../js/entities/hero/versions/Lobster.v003.js';
+        import { render as lobsterV004 } from '../js/entities/hero/versions/Lobster.v004.js';
         import { render as fishV001 } from '../js/entities/pickups/versions/GoldenFish.v001.js';
         import { render as fishV002 } from '../js/entities/pickups/versions/GoldenFish.v002.js';
         import { render as bubbleV001 } from '../js/entities/pickups/versions/Bubble.v001.js';
@@ -380,7 +382,15 @@
         const renderers = {
             'lobster-001': (c,x,y,s,t) => lobsterV001(c,x,y,s),
             'lobster-002': (c,x,y,s,t) => lobsterV002(c,x,y,s),
-            'lobster-003': (c,x,y,s,t,wag,anim) => lobsterV003(c,x,y,s,t,wag,anim),
+            'lobster-003': (c,x,y,s,t) => {
+                const angle = 0;
+                const segs = [];
+                for (let i = 0; i < 3; i++) {
+                    segs.push({ x: x - s * (0.6 + i * 0.4), y: y, angle: 0 });
+                }
+                lobsterV003(c, x, y, s, angle, segs, false, 0);
+            },
+            'lobster-004': (c,x,y,s,t,wag,anim) => lobsterV004(c,x,y,s,t,wag,anim),
             'fish-001': (c,x,y,t,size,dir,shimmer) => fishV001(c,x,y,size||15,dir||1),
             'fish-002': (c,x,y,t,size,dir,shimmer) => fishV002(c,x,y,t,size||15,dir||1,shimmer||5),
             'bubble-001': (c,x,y,s,t,color) => bubbleV001(c,x,y,s,t,color),

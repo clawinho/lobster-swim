@@ -1,72 +1,69 @@
 /**
- * Lobster.v003.js - Full animation with tail physics (CURRENT IN GAME)
+ * Lobster.v003.js - Game class rendering with real tail physics
  * @version 003
  * @current true
- * 
- * Animation states:
- * - "normal": default swimming animation
- * - "invincible": golden shimmer with flicker
- * - "death": spinning with red glow and fade
+ *
+ * Renders the lobster using pre-computed tail segment positions from the game class.
+ * Uses Date.now() for claw wave and antenna wave to match original game behavior.
  */
-export function render(ctx, x, y, size, time, tailWag = 8, animState = "normal") {
+export function render(ctx, x, y, size, angle, tailSegments, invincible, invincibleTimer) {
+    if (invincible && Math.floor(invincibleTimer / 5) % 2 === 0) {
+        ctx.globalAlpha = 0.4;
+    }
+
+    // Draw tail segments first (behind body)
+    ctx.fillStyle = '#cc3300';
+
+    // Segment 1 (closest to body)
     ctx.save();
-    
-    // Apply animation state effects BEFORE drawing
-    let extraRotation = 0;
-    if (animState === "invincible") {
-        // Flicker effect
-        if (Math.floor(time / 5) % 2 === 0) {
-            ctx.globalAlpha = 0.6;
-        }
-        // Golden glow
-        ctx.shadowColor = "#ffdd00";
-        ctx.shadowBlur = 20;
-    } else if (animState === "death") {
-        // Spin
-        extraRotation = time * 0.15;
-        // Pulsing fade
-        ctx.globalAlpha = 0.4 + Math.sin(time * 0.1) * 0.3;
-        // Red glow
-        ctx.shadowColor = "#ff0000";
-        ctx.shadowBlur = 15;
-    }
-    
-    const tailAngle = Math.sin(time * 0.05 * tailWag / 8) * 0.3;
-    ctx.translate(x, y);
-    ctx.rotate(extraRotation);
-    
-    // Tail segments
-    ctx.fillStyle = "#cc3300";
-    for (let i = 0; i < 3; i++) {
-        const segX = -size * (0.6 + i * 0.4);
-        const segY = Math.sin(time * 0.05 + i * 0.5) * tailWag;
-        const segSize = size * (0.5 - i * 0.12);
-        ctx.beginPath();
-        ctx.ellipse(segX, segY, segSize, segSize * 0.7, tailAngle * (i + 1), 0, Math.PI * 2);
-        ctx.fill();
-    }
-    
-    // Tail fan
-    ctx.fillStyle = "#ff4500";
-    const fanX = -size * 1.8, fanY = Math.sin(time * 0.05 + 1.5) * tailWag;
+    ctx.translate(tailSegments[0].x, tailSegments[0].y);
+    ctx.rotate(tailSegments[0].angle);
+    ctx.beginPath();
+    ctx.ellipse(0, 0, size * 0.5, size * 0.35, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+
+    // Segment 2
+    ctx.save();
+    ctx.translate(tailSegments[1].x, tailSegments[1].y);
+    ctx.rotate(tailSegments[1].angle);
+    ctx.beginPath();
+    ctx.ellipse(0, 0, size * 0.35, size * 0.25, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+
+    // Tail fan (segment 3)
+    ctx.fillStyle = '#ff4500';
+    ctx.save();
+    ctx.translate(tailSegments[2].x, tailSegments[2].y);
+    ctx.rotate(tailSegments[2].angle);
     for (let i = -2; i <= 2; i++) {
         ctx.beginPath();
-        ctx.ellipse(fanX, fanY + i * 4, 8, 3, tailAngle * 3, 0, Math.PI * 2);
+        ctx.ellipse(-8, i * 4, 8, 3, 0, 0, Math.PI * 2);
         ctx.fill();
     }
-    
-    // Body
+    ctx.restore();
+
+    // Draw body
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.rotate(angle);
+
+    ctx.fillStyle = '#ff4500';
     ctx.beginPath();
     ctx.ellipse(0, 0, size, size * 0.6, 0, 0, Math.PI * 2);
     ctx.fill();
-    
-    // Claws
-    const clawAngle = Math.sin(time * 0.1) * 0.15;
-    ctx.save(); ctx.rotate(-0.5 + clawAngle);
+
+    let clawWave = Math.sin(Date.now() / 200) * 0.15;
+
+    // Upper claw
+    ctx.save();
+    ctx.rotate(-0.5 + clawWave);
+    ctx.fillStyle = '#ff4500';
     ctx.beginPath();
     ctx.ellipse(size * 0.9, -size * 0.1, size * 0.5, size * 0.25, 0.3, 0, Math.PI * 2);
     ctx.fill();
-    ctx.fillStyle = "#cc3300";
+    ctx.fillStyle = '#cc3300';
     ctx.beginPath();
     ctx.moveTo(size * 1.3, -size * 0.2);
     ctx.lineTo(size * 1.6, -size * 0.4);
@@ -74,13 +71,15 @@ export function render(ctx, x, y, size, time, tailWag = 8, animState = "normal")
     ctx.closePath();
     ctx.fill();
     ctx.restore();
-    
-    ctx.save(); ctx.rotate(0.5 - clawAngle);
-    ctx.fillStyle = "#ff4500";
+
+    // Lower claw
+    ctx.save();
+    ctx.rotate(0.5 - clawWave);
+    ctx.fillStyle = '#ff4500';
     ctx.beginPath();
     ctx.ellipse(size * 0.9, size * 0.1, size * 0.5, size * 0.25, -0.3, 0, Math.PI * 2);
     ctx.fill();
-    ctx.fillStyle = "#cc3300";
+    ctx.fillStyle = '#cc3300';
     ctx.beginPath();
     ctx.moveTo(size * 1.3, size * 0.2);
     ctx.lineTo(size * 1.6, size * 0.4);
@@ -88,10 +87,24 @@ export function render(ctx, x, y, size, time, tailWag = 8, animState = "normal")
     ctx.closePath();
     ctx.fill();
     ctx.restore();
-    
+
+    // Eyes
+    ctx.fillStyle = '#000';
+    ctx.beginPath();
+    ctx.arc(size * 0.4, -size * 0.25, 3, 0, Math.PI * 2);
+    ctx.arc(size * 0.4, size * 0.25, 3, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = '#fff';
+    ctx.beginPath();
+    ctx.arc(size * 0.42, -size * 0.27, 1.5, 0, Math.PI * 2);
+    ctx.arc(size * 0.42, size * 0.23, 1.5, 0, Math.PI * 2);
+    ctx.fill();
+
     // Antennae
-    ctx.strokeStyle = "#ff6600"; ctx.lineWidth = 2;
-    const antWave = Math.sin(time * 0.15) * 5;
+    ctx.strokeStyle = '#ff6600';
+    ctx.lineWidth = 2;
+    let antWave = Math.sin(Date.now() / 150) * 5;
     ctx.beginPath();
     ctx.moveTo(size * 0.5, -size * 0.3);
     ctx.quadraticCurveTo(size * 0.8, -size * 0.8 + antWave, size * 1.2, -size * 0.6 + antWave);
@@ -100,25 +113,25 @@ export function render(ctx, x, y, size, time, tailWag = 8, animState = "normal")
     ctx.moveTo(size * 0.5, size * 0.3);
     ctx.quadraticCurveTo(size * 0.8, size * 0.8 - antWave, size * 1.2, size * 0.6 - antWave);
     ctx.stroke();
-    
-    // Eyes
-    ctx.fillStyle = "#000";
-    ctx.beginPath();
-    ctx.arc(size * 0.3, -size * 0.2, 4, 0, Math.PI * 2);
-    ctx.arc(size * 0.3, size * 0.2, 4, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.fillStyle = "#fff";
-    ctx.beginPath();
-    ctx.arc(size * 0.32, -size * 0.22, 1.5, 0, Math.PI * 2);
-    ctx.arc(size * 0.32, size * 0.18, 1.5, 0, Math.PI * 2);
-    ctx.fill();
-    
+    ctx.lineWidth = 1;
+
     ctx.restore();
+    ctx.globalAlpha = 1;
+
+    // Invincibility shield
+    if (invincible) {
+        ctx.strokeStyle = '#ffff0066';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.arc(x, y, size + 10, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.lineWidth = 1;
+    }
 }
 
-export const meta = { 
-    version: "003", 
-    name: "Tail Physics", 
-    current: true, 
-    features: ["tail physics", "animated claws", "antennae", "animation states"] 
+export const meta = {
+    version: "003",
+    name: "Game Renderer (Real Tail Physics)",
+    current: true,
+    features: ["real tail physics", "animated claws", "antennae", "invincibility shield"]
 };
