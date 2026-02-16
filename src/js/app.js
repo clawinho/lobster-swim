@@ -762,6 +762,65 @@ function render() {
         ctx.restore();
     }
     
+    // Ocean current direction indicator (bottom-left compass)
+    if (LEVELS[currentLevel].mechanics.includes('oceanCurrent') && oceanCurrent && !deathAnimating) {
+        ctx.save();
+        const compassX = 50;
+        const compassY = CANVAS_HEIGHT - 50;
+        const compassRadius = 25;
+        const info = oceanCurrent.getInfo();
+        
+        // Outer ring (dark with glow)
+        ctx.beginPath();
+        ctx.arc(compassX, compassY, compassRadius, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(0, 20, 40, 0.7)';
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(68, 136, 170, 0.6)';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        
+        // Direction arrow (points where current pushes you)
+        ctx.save();
+        ctx.translate(compassX, compassY);
+        ctx.rotate(info.angle);
+        
+        // Arrow body
+        ctx.beginPath();
+        ctx.moveTo(-compassRadius * 0.6, 0);
+        ctx.lineTo(compassRadius * 0.6, 0);
+        ctx.strokeStyle = '#4488ff';
+        ctx.lineWidth = 3;
+        ctx.lineCap = 'round';
+        ctx.stroke();
+        
+        // Arrow head
+        ctx.beginPath();
+        ctx.moveTo(compassRadius * 0.6, 0);
+        ctx.lineTo(compassRadius * 0.3, -compassRadius * 0.25);
+        ctx.moveTo(compassRadius * 0.6, 0);
+        ctx.lineTo(compassRadius * 0.3, compassRadius * 0.25);
+        ctx.stroke();
+        
+        ctx.restore();
+        
+        // Strength indicator (pulsing outer glow)
+        const pulse = 0.5 + Math.sin(Date.now() * 0.003) * 0.3;
+        const glowSize = compassRadius + 5 + (info.strength * 10 * pulse);
+        ctx.beginPath();
+        ctx.arc(compassX, compassY, glowSize, 0, Math.PI * 2);
+        ctx.strokeStyle = `rgba(68, 136, 255, ${0.2 * pulse})`;
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        
+        // "CURRENT" label
+        ctx.font = '9px monospace';
+        ctx.textAlign = 'center';
+        ctx.fillStyle = 'rgba(68, 136, 170, 0.8)';
+        ctx.fillText('CURRENT', compassX, compassY + compassRadius + 12);
+        
+        ctx.restore();
+    }
+    
     // Combo milestone screen flash
     if (comboFlash > 0) {
         const flashAlpha = (comboFlash / 20) * 0.4;
