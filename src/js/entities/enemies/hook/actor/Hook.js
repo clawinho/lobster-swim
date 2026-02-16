@@ -4,7 +4,7 @@
  * Render: v002 (pendulum swing + bait)
  */
 
-import { render as renderHook } from './versions/Hook.v002.js';
+import { render as renderHook } from '../render/Hook.v002.js';
 
 export class Hook {
     constructor(x, lineLength = 150, swingSpeed = 0.02) {

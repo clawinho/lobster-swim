@@ -4,7 +4,7 @@
  * Render: v001 (grid pattern with handle)
  */
 
-import { render as renderNet } from './versions/Net.v001.js';
+import { render as renderNet } from '../render/Net.v001.js';
 
 export class Net {
     constructor(x, y, width = 100, height = 60) {

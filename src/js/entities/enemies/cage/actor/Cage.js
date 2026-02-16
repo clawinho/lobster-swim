@@ -4,7 +4,7 @@
  * Render: v002 (wooden trap with bars and entrance funnel)
  */
 
-import { render as renderCage } from './versions/Cage.v002.js';
+import { render as renderCage } from '../render/Cage.v002.js';
 
 export class Cage {
     constructor(x, y, size = 40) {

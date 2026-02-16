@@ -4,7 +4,7 @@
  * Render: v001 (wooden handle, metal prongs, shine)
  */
 
-import { render as renderFork } from './versions/Fork.v001.js';
+import { render as renderFork } from '../render/Fork.v001.js';
 
 export class Fork {
     constructor(x, canvasHeight = 600) {
