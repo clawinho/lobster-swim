@@ -45,7 +45,7 @@ let canvas, ctx, audio;
 let player, bubbles, hooks, cages, nets, forks, seagulls, fish, pearl, oceanCurrent, beachBalls;
 let gameSessionId = null;
 let score = 0, lives = 3, highScore = 0;
-let gameOver = false, gameStarted = false;
+let gameOver = false, gameStarted = false, paused = false;
 let newBestTimer = 0; // For "NEW BEST!" celebration
 let deathAnimating = false, deathTimer = 0, deathRotation = 0; // Death animation state
 let levelTransition = false, levelTransitionTimer = 0, transitionLevel = 0; // Level transition state
@@ -240,6 +240,7 @@ async function startGame() {
     lastHookThreshold = 0;
     fishSpawnTimer = 0;
     particles = [];
+    paused = false;
     deathAnimating = false;
     deathTimer = 0;
     deathRotation = 0;
@@ -917,6 +918,21 @@ function render() {
         ctx.restore();
     }
     
+    // Paused overlay
+    if (paused) {
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+        ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+        ctx.save();
+        ctx.font = 'bold 48px monospace';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillStyle = '#ff4500';
+        ctx.shadowColor = '#ff4500';
+        ctx.shadowBlur = 20;
+        ctx.fillText('PAUSED', CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2);
+        ctx.restore();
+    }
+
     ctx.restore();
 }
 
@@ -926,10 +942,10 @@ function renderBackground() {
 
 function gameLoop() {
     if (!gameStarted) return;
-    
-    update();
+
+    if (!paused) update();
     render();
-    
+
     // Continue loop during death animation or normal play
     if (!gameOver || deathAnimating) {
         requestAnimationFrame(gameLoop);
@@ -1075,3 +1091,13 @@ window.gameDevRemoveLife = () => {
     if (!gameStarted) return;
     loseLife();
 };
+
+window.gameDevSetPaused = (val) => {
+    if (!gameStarted || gameOver) return;
+    paused = val;
+};
+window.gameDevIsPaused = () => paused;
+
+window.gameDevGetEntities = () => ({
+    player, bubbles, hooks, cages, nets, forks, fish, pearl, oceanCurrent
+});

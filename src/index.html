@@ -87,6 +87,9 @@
     <button id="music-btn">🎵</button>
     <button id="sfx-btn">💥</button>
 
+    <!-- DEV PAUSE BUTTON -->
+    <button id="pause-btn" onclick="devTogglePause()" style="position:fixed; top:10px; left:50%; transform:translateX(-50%); display:none; z-index:101; background:#001820ee; color:#ff4500; border:2px solid #ff4500; padding:8px 20px; font-family:monospace; font-size:14px; font-weight:bold; cursor:pointer;">⏸ PAUSE</button>
+
     <!-- DEV PANEL -->
     <div id="dev-panel" style="position: fixed; top: 10px; left: 10px; background: #001820ee; border: 2px solid #ff4500; padding: 15px; display: none; z-index: 100; font-size: 12px; font-family: monospace;">
         <div style="color: #ff4500; font-weight: bold; margin-bottom: 10px;">🔧 DEV MODE</div>
@@ -116,15 +119,40 @@
         function toggleDevPanel() {
             devPanelOpen = !devPanelOpen;
             document.getElementById('dev-panel').style.display = devPanelOpen ? 'block' : 'none';
+            document.getElementById('pause-btn').style.display = devPanelOpen ? 'block' : 'none';
+            if (!devPanelOpen) {
+                // Closing dev panel: unpause and hide inspector
+                window.gameDevSetPaused?.(false);
+                document.getElementById('pause-btn').textContent = '⏸ PAUSE';
+                document.querySelector('entity-inspector')?.hide();
+            }
         }
-        
+
+        function devTogglePause() {
+            const isPaused = window.gameDevIsPaused?.();
+            const nowPaused = !isPaused;
+            window.gameDevSetPaused?.(nowPaused);
+            document.getElementById('pause-btn').textContent = nowPaused ? '▶ RESUME' : '⏸ PAUSE';
+            const inspector = document.querySelector('entity-inspector');
+            if (nowPaused) { inspector?.show(); } else { inspector?.hide(); }
+        }
+
         // Listen for version click from bottom-nav component
         document.addEventListener('version-click', toggleDevPanel);
-        
+
+        // P key toggles pause when dev panel is open
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'p' || e.key === 'P') {
+                if (devPanelOpen && !e.target.matches('input, textarea')) {
+                    devTogglePause();
+                }
+            }
+        });
+
         // Dev functions - these call into the game module
         function devSetLevel(lvl) { window.gameDevSetLevel?.(lvl); }
         function devAddScore(pts) { window.gameDevAddScore?.(pts); }
-        function devToggleGod() { 
+        function devToggleGod() {
             const isGod = window.gameDevToggleGod?.();
             document.getElementById('god-btn').textContent = 'God Mode: ' + (isGod ? 'ON' : 'OFF');
         }
@@ -133,8 +161,12 @@
         function devRemoveLife() { window.gameDevRemoveLife?.(); }
     </script>
 
+    <!-- Entity Inspector -->
+    <entity-inspector></entity-inspector>
+
     <!-- Load components and game -->
     <script type="module" src="js/components/BottomNav.js?v=1010"></script>
+    <script type="module" src="js/components/EntityInspector.js?v=1010"></script>
     <script type="module" src="js/app.js?v=1010"></script>
 </body>
 </html>
