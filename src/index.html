@@ -125,6 +125,11 @@
                 window.gameDevSetPaused?.(false);
                 document.getElementById('pause-btn').textContent = '⏸ PAUSE';
                 document.querySelector('entity-inspector')?.hide();
+            } else {
+                // Opening dev panel: auto-pause and show inspector
+                window.gameDevSetPaused?.(true);
+                document.getElementById('pause-btn').textContent = '▶ RESUME';
+                document.querySelector('entity-inspector')?.show();
             }
         }
 
