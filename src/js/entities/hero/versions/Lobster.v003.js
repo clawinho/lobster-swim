@@ -1,7 +1,7 @@
 /**
  * Lobster.v003.js - Game class rendering with real tail physics
  * @version 003
- * @current true
+ * @current false
  *
  * Renders the lobster using pre-computed tail segment positions from the game class.
  * Uses Date.now() for claw wave and antenna wave to match original game behavior.

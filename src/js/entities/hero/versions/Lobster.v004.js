@@ -1,7 +1,7 @@
 /**
  * Lobster.v004.js - Game renderer with rotated tail ellipses and bigger eyes
  * @version 004
- * @current false
+ * @current true
  *
  * Renders the lobster using pre-computed tail segment positions from the game class.
  * Visual style: varying segment proportions, sine-rotated ellipses, bigger eyes at (0.3, ±0.2).
