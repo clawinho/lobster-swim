@@ -386,7 +386,7 @@
             'bubble-001': (c,x,y,s,t,color) => bubbleV001(c,x,y,s,t,color),
             'bubble-002': (c,x,y,s,t,color) => bubbleV002(c,x,y,s,t,color),
             'hook-001': (c,x,l,t,swing) => hookV001(c,x,l),
-            'hook-002': (c,x,l,t,swing) => hookV002(c,x,l,t,swing||10),
+            'hook-002': (c,x,l,t,swing) => { const hx = x + Math.sin(t * 0.03 * (swing||10) / 10) * 15; hookV002(c,x,hx,l); },
             'cage-001': (c,x,y,s) => cageV001(c,x,y,s),
             'cage-002': (c,x,y,s) => cageV002(c,x,y,s),
         };

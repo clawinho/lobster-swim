@@ -1,7 +1,10 @@
 /**
  * Hook.js - Fishing hook enemy
  * Swings from above, can drop down to catch the lobster
+ * Render: v002 (pendulum swing + bait)
  */
+
+import { render as renderHook } from './versions/Hook.v002.js';
 
 export class Hook {
     constructor(x, lineLength = 150, swingSpeed = 0.02) {
@@ -59,37 +62,7 @@ export class Hook {
 
     render(ctx) {
         const swingX = Math.sin(this.angle) * 50;
-        const hookX = this.x + swingX;
-        const hookY = this.lineLength;
-
-        // Fishing line
-        ctx.strokeStyle = '#888';
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.moveTo(this.x, 0);
-        ctx.lineTo(hookX, hookY - 20);
-        ctx.stroke();
-
-        // Hook
-        ctx.strokeStyle = '#ccc';
-        ctx.lineWidth = 3;
-        ctx.beginPath();
-        ctx.moveTo(hookX, hookY - 20);
-        ctx.lineTo(hookX, hookY);
-        ctx.arc(hookX - 10, hookY, 10, 0, Math.PI, false);
-        ctx.stroke();
-
-        // Hook point
-        ctx.fillStyle = '#fff';
-        ctx.beginPath();
-        ctx.moveTo(hookX - 20, hookY);
-        ctx.lineTo(hookX - 25, hookY - 8);
-        ctx.lineTo(hookX - 18, hookY - 3);
-        ctx.fill();
-
-        ctx.lineWidth = 1;
-
-        return this.getHookPosition();
+        renderHook(ctx, this.x, this.x + swingX, this.lineLength);
     }
 
     checkCollision(player, invincible = false) {
