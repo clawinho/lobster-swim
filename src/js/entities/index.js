@@ -14,3 +14,4 @@ export { Fork } from './enemies/Fork.js';
 // Pickups
 export { Bubble } from './pickups/Bubble.js';
 export { GoldenFish } from './pickups/GoldenFish.js';
+export { Pearl } from './pickups/Pearl.js';

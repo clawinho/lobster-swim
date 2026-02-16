@@ -2,7 +2,7 @@
  * app.js - Main application (uses regular DOM, modular entities)
  */
 
-import { Lobster, Hook, Cage, Bubble, GoldenFish, Net, Fork } from './entities/index.js';
+import { Lobster, Hook, Cage, Bubble, GoldenFish, Net, Fork, Pearl } from './entities/index.js';
 import { Particle } from './entities/effects/Particle.js';
 import { Audio } from './audio-module.js';
 import { OceanCurrent } from './entities/mechanics/OceanCurrent.js';
@@ -40,7 +40,7 @@ const COMBO_MESSAGES = ['', 'Nice!', 'Great!', 'Awesome!', 'Amazing!', 'INCREDIB
 
 // Game state
 let canvas, ctx, audio;
-let player, bubbles, hooks, cages, nets, forks, fish, oceanCurrent;
+let player, bubbles, hooks, cages, nets, forks, fish, pearl, oceanCurrent;
 let gameSessionId = null;
 let score = 0, lives = 3, highScore = 0;
 let gameOver = false, gameStarted = false;
@@ -67,7 +67,7 @@ const LEVEL_SUBTITLES = {
 let currentLevel = 1, invincible = true, invincibleTimer = INVINCIBLE_DURATION;
 let caught = false, caughtY = 0, screenShake = 0;
 let keys = {}, joystickDx = 0, joystickDy = 0, hasTarget = false;
-let bgScrollX = 0, lastHookThreshold = 0, fishSpawnTimer = 0;
+let bgScrollX = 0, lastHookThreshold = 0, fishSpawnTimer = 0, pearlSpawnTimer = 0;
 let particles = [];
 // DOM Elements
 let titleScreen, playBtn, scoreDisplay, livesDisplay, levelDisplay, difficultyDisplay;
@@ -265,6 +265,8 @@ async function startGame() {
     nets = [];
     forks = [];
     fish = null;
+    pearl = null;
+    pearlSpawnTimer = 0;
     oceanCurrent = new OceanCurrent(0.4); // Ocean currents push player gently
     
     updateUI();
@@ -590,6 +592,50 @@ function update() {
         }
     }
     
+    // Magic Pearl - grants invincibility
+    pearlSpawnTimer++;
+    // Spawn rarely: every ~20 seconds (1200 frames), 20% chance, only if no pearl active
+    if (!pearl && pearlSpawnTimer > 1200) {
+        if (Math.random() < 0.2) {
+            pearl = new Pearl(
+                Math.random() * (CANVAS_WIDTH - 100) + 50,
+                CANVAS_HEIGHT + 30
+            );
+            pearlSpawnTimer = 0;
+        }
+    }
+    
+    if (pearl) {
+        pearl.update();
+        if (!pearl.active) {
+            pearl = null;
+        } else {
+            // Check collision with player
+            const ph = pearl.getHitbox();
+            const px = player.x, py = player.y, pr = 20; // player radius
+            const nearX = Math.max(ph.x, Math.min(px, ph.x + ph.width));
+            const nearY = Math.max(ph.y, Math.min(py, ph.y + ph.height));
+            const dist = Math.sqrt((px - nearX) ** 2 + (py - nearY) ** 2);
+            
+            if (dist < pr) {
+                // Collected! Grant invincibility
+                audio.playPowerup?.() || audio.playBubble?.(); // Use powerup sound if exists
+                invincible = true;
+                invincibleTimer = 300; // 5 seconds of invincibility
+                scorePopups.push({
+                    x: pearl.x,
+                    y: pearl.y,
+                    text: "✨ SHIELD! ✨",
+                    timer: 90,
+                    color: "#ff88ff",
+                    startY: pearl.y
+                });
+                particles.push(...Particle.spawnGoldenParticles(pearl.x, pearl.y));
+                pearl = null;
+            }
+        }
+    }
+    
     // Level up check
     checkLevelUp();
     
@@ -627,6 +673,7 @@ function render() {
     if (currentLevel >= 2) nets.forEach(n => n.render(ctx));
     if (currentLevel >= 3) forks.forEach(f => f.render(ctx));
     if (fish) fish.render(ctx);
+    if (pearl) pearl.render(ctx);
     
     // Player (with death animation rotation)
     if (deathAnimating) {
