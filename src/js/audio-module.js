@@ -8,13 +8,7 @@ export class Audio {
         this.musicEnabled = true;
         this.sfxEnabled = true;
         this.currentTrack = null;
-        this.currentLevel = 0;
-
-        this.levelTracks = {
-            1: 'assets/music/music_ocean.mp3',
-            2: 'assets/music/music_tank.mp3',
-            3: 'assets/music/music_kitchen.mp3'
-        };
+        this.currentTrackPath = null;
     }
 
     init() {
@@ -28,18 +22,17 @@ export class Audio {
         return this.ctx;
     }
 
-    // Music control
-    startLevelMusic(level) {
+    // Music control — accepts a track file path (e.g. 'assets/music/music_ocean.mp3')
+    startLevelMusic(trackPath) {
         if (!this.musicEnabled) return;
-        if (this.currentLevel === level && this.currentTrack) return;
+        if (this.currentTrackPath === trackPath && this.currentTrack) return;
 
         this.stopMusic();
-        this.currentLevel = level;
+        this.currentTrackPath = trackPath;
 
-        const track = this.levelTracks[level];
-        if (!track) return;
+        if (!trackPath) return;
 
-        this.currentTrack = new window.Audio(track);
+        this.currentTrack = new window.Audio(trackPath);
         this.currentTrack.loop = true;
         this.currentTrack.volume = 1.0;
         this.currentTrack.play().catch(() => {});
@@ -55,8 +48,8 @@ export class Audio {
 
     toggleMusic() {
         this.musicEnabled = !this.musicEnabled;
-        if (this.musicEnabled) {
-            this.startLevelMusic(this.currentLevel || 1);
+        if (this.musicEnabled && this.currentTrackPath) {
+            this.startLevelMusic(this.currentTrackPath);
         } else {
             this.stopMusic();
         }

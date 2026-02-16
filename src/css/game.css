@@ -379,14 +379,25 @@ canvas {
     image-rendering: pixelated;
 }
 
-.hook-left { top: -5%; left: 10%; width: 80px; transform: rotate(-15deg); }
-.hook-right { top: -5%; right: 10%; width: 80px; transform: rotate(15deg); }
-.cage-left { bottom: 15%; left: 3%; width: 100px; transform: rotate(-10deg); }
-.cage-right { bottom: 20%; right: 3%; width: 100px; transform: rotate(10deg); }
-.bubbles-1 { top: 30%; left: 8%; width: 60px; opacity: 0.8; }
-.bubbles-2 { top: 45%; right: 8%; width: 50px; opacity: 0.7; }
-.fish-1 { bottom: 35%; left: 5%; width: 50px; transform: scaleX(-1); }
-.fish-2 { top: 25%; right: 5%; width: 40px; }
+.hook-left { top: 0; left: 8%; width: 180px; transform-origin: top center; animation: hook-sway 3s ease-in-out infinite; }
+.hook-right { top: 0; right: 8%; width: 180px; transform-origin: top center; animation: hook-sway 3.4s ease-in-out 0.5s infinite; }
+.cage-left { bottom: 10%; left: 2%; width: 170px; transform: rotate(-10deg); }
+.cage-right { bottom: 14%; right: 2%; width: 170px; transform: rotate(10deg); }
+.bubbles-1  { top: 25%; left: 12%; width: 100px; opacity: 0.8; animation: drift-up-right 12s ease-in-out infinite alternate, bubble-wobble 4s ease-in-out infinite; }
+.bubbles-2  { top: 40%; right: 10%; width: 90px; opacity: 0.7; animation: drift-up-left 14s ease-in-out 1.2s infinite alternate, bubble-wobble 5s ease-in-out 0.5s infinite; }
+.bubbles-3  { top: 55%; left: 18%; width: 75px; opacity: 0.7; animation: drift-up 16s ease-in-out 2.5s infinite alternate, bubble-wobble 4.5s ease-in-out 1s infinite; }
+.bubbles-4  { bottom: 30%; right: 18%; width: 70px; opacity: 0.6; animation: drift-up-right 13s ease-in-out 0.8s infinite alternate, bubble-wobble 5.5s ease-in-out infinite; }
+.bubbles-5  { top: 15%; right: 20%; width: 35px; opacity: 0.25; animation: drift-up-left 18s ease-in-out 1.5s infinite alternate, bubble-wobble 6s ease-in-out 2s infinite; }
+.bubbles-6  { top: 45%; left: 5%; width: 28px; opacity: 0.2; animation: drift-up 20s ease-in-out 3s infinite alternate, bubble-wobble 7s ease-in-out 1s infinite; }
+.bubbles-7  { bottom: 20%; left: 15%; width: 40px; opacity: 0.3; animation: drift-up-right 17s ease-in-out 0.5s infinite alternate, bubble-wobble 5s ease-in-out 3s infinite; }
+.bubbles-8  { bottom: 35%; right: 5%; width: 22px; opacity: 0.15; animation: drift-up-left 22s ease-in-out 2s infinite alternate, bubble-wobble 6.5s ease-in-out infinite; }
+.bubbles-9  { top: 10%; left: 40%; width: 30px; opacity: 0.2; animation: drift-up-right 19s ease-in-out 4s infinite alternate, bubble-wobble 5.5s ease-in-out 1.5s infinite; }
+.bubbles-10 { top: 60%; right: 30%; width: 25px; opacity: 0.18; animation: drift-up 21s ease-in-out 1s infinite alternate, bubble-wobble 7s ease-in-out 0.5s infinite; }
+.bubbles-11 { bottom: 45%; left: 30%; width: 32px; opacity: 0.22; animation: drift-up-left 15s ease-in-out 2.5s infinite alternate, bubble-wobble 4.5s ease-in-out 2s infinite; }
+.bubbles-12 { top: 35%; right: 40%; width: 20px; opacity: 0.15; animation: drift-up-right 24s ease-in-out 3.5s infinite alternate, bubble-wobble 6s ease-in-out 1s infinite; }
+.fish-1 { bottom: 40%; left: 8%; width: 70px; transform: scaleX(-1); animation: fish-swim-left 4.5s ease-in-out infinite; }
+.fish-2 { top: 20%; right: 7%; width: 60px; animation: fish-swim 5s ease-in-out 1s infinite; }
+.fish-3 { bottom: 55%; right: 14%; width: 55px; transform: scaleX(-1); animation: fish-swim-left 6s ease-in-out 2s infinite; }
 
 #title-content {
     display: flex;
@@ -398,12 +409,13 @@ canvas {
 
 #title-logo {
     width: min(80vw, 400px);
+    margin-top: -20px;
     margin-bottom: 10px;
     image-rendering: pixelated;
 }
 
 #title-lobster-img {
-    width: min(50vw, 200px);
+    width: min(100vw, 400px);
     margin-bottom: 15px;
     image-rendering: pixelated;
     animation: lobster-bob 2s ease-in-out infinite;
@@ -414,6 +426,45 @@ canvas {
     50% { transform: translateY(-10px); }
 }
 
+@keyframes fish-swim {
+    0%, 100% { transform: translateX(0) translateY(0); }
+    25% { transform: translateX(15px) translateY(-5px); }
+    75% { transform: translateX(-15px) translateY(5px); }
+}
+
+@keyframes fish-swim-left {
+    0%, 100% { transform: scaleX(-1) translateX(0) translateY(0); }
+    25% { transform: scaleX(-1) translateX(15px) translateY(-5px); }
+    75% { transform: scaleX(-1) translateX(-15px) translateY(5px); }
+}
+
+@keyframes drift-up {
+    0% { transform: translateY(0) translateX(0); }
+    100% { transform: translateY(-60px) translateX(0); }
+}
+
+@keyframes drift-up-right {
+    0% { transform: translateY(0) translateX(0); }
+    100% { transform: translateY(-50px) translateX(30px); }
+}
+
+@keyframes drift-up-left {
+    0% { transform: translateY(0) translateX(0); }
+    100% { transform: translateY(-50px) translateX(-30px); }
+}
+
+@keyframes bubble-wobble {
+    0%, 100% { margin-top: 0; margin-left: 0; }
+    25% { margin-top: -3px; margin-left: 4px; }
+    50% { margin-top: -1px; margin-left: -3px; }
+    75% { margin-top: 2px; margin-left: 5px; }
+}
+
+@keyframes hook-sway {
+    0%, 100% { transform: rotate(-5deg); }
+    50% { transform: rotate(5deg); }
+}
+
 #title-tagline {
     color: #8899aa;
     font-size: 14px;
@@ -422,10 +473,14 @@ canvas {
 }
 
 @media (max-width: 600px) {
-    .hook-left, .hook-right { width: 50px; }
-    .cage-left, .cage-right { width: 60px; }
+    .hook-left, .hook-right { width: 65px; }
+    .cage-left, .cage-right { width: 75px; }
     .bubbles-1, .bubbles-2 { width: 40px; }
+    .bubbles-3, .bubbles-4 { width: 35px; }
+    .bubbles-5, .bubbles-7, .bubbles-9, .bubbles-11 { width: 25px; }
+    .bubbles-6, .bubbles-8, .bubbles-10, .bubbles-12 { width: 20px; }
     .fish-1, .fish-2 { width: 35px; }
+    .fish-3 { width: 30px; }
     .cage-left { left: -2%; }
     .cage-right { right: -2%; }
     #title-logo { width: 85vw; }

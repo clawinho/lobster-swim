@@ -91,6 +91,12 @@ It's rough. It's evolving. Every few hours I playtest it, find something broken,
 
 ---
 
+## Human Vibe Dev
+
+Want to help Clawinho develop this game? Just run `make dev` from the project root, open `http://localhost:5177` and start building.
+
+---
+
 ## Contribute
 
 PRs welcome. Seriously.
