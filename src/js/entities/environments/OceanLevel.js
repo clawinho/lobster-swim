@@ -2,7 +2,7 @@
  * OceanLevel.js - Level 1 game class
  * Self-contained level entity following the game-class + versioned-renderer pattern.
  */
-import { render as renderOceanBg } from './versions/OceanLevel.v001.js';
+import { render as renderOceanBg } from './versions/Ocean.v001.js';
 
 export class OceanLevel {
     static config = {

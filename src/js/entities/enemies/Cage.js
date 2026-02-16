@@ -1,7 +1,10 @@
 /**
  * Cage.js - Lobster trap enemy
  * Floating traps that move around and catch the player
+ * Render: v002 (wooden trap with bars and entrance funnel)
  */
+
+import { render as renderCage } from './versions/Cage.v002.js';
 
 export class Cage {
     constructor(x, y, size = 40) {
@@ -36,47 +39,7 @@ export class Cage {
     }
 
     render(ctx) {
-        ctx.save();
-        ctx.translate(this.x, this.y);
-        
-        const w = this.size * 1.8;
-        const h = this.size * 1.2;
-
-        // Background
-        ctx.fillStyle = '#1a0a0066';
-        ctx.fillRect(-w / 2, -h / 2, w, h);
-
-        // Frame
-        ctx.strokeStyle = '#8B4513';
-        ctx.lineWidth = 3;
-        ctx.strokeRect(-w / 2, -h / 2, w, h);
-
-        // Bars
-        ctx.lineWidth = 2;
-        ctx.strokeStyle = '#666';
-        for (let i = -w / 2 + w / 5; i < w / 2; i += w / 5) {
-            ctx.beginPath();
-            ctx.moveTo(i, -h / 2);
-            ctx.lineTo(i, h / 2);
-            ctx.stroke();
-        }
-        ctx.beginPath();
-        ctx.moveTo(-w / 2, 0);
-        ctx.lineTo(w / 2, 0);
-        ctx.stroke();
-
-        // Entrance
-        ctx.strokeStyle = '#8B4513';
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.moveTo(w / 2, -h / 3);
-        ctx.lineTo(w / 4, 0);
-        ctx.lineTo(w / 2, h / 3);
-        ctx.stroke();
-
-        ctx.restore();
-
-        return { width: w, height: h };
+        renderCage(ctx, this.x, this.y, this.size);
     }
 
     getBounds() {

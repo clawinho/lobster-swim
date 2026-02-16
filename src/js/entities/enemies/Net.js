@@ -1,7 +1,10 @@
 /**
  * Net.js - Fishing net enemy (Level 2+)
  * Large rectangular hazard that sweeps across the screen
+ * Render: v001 (grid pattern with handle)
  */
+
+import { render as renderNet } from './versions/Net.v001.js';
 
 export class Net {
     constructor(x, y, width = 100, height = 60) {
@@ -37,22 +40,7 @@ export class Net {
     }
 
     render(ctx) {
-        ctx.strokeStyle = '#888';
-        ctx.lineWidth = 2;
-        ctx.strokeRect(this.x, this.y, this.width, this.height);
-
-        // Net grid
-        for (let i = 1; i < 4; i++) {
-            ctx.beginPath();
-            ctx.moveTo(this.x, this.y + i * this.height / 4);
-            ctx.lineTo(this.x + this.width, this.y + i * this.height / 4);
-            ctx.stroke();
-            ctx.moveTo(this.x + i * this.width / 4, this.y);
-            ctx.lineTo(this.x + i * this.width / 4, this.y + this.height);
-            ctx.stroke();
-        }
-
-        ctx.lineWidth = 1;
+        renderNet(ctx, this.x, this.y, this.width, this.height);
     }
 
     getBounds() {

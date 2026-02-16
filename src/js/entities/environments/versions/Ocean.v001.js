@@ -1,5 +1,5 @@
 /**
- * OceanLevel.v001.js - Ocean background (Level 1)
+ * Ocean.v001.js - Ocean background (Level 1)
  * Extracted from app.js renderBackground
  * @version 001
  * @current true
