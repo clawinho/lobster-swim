@@ -31,7 +31,9 @@ export const ENTITY_CONFIG = {
         props: [
             { key: 'x', min: 0, max: 800, step: 1 },
             { key: 'y', min: 0, max: 600, step: 1 },
-            { key: 'size', min: 10, max: 150, step: 1 }
+            { key: 'size', min: 10, max: 150, step: 1 },
+            { key: 'baseDx', min: -3, max: 3, step: 0.05 },
+            { key: 'baseDy', min: -3, max: 3, step: 0.05 }
         ]
     },
     nets: {
@@ -51,7 +53,10 @@ export const ENTITY_CONFIG = {
         props: [
             { key: 'x', min: 0, max: 800, step: 1 },
             { key: 'y', min: 0, max: 600, step: 1 },
-            { key: 'fallSpeed', min: 0.5, max: 15, step: 0.5 }
+            { key: 'fallSpeed', min: 0.5, max: 15, step: 0.5 },
+            { key: 'wobble', min: 0, max: 6.28, step: 0.01 },
+            { key: 'wobbleSpeed', min: 0.01, max: 0.2, step: 0.01 },
+            { key: 'canvasHeight', min: 100, max: 1200, step: 10 }
         ]
     },
     bubbles: {
@@ -60,7 +65,8 @@ export const ENTITY_CONFIG = {
         props: [
             { key: 'x', min: 0, max: 800, step: 1 },
             { key: 'y', min: 0, max: 600, step: 1 },
-            { key: 'size', min: 5, max: 80, step: 1 }
+            { key: 'size', min: 5, max: 80, step: 1 },
+            { key: 'phase', min: 0, max: 6.28, step: 0.01 }
         ]
     },
     fish: {
@@ -70,8 +76,11 @@ export const ENTITY_CONFIG = {
         props: [
             { key: 'x', min: 0, max: 800, step: 1 },
             { key: 'y', min: 0, max: 600, step: 1 },
+            { key: 'size', min: 5, max: 50, step: 1 },
             { key: 'speed', min: 0.5, max: 10, step: 0.5 },
-            { key: 'direction', readOnly: true }
+            { key: 'direction', readOnly: true },
+            { key: 'wobble', min: 0, max: 6.28, step: 0.01 },
+            { key: 'animTime', min: 0, max: 1000, step: 1 }
         ]
     },
     pearl: {

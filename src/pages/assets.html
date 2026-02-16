@@ -656,11 +656,11 @@
         const ACTOR_DEFAULTS = {
             player: { x: 400, y: 300, size: 30, speed: 5, angle: 0 },
             hooks: { x: 400, lineLength: 150, swingSpeed: 0.02, dropping: false },
-            cages: { x: 400, y: 300, size: 40 },
+            cages: { x: 400, y: 300, size: 40, baseDx: 0.75, baseDy: 0.75 },
             nets: { x: 400, y: 300, width: 100, height: 60, speed: 2 },
-            forks: { x: 400, y: 300, fallSpeed: 3 },
-            bubbles: { x: 400, y: 300, size: 18 },
-            fish: { x: 400, y: 300, speed: 2, direction: 1 }
+            forks: { x: 400, y: 300, fallSpeed: 3, wobble: 0, wobbleSpeed: 0.05, canvasHeight: 600 },
+            bubbles: { x: 400, y: 300, size: 18, phase: 0 },
+            fish: { x: 400, y: 300, size: 15, speed: 2, direction: 1, wobble: 0, animTime: 0 }
         };
 
         document.querySelectorAll('[data-actor-key]').forEach(pane => {
