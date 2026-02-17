@@ -59,7 +59,6 @@ let scorePopups = []; // {x, y, text, timer, color, startY}
 
 // Screen flash for combo milestones
 let comboFlash = 0; // Timer for screen flash
-    stunTimer = 0;
 let comboFlashColor = '#ffff00'; // Color of flash
 const COMBO_FLASH_MILESTONES = [5, 8, 10]; // Combos that trigger flash
 const COMBO_FLASH_COLORS = { 5: '#ffff00', 8: '#ff8800', 10: '#ff00ff' };
@@ -477,7 +476,6 @@ function update() {
     
     // Ocean current (only in levels with oceanCurrent mechanic)
     if (LEVELS[currentLevel].mechanics.includes('oceanCurrent') && oceanCurrent) {
-        const diff = getDifficulty();
         oceanCurrent.applyToPlayer(player, diff.speedMult, CANVAS_WIDTH, CANVAS_HEIGHT);
     }
     
@@ -532,9 +530,9 @@ function update() {
             bubble.respawn(CANVAS_WIDTH, CANVAS_HEIGHT);
             updateScore();
             
-            // Difficulty scaling
-            const diff = getDifficulty();
-            if (diff.hookCount > hooks.length && score > lastHookThreshold + 100) {
+            // Difficulty scaling (re-check after score changed)
+            const updatedDiff = getDifficulty();
+            if (updatedDiff.hookCount > hooks.length && score > lastHookThreshold + 100) {
                 hooks.push(...Hook.create(CANVAS_WIDTH, 1));
                 lastHookThreshold = score;
             }
@@ -644,20 +642,12 @@ function update() {
     eels.forEach(eel => {
         eel.update(diff.speedMult);
         if (eel.checkCollision(player, invincible)) {
-            lives--;
-            screenShake = 15;
-            comboCount = 0;
             scorePopups.push({
                 x: player.x, y: player.y - 20,
                 text: "ZAPPED!", timer: 60,
                 color: "#44eeff", startY: player.y - 20
             });
-            if (lives <= 0) {
-                gameOver = true;
-            } else {
-                invincible = true;
-                invincibleTimer = 120;
-            }
+            loseLife();
         }
     });
 
@@ -1146,7 +1136,8 @@ function updateScore() {
 
 function updateLives() {
     let hearts = '';
-    for (let i = 0; i < 3; i++) {
+    const maxHearts = Math.max(3, lives);
+    for (let i = 0; i < maxHearts; i++) {
         hearts += i < lives ? '❤️' : '🖤';
     }
     livesDisplay.innerHTML = hearts;
@@ -1270,7 +1261,7 @@ window.gameDevSetPaused = (val) => {
 window.gameDevIsPaused = () => paused;
 
 window.gameDevGetEntities = () => ({
-    player, bubbles, hooks, cages, nets, forks, fish, pearl, oceanCurrent, particles
+    player, bubbles, hooks, cages, nets, forks, seagulls, beachBalls, jellyfish, eels, fish, pearl, starfish, oceanCurrent, particles
 });
 
 window.gameDevSelectedEntities = [];
@@ -1311,13 +1302,14 @@ window.gameDevPickEntityAt = (canvasX, canvasY) => {
         }
     };
 
-    const arrayKeys = ['hooks', 'cages', 'nets', 'forks', 'bubbles', 'particles'];
+    const arrayKeys = ['hooks', 'cages', 'nets', 'forks', 'seagulls', 'beachBalls', 'jellyfish', 'eels', 'bubbles', 'particles'];
     for (const key of arrayKeys) {
         (entities[key] || []).forEach((e, i) => check(key, e, i));
     }
     if (entities.player) check('player', entities.player, null);
     if (entities.fish) check('fish', entities.fish, null);
     if (entities.pearl) check('pearl', entities.pearl, null);
+    if (entities.starfish) check('starfish', entities.starfish, null);
 
     return best;
 };
