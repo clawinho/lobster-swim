@@ -38,3 +38,8 @@ Unvetted ideas from anyone — contributors, outsiders, brainstorms. No gatekeep
 ---
 
 **Precedence:** When suggestions conflict, they resolve in section order — Human Leads overrides Agentic Roles overrides Open Suggestions.
+
+### Level transitions happen way too fast
+**Author:** Jeroen (pixelprotest)  **Date:** 2026-02-17
+
+Current thresholds are Ocean→Sea at 200 and Sea→Beach at 500. A few bubble pickups and you're already in the next level. Each level should feel like a proper chapter — increase thresholds significantly so players spend real time in each environment. Suggested: Ocean→Sea at 1000, Sea→Beach at 3000 (or similar). The player should earn the transition.
