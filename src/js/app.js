@@ -2,7 +2,7 @@
  * app.js - Main application (uses regular DOM, modular entities)
  */
 
-import { Lobster, Hook, Cage, Bubble, GoldenFish, Net, Fork, Pearl, Seagull, BeachBall } from './entities/index.js';
+import { Lobster, Hook, Cage, Bubble, GoldenFish, Net, Fork, Pearl, Seagull, BeachBall, Jellyfish } from './entities/index.js';
 import { Particle } from './entities/effects/particle/actor/Particle.js';
 import { Audio } from './audio-module.js';
 import { OceanCurrent } from './entities/mechanics/ocean-current/actor/OceanCurrent.js';
@@ -42,7 +42,8 @@ const COMBO_MESSAGES = ['', 'Nice!', 'Great!', 'Awesome!', 'Amazing!', 'INCREDIB
 
 // Game state
 let canvas, ctx, audio;
-let player, bubbles, hooks, cages, nets, forks, seagulls, fish, pearl, oceanCurrent, beachBalls;
+let player, bubbles, hooks, cages, nets, forks, seagulls, fish, pearl, oceanCurrent, beachBalls, jellyfish;
+let stunTimer = 0; // Jellyfish sting stun
 let gameSessionId = null;
 let score = 0, lives = 3, highScore = 0;
 let gameOver = false, gameStarted = false, paused = false;
@@ -58,6 +59,7 @@ let scorePopups = []; // {x, y, text, timer, color, startY}
 
 // Screen flash for combo milestones
 let comboFlash = 0; // Timer for screen flash
+    stunTimer = 0;
 let comboFlashColor = '#ffff00'; // Color of flash
 const COMBO_FLASH_MILESTONES = [5, 8, 10]; // Combos that trigger flash
 const COMBO_FLASH_COLORS = { 5: '#ffff00', 8: '#ff8800', 10: '#ff00ff' };
@@ -255,6 +257,7 @@ async function startGame() {
     comboPopups = [];
     scorePopups = [];
     comboFlash = 0;
+    stunTimer = 0;
     
     // Create entities
     player = new Lobster(400, 300);
@@ -265,6 +268,7 @@ async function startGame() {
     forks = [];
     seagulls = Seagull.create(CANVAS_WIDTH, CANVAS_HEIGHT, 2); // Diving seagulls
     beachBalls = BeachBall.create(LEVELS[1].enemies.beachBalls || 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+    jellyfish = Jellyfish.create(3, CANVAS_WIDTH, CANVAS_HEIGHT);
     fish = null;
     pearl = null;
     pearlSpawnTimer = 0;
@@ -435,15 +439,20 @@ function update() {
         return;
     }
     
+    // Stun timer (jellyfish sting)
+    if (stunTimer > 0) stunTimer--;
+    const speedMod = stunTimer > 0 ? Jellyfish.STUN_SPEED_MULT : 1;
+    const effectiveSpeed = player.speed * speedMod;
+
     // Player movement
-    if (keys['ArrowUp'] || keys['w'] || keys['W']) player.y -= player.speed;
-    if (keys['ArrowDown'] || keys['s'] || keys['S']) player.y += player.speed;
-    if (keys['ArrowLeft'] || keys['a'] || keys['A']) player.x -= player.speed;
-    if (keys['ArrowRight'] || keys['d'] || keys['D']) player.x += player.speed;
+    if (keys['ArrowUp'] || keys['w'] || keys['W']) player.y -= effectiveSpeed;
+    if (keys['ArrowDown'] || keys['s'] || keys['S']) player.y += effectiveSpeed;
+    if (keys['ArrowLeft'] || keys['a'] || keys['A']) player.x -= effectiveSpeed;
+    if (keys['ArrowRight'] || keys['d'] || keys['D']) player.x += effectiveSpeed;
     
     if (joystickDx !== 0 || joystickDy !== 0) {
-        player.x += joystickDx * player.speed;
-        player.y += joystickDy * player.speed;
+        player.x += joystickDx * effectiveSpeed;
+        player.y += joystickDy * effectiveSpeed;
     }
     
     if (hasTarget) {
@@ -451,8 +460,8 @@ function update() {
         const dy = player.targetY - player.y;
         const dist = Math.sqrt(dx * dx + dy * dy);
         if (dist > 10) {
-            player.x += (dx / dist) * player.speed;
-            player.y += (dy / dist) * player.speed;
+            player.x += (dx / dist) * effectiveSpeed;
+            player.y += (dy / dist) * effectiveSpeed;
         } else {
             hasTarget = false;
         }
@@ -599,6 +608,22 @@ function update() {
         });
     }
     
+    // Jellyfish (sting = stun)
+    if (jellyfish) {
+        jellyfish.forEach(jelly => {
+            jelly.update(diff.speedMult, CANVAS_WIDTH, CANVAS_HEIGHT);
+            if (jelly.checkCollision(player, invincible)) {
+                stunTimer = Jellyfish.STUN_DURATION;
+                screenShake = 8;
+                comboCount = 0; // Break combo on sting
+                scorePopups.push({
+                    x: player.x, y: player.y - 20,
+                    text: 'STUNNED!', timer: 60,
+                    color: '#cc44ff', startY: player.y - 20
+                });
+            }
+        });
+    }
     // Golden fish
     fishSpawnTimer++;
     if (!fish && fishSpawnTimer > GoldenFish.SPAWN_INTERVAL && lives < 3) {
@@ -713,6 +738,7 @@ function render() {
     if (LEVELS[currentLevel].enemies.forks) forks.forEach(f => f.render(ctx));
     if (currentLevel === 1 && seagulls) seagulls.forEach(g => g.render(ctx));
     if (LEVELS[currentLevel].enemies.beachBalls) beachBalls.forEach(b => b.render(ctx));
+    if (jellyfish) jellyfish.forEach(j => j.render(ctx));
     if (fish) fish.render(ctx);
     if (pearl) pearl.render(ctx);
     
@@ -883,6 +909,21 @@ function render() {
         const b = parseInt(hex.slice(5, 7), 16);
         ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${flashAlpha})`;
         ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+    }
+    // Stun overlay (jellyfish sting)
+    if (stunTimer > 0) {
+        const stunAlpha = Math.min(0.15, (stunTimer / 60) * 0.15);
+        ctx.fillStyle = `rgba(180, 50, 255, ${stunAlpha})`;
+        ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+        // Stun indicator text (flashing)
+        if (Math.floor(stunTimer / 10) % 2 === 0) {
+            ctx.save();
+            ctx.font = 'bold 16px monospace';
+            ctx.textAlign = 'center';
+            ctx.fillStyle = '#cc44ff';
+            ctx.fillText('⚡ STUNNED ⚡', player.x, player.y - 40);
+            ctx.restore();
+        }
     }
     
     // NEW BEST! celebration text
