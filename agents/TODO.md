@@ -8,10 +8,6 @@ Updated: 2026-02-17
 
 Priority order — top item is next up.
 
-### Bugs (Ship Blockers)
-- [ ] Fix eel death handler — replace manual `lives--`/`gameOver=true` with `loseLife()` call (`app.js:646-662`). Currently bypasses death animation, death sound, death particles, high score save, and `updateLives()` UI update.
-- [ ] Hearts display caps at 3 even when lives > 3 — change `updateLives()` loop to use `Math.max(3, lives)` (`app.js:1149`)
-
 ### Game Feel (High Priority)
 - [ ] Screen shake on death
 - [ ] Better death animation
@@ -28,14 +24,6 @@ Priority order — top item is next up.
 ### Audio (Medium Priority)
 - [ ] Music refinement — layered intensity per level (Ocean calm → Tank tension → Kitchen urgency)
 - [ ] Background art polish
-
-### Code Cleanup (Low Priority)
-- [ ] Remove stray `stunTimer = 0` assignment at `app.js:62` (duplicate of declaration on line 46)
-- [ ] Remove shadowed `const diff = getDifficulty()` re-declarations at `app.js:480` and `app.js:536` — use outer scope `diff`
-
-### Dev Tooling (Low Priority)
-- [ ] Add missing entities to `gameDevGetEntities()` — `seagulls`, `beachBalls`, `jellyfish`, `eels`, `starfish` (`app.js:1272`)
-- [ ] Add missing entity types to `gameDevPickEntityAt()` array keys and singleton checks (`app.js:1314`)
 
 ---
 
