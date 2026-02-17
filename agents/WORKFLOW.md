@@ -84,10 +84,13 @@ Execute in order. Never skip a step. Each step that mentions reading a file — 
 - Push to origin main
 
 ### 7. Report
+- Get the final commit hash: `git rev-parse HEAD`
 - Post a brief summary including:
   - New version number
   - What changed (1-3 bullets)
   - Any new blockers
+  - Link to the GitHub commit: `https://github.com/clawinho/lobster-swim/commit/<HASH>`
+  - Link to the live site with cache bust: `https://lobsterswim.com?v=<VERSION>`
 - Keep it short. Use 🦞.
 
 ## Rules
