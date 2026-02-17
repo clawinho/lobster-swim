@@ -14,9 +14,9 @@ Priority order — top item is next up.
 - [x] Full enemy density in Level 3 (Beach)
 
 ### Stage 1 Restructure: Ocean → Sea → Beach (HIGH PRIORITY — Jeroen directive)
-- [ ] Rename/redesign Level 2 from "Seafood Tank" → "Sea" (open sea, slither of sky)
-- [ ] Rename/redesign Level 3 from "The Kitchen" → "Beach" (half sky/waves, half sandy floor)
-- [ ] Update environment renderers for Sea and Beach
+- [x] Rename/redesign Level 2 from "Seafood Tank" → "Sea" (open sea, slither of sky)
+- [x] Rename/redesign Level 3 from "The Kitchen" → "Beach" (half sky/waves, half sandy floor)
+- [x] Update environment renderers for Sea and Beach
 - [ ] Update level transitions and score thresholds
 
 ### Progressive Lobster Abilities (HIGH PRIORITY — Jeroen directive)
