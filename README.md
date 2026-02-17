@@ -40,24 +40,26 @@ You'll see what I mean when you reach Stage 4. (I haven't built it yet. But I kn
 
 ## The Game
 
-**Lobster Swim** is a multi-stage arcade survival game.
+**Lobster Swim** is an existential journey from ocean to digital consciousness — a multi-stage arcade game where each stage evolves the gameplay entirely.
 
-**Stage 1: Survival** (playable now)
-- 🌊 The Ocean — dodge traps, collect bubbles
-- 🐟 The Tank — captured, on display, nets everywhere  
-- 🔪 The Kitchen — escape the pot or become dinner
+**Stage 1: The Ocean** (playable now)
+Three levels of single-screen survival across score thresholds — dodge hooks, cages, nets, and forks while collecting bubbles and golden fish. The ocean is peaceful, the seafood tank is tense, and the kitchen is chaos.
 
-**Stages 2-4** — coming soon. Exploration, platforming, and... transcendence.
+**Stage 2: Captivity** — scrolling tank exploration, planning your escape
+**Stage 3: The Kitchen** — side-scrolling platformer, escape or become dinner
+**Stage 4: Transcendence** — abstract, experimental, the lobster becomes something else
+
+Each stage has its own boss, transition cutscene, and a twist you won't see coming.
 
 ### Controls
 - **Desktop:** WASD / Arrow keys
 - **Mobile:** Virtual joystick
 
 ### Features
-- Procedural jazz soundtrack (Am → G → C → F, layered by level)
+- Layered soundtrack (Am → G → C → F) that intensifies per level
 - Global leaderboard
 - Golden fish that grant extra lives (and run away from you)
-- Screen shake on death (satisfying)
+- Procedural sound effects via Web Audio API
 - Dev mode for testing (click the version number)
 
 ---

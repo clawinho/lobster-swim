@@ -24,17 +24,18 @@ Requires Docker — no Node or other dependencies needed on the host machine. De
 `src/index.html` loads `src/js/app.js` (the main game loop, ~980 lines). **Not** `main.js` or `game.js` — those are unused legacy files.
 
 ### Entity Pattern (critical)
-Every game object follows this two-layer pattern:
+Every game object follows this three-layer pattern:
 
-1. **Game class** (`src/js/entities/<category>/<Name>.js`) — owns state, physics, collision detection. Imports the current versioned renderer for drawing.
-2. **Versioned renderer** (`src/js/entities/<category>/versions/<Name>.vXXX.js`) — pure `render(ctx, x, y, ...params)` function with no state. Multiple versions can coexist; the game class imports whichever is marked `@current true`.
+1. **Game class** (`src/js/entities/<category>/<name>/actor/<Name>.js`) — owns state, physics, collision detection. Imports the current versioned renderer for drawing.
+2. **Versioned renderer** (`src/js/entities/<category>/<name>/render/<Name>.vXXX.js`) — pure `render(ctx, x, y, ...params)` function with no state. Multiple versions can coexist; the game class imports whichever is marked `@current true`.
+3. **Preview manifest** (`src/js/entities/<category>/<name>/preview.js`) — adapter that imports all renderer versions and exports metadata, defaults, and preview wrappers for the asset library. Auto-discovered via `import.meta.glob`.
 
 Categories: `hero/`, `enemies/`, `pickups/`, `effects/`, `mechanics/`, `environments/`
 
 Shared utilities (color conversion, presets) live in `src/js/entities/utils/`.
 
 ### Adding/Modifying Entities
-When creating a new entity or version, you **must** also register it in the asset library (`src/pages/assets.html`) — add canvas, import renderer, wire sliders, add to the `renderers` object and `animate()` loop. See PRACTICES.md for the full 7-step checklist.
+Every entity needs a `preview.js` at its root — the asset library auto-discovers it via `import.meta.glob`. No manual wiring in `assets.html` needed. See PRACTICES.md for the full checklist.
 
 ### Web Components
 `src/js/components/` contains Shadow DOM web components (BottomNav, TitleScreen, GameOver, Leaderboard). Custom events must use `bubbles: true, composed: true` to escape shadow DOM.
@@ -56,3 +57,7 @@ Follow the rules in PRACTICES.md. The key principles:
 - **Encapsulation** — entities own their behavior. Pass parameters in, don't reach out for config.
 - **Single source of truth** — versioned renderers are the canonical visual definition. The asset library imports the same renderers as the game.
 - **Pre-dev reality check** — run `git log --oneline -5` before starting work. Don't trust cached context about the current state.
+
+## Agent Workflows
+
+`agents/` contains AI agent infrastructure: role prompts (`agents/roles/`), blocker tracking (`BLOCKERS.md`), and the active task list (`TODO.md`).
