@@ -12,24 +12,36 @@ This document defines the automated gamedev cycle for Lobster Swim. It is design
 
 - **Repository:** The canonical repo on the machine serving the game
 - **Branch:** main
-- **Docs directory:** agents/ (contains TODO.md, BLOCKERS.md, SUGGESTIONS.md, GAMEDEV_ROLES.md)
-- **Role definitions:** agents/roles/*.md
-- **Dev rules:** PRACTICES.md (repo root)
-- **Game vision:** GAME_VISION.md (repo root)
+
+## File Locations
+
+| File | Path | Description |
+|------|------|-------------|
+| SUGGESTIONS.md | repo root | Shared inbox — humans and agents both contribute here |
+| TODO.md | agents/TODO.md | Active task list managed by Producer role |
+| BLOCKERS.md | agents/BLOCKERS.md | Blocker tracking across all roles |
+| GAMEDEV_ROLES.md | agents/GAMEDEV_ROLES.md | Index of all available roles |
+| Role definitions | agents/roles/*.md | Individual role prompts and responsibilities |
+| PRACTICES.md | repo root | Development rules — law of the land |
+| GAME_VISION.md | repo root | North star design document |
+| STAGES.md | repo root | Detailed level/stage designs |
+| CLAUDE.md | repo root | Project onboarding context |
+
+**Never create duplicates.** If a file exists at one of these paths, that is the only copy.
 
 ## Steps
 
 Execute in order. Never skip a step. Each step that mentions reading a file — read it fully before acting.
 
 ### 1. Orient
-- Read `PRACTICES.md` — these are the development rules, follow them strictly
+- Read `PRACTICES.md` — development rules, follow strictly
 - Read `CLAUDE.md` if it exists — project onboarding context
 
 ### 2. Producer Triage
 - Read `agents/GAMEDEV_ROLES.md` to understand all available roles
 - Read `agents/roles/producer.md` and assume the Producer role
 - Run `git log --oneline -5` to see recent changes
-- Read and triage `agents/SUGGESTIONS.md`:
+- Read and triage `SUGGESTIONS.md` (repo root):
   - **Human Leads:** Process as directives, convert to TODO items or vision updates
   - **Agentic Roles:** Verify against GAME_VISION.md, convert valid ones to TODO items
   - Remove processed suggestions
@@ -80,10 +92,10 @@ Execute in order. Never skip a step. Each step that mentions reading a file — 
 
 ## Rules
 
-- **Never** create TODO.md, BLOCKERS.md, or SUGGESTIONS.md in the repo root — they live in `agents/`
+- **Never** create files in the wrong location — check the File Locations table
 - **Never** install software on the server
 - **Never** skip reading a file that a step tells you to read
-- If TODO and SUGGESTIONS have nothing actionable, report "no work needed" and stop
+- If SUGGESTIONS.md and agents/TODO.md have nothing actionable, report no work needed and stop
 - Quality over quantity — one solid fix beats three sloppy ones
 - Each run is stateless — the repo IS the shared memory
 
