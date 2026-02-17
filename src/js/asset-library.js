@@ -15,49 +15,7 @@ const CATEGORIES = [
     { id: 'mechanics', label: 'Mechanics', emoji: '⚙️' },
 ];
 
-import * as mod_0 from './entities/effects/particle/preview.js';
-import * as mod_1 from './entities/enemies/beachball/preview.js';
-import * as mod_2 from './entities/enemies/cage/preview.js';
-import * as mod_3 from './entities/enemies/eel/preview.js';
-import * as mod_4 from './entities/enemies/fork/preview.js';
-import * as mod_5 from './entities/enemies/hook/preview.js';
-import * as mod_6 from './entities/enemies/net/preview.js';
-import * as mod_7 from './entities/enemies/seagull/preview.js';
-import * as mod_8 from './entities/environments/kitchen/preview.js';
-import * as mod_9 from './entities/environments/ocean/preview.js';
-import * as mod_10 from './entities/environments/tank/preview.js';
-import * as mod_11 from './entities/hero/lobster/preview.js';
-import * as mod_12 from './entities/mechanics/difficulty/preview.js';
-import * as mod_13 from './entities/mechanics/invincibility/preview.js';
-import * as mod_14 from './entities/mechanics/magnetism/preview.js';
-import * as mod_15 from './entities/mechanics/ocean-current/preview.js';
-import * as mod_16 from './entities/pickups/bubble/preview.js';
-import * as mod_17 from './entities/pickups/goldfish/preview.js';
-import * as mod_18 from './entities/pickups/pearl/preview.js';
-import * as mod_19 from './entities/pickups/starfish/preview.js';
-
-const modules = Object.fromEntries([
-  ['./entities/effects/particle/preview.js', mod_0],
-  ['./entities/enemies/beachball/preview.js', mod_1],
-  ['./entities/enemies/cage/preview.js', mod_2],
-  ['./entities/enemies/eel/preview.js', mod_3],
-  ['./entities/enemies/fork/preview.js', mod_4],
-  ['./entities/enemies/hook/preview.js', mod_5],
-  ['./entities/enemies/net/preview.js', mod_6],
-  ['./entities/enemies/seagull/preview.js', mod_7],
-  ['./entities/environments/kitchen/preview.js', mod_8],
-  ['./entities/environments/ocean/preview.js', mod_9],
-  ['./entities/environments/tank/preview.js', mod_10],
-  ['./entities/hero/lobster/preview.js', mod_11],
-  ['./entities/mechanics/difficulty/preview.js', mod_12],
-  ['./entities/mechanics/invincibility/preview.js', mod_13],
-  ['./entities/mechanics/magnetism/preview.js', mod_14],
-  ['./entities/mechanics/ocean-current/preview.js', mod_15],
-  ['./entities/pickups/bubble/preview.js', mod_16],
-  ['./entities/pickups/goldfish/preview.js', mod_17],
-  ['./entities/pickups/pearl/preview.js', mod_18],
-  ['./entities/pickups/starfish/preview.js', mod_19],
-]);
+const modules = import.meta.glob('./entities/**/preview.js', { eager: true });
 
 export function buildAssetLibrary(container) {
     const entities = [];
