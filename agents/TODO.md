@@ -8,10 +8,12 @@ Updated: 2026-02-17
 
 Priority order — top item is next up.
 
-### Enemy Balance (HIGH PRIORITY — Jeroen directive)
+### Enemy Balance (HIGH PRIORITY — Jeroen directive + QA feedback)
 - [x] Reduce enemies in Level 1 (Ocean) — make it chill, very few enemies
 - [x] Ramp up enemies in Level 2 (Sea)
 - [x] Full enemy density in Level 3 (Beach)
+- [ ] Sea level still too many enemies at low scores — reduce initial spawn counts and delay ramp (QA: score 235 already has hooks+cages+jellyfish)
+- [ ] Per-level enemy filtering — limit enemy types by environment (no eels on Beach, etc.)
 
 ### Stage 1 Restructure: Ocean → Sea → Beach (HIGH PRIORITY — Jeroen directive)
 - [x] Rename/redesign Level 2 from "Seafood Tank" → "Sea" (open sea, slither of sky)
@@ -23,6 +25,7 @@ Priority order — top item is next up.
 - [ ] Level 1: Baby lobster, left/right only on ocean floor (Asteroids-style)
 - [ ] Level 2: Swimming lobster, full movement
 - [ ] Level 3: Can jump above water and walk on land
+- [ ] Lobster sprite should change between levels (QA: swimming sprite on Beach looks wrong)
 
 ### Lobster Art (MEDIUM PRIORITY — Jeroen directive)
 - [ ] Design legs for the hero lobster

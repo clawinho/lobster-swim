@@ -11,8 +11,8 @@ export class Sea {
         background: '#001830',
         scoreThreshold: 200,
         musicTrack: 'assets/music/music_tank.mp3',
-        enemies: { hooks: 3, nets: 3 },
-        spawnOnEnter: { nets: 3, hooks: 2 },
+        enemies: { hooks: 3, nets: 2, jellyfish: 1, eels: true },
+        spawnOnEnter: { nets: 1, hooks: 1 },
         mechanics: [],
     };
 

@@ -276,7 +276,7 @@ async function startGame() {
     forks = [];
     seagulls = Seagull.create(CANVAS_WIDTH, CANVAS_HEIGHT, 0); // Diving seagulls
     beachBalls = BeachBall.create(LEVELS[1].enemies.beachBalls || 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-    jellyfish = Jellyfish.create(1, CANVAS_WIDTH, CANVAS_HEIGHT);
+    jellyfish = Jellyfish.create(LEVELS[1].enemies.jellyfish || 0, CANVAS_WIDTH, CANVAS_HEIGHT);
     eels = [];
     eelSpawnTimer = 0;
     fish = null;
@@ -319,6 +319,13 @@ function checkLevelUp() {
             if (spawn.nets) nets = Net.create(spawn.nets, CANVAS_WIDTH, CANVAS_HEIGHT);
             if (spawn.forks) forks = Fork.create(spawn.forks, CANVAS_WIDTH, CANVAS_HEIGHT);
             if (spawn.hooks) hooks.push(...Hook.create(CANVAS_WIDTH, spawn.hooks));
+            // Spawn jellyfish based on level config
+            const jellyfishCount = config.enemies.jellyfish || 0;
+            if (jellyfishCount > jellyfish.length) {
+                jellyfish.push(...Jellyfish.create(jellyfishCount - jellyfish.length, CANVAS_WIDTH, CANVAS_HEIGHT));
+            }
+            // Clear eels when entering a level without them
+            if (!config.enemies.eels) { eels = []; eelSpawnTimer = 0; }
             audio.crossfadeTo(config.musicTrack);
             audio.playLevelUp();
 
@@ -659,26 +666,28 @@ function update() {
         });
     }
 
-    // Electric eels
-    eelSpawnTimer++;
-    const eelSpawnRate = diff.speedMult > 1.3 ? 180 : (diff.speedMult > 1.1 ? 300 : 480);
-    if (eelSpawnTimer >= eelSpawnRate) {
-        eels.push(new Eel(CANVAS_WIDTH, CANVAS_HEIGHT));
-        eelSpawnTimer = 0;
-    }
-    eels = eels.filter(e => e.alive);
-    eels.forEach(eel => {
-        eel.update(diff.speedMult);
-        if (eel.checkCollision(player, invincible)) {
-            particles.push(...Particle.spawnZapParticles(player.x, player.y));
-            scorePopups.push({
-                x: player.x, y: player.y - 20,
-                text: "ZAPPED!", timer: 60,
-                color: "#44eeff", startY: player.y - 20
-            });
-            loseLife();
+    // Electric eels (only in levels with eels enabled)
+    if (LEVELS[currentLevel].enemies.eels) {
+        eelSpawnTimer++;
+        const eelSpawnRate = diff.speedMult > 1.3 ? 180 : (diff.speedMult > 1.1 ? 300 : 480);
+        if (eelSpawnTimer >= eelSpawnRate) {
+            eels.push(new Eel(CANVAS_WIDTH, CANVAS_HEIGHT));
+            eelSpawnTimer = 0;
         }
-    });
+        eels = eels.filter(e => e.alive);
+        eels.forEach(eel => {
+            eel.update(diff.speedMult);
+            if (eel.checkCollision(player, invincible)) {
+                particles.push(...Particle.spawnZapParticles(player.x, player.y));
+                scorePopups.push({
+                    x: player.x, y: player.y - 20,
+                    text: "ZAPPED!", timer: 60,
+                    color: "#44eeff", startY: player.y - 20
+                });
+                loseLife();
+            }
+        });
+    }
 
     // Golden fish
     fishSpawnTimer++;
