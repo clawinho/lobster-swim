@@ -1,7 +1,7 @@
 /**
  * Beach.v001.js - Beach: half sky+waves on top, half sandy floor+shallow water
  * @version 001
- * @current true
+ * @current false
  */
 
 import { hslToRgba } from '../../../utils/colors.js';
@@ -125,4 +125,4 @@ export function render(ctx, w, h, scrollX) {
     ctx.restore();
 }
 
-export const meta = { version: '001', name: 'Beach', current: true, features: ['sky', 'ocean waves', 'shore foam', 'sandy floor', 'shells', 'water shimmer'] };
+export const meta = { version: '001', name: 'Beach', current: false, features: ['sky', 'ocean waves', 'shore foam', 'sandy floor', 'shells', 'water shimmer'] };

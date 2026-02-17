@@ -9,9 +9,9 @@ Updated: 2026-02-17
 Priority order — top item is next up.
 
 ### Beach Visual Redesign (HIGH PRIORITY — Jeroen directive)
-- [ ] Redesign Beach level: camera underwater looking toward shore
-- [ ] Top half sky, middle waterline with crashing waves, bottom half sea with yellow sand floor
-- [ ] Sand bank slopes up left to right
+- [x] Redesign Beach level: camera underwater looking toward shore
+- [x] Top half sky, middle waterline with crashing waves, bottom half sea with yellow sand floor
+- [x] Sand bank slopes up left to right
 - [ ] Beach-specific enemies: seagulls dive from above waterline, beach balls float at surface
 - [ ] Lobster POV: still submerged but near shore
 

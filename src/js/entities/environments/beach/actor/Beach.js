@@ -2,7 +2,7 @@
  * Beach.js - Level 3 game class
  * Beach environment: half sky+waves, half sandy floor.
  */
-import { render as renderBeachBg } from '../render/Beach.v001.js';
+import { render as renderBeachBg } from '../render/Beach.v002.js';
 
 export class Beach {
     static config = {
