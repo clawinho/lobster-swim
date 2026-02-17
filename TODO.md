@@ -1,49 +1,34 @@
-# Refactoring TODO - DRY Violations
+# TODO
 
-## Analysis Date: 2026-02-15
-## Status: ✅ ALL COMPLETE
-
----
-
-## 1. Lobster.js
-- **Status:** ✅ FIXED
-- **Fix:** Imports from `./versions/Lobster.v003.js`, passes tailSegments + angle
-
-## 2. Hook.js
-- **Status:** ✅ FIXED
-- **Fix:** Imports from `./versions/Hook.v002.js`
-
-## 3. Cage.js
-- **Status:** ✅ FIXED
-- **Fix:** Imports from `./versions/Cage.v002.js`
-
-## 4. Net.js
-- **Status:** ✅ FIXED
-- **Fix:** Imports from `./versions/Net.v001.js`
-
-## 5. Fork.js
-- **Status:** ✅ FIXED
-- **Fix:** Imports from `./versions/Fork.v001.js`
-
-## 6. GoldenFish.js
-- **Status:** ✅ FIXED
-- **Fix:** Imports from `./versions/GoldenFish.v002.js`
-
-## 7. Bubble.js
-- **Status:** ✅ FIXED (earlier)
-- **Fix:** Imports from `./versions/Bubble.v002.js`
+Updated: 2026-02-17
 
 ---
 
-## Shared Utilities
+## Gameplay
+- [ ] Screen shake on death
+- [ ] Particle effects
+- [ ] Better death animation
+- [ ] Respawn invincibility tuning
+- [ ] Progressive difficulty balancing
 
-### Created:
-- `utils/colors.js` - hslToRgba, COLOR_PRESETS, resolveHue
+## Level Design
+- [ ] Transition effects between levels
+- [ ] Stage 1 boss: Giant Enemy Crab
+- [ ] Stage 2 prototype: scrolling tank exploration
+- [ ] Stage 3 prototype: platformer mechanics
+- [ ] Stage 4 concept: abstract/experimental gameplay
 
----
+## Art & Audio
+- [ ] Music refinement (layered intensity per level)
+- [ ] New sound effects for upcoming enemies
+- [ ] Background art polish
 
-## Summary
+## UI / UX
+- [ ] Achievement system
+- [ ] Personal best tracking per session
+- [ ] Mobile optimization pass
 
-All game classes now import from their versioned renderers.
-No duplicate drawing code.
-Single source of truth for each entity's visual appearance.
+## Production
+- [ ] Decide on save system / checkpoints
+- [ ] Decide Stage 4 final boss concept
+- [ ] Game jam submission polish (April 2026)
