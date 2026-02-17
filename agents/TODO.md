@@ -4,31 +4,48 @@ Updated: 2026-02-17
 
 ---
 
-## Gameplay
-- [ ] Screen shake on death
-- [ ] Particle effects
-- [ ] Better death animation
+## Phase 1: Stage 1 Polish (Ship by Feb 28)
+
+Priority order — top item is next up.
+
+### Game Feel (High Priority)
+- [ ] Transition effects between levels (visual + audio fade)
+
+### Balance (High Priority)
 - [ ] Respawn invincibility tuning
-- [ ] Progressive difficulty balancing
+- [ ] Progressive difficulty balancing (enemy speed/count curves at 100/200/500/1000)
 
-## Level Design
-- [ ] Transition effects between levels
-- [ ] Stage 1 boss: Giant Enemy Crab
-- [ ] Stage 2 prototype: scrolling tank exploration
-- [ ] Stage 3 prototype: platformer mechanics
-- [ ] Stage 4 concept: abstract/experimental gameplay
+### Platform (High Priority)
+- [ ] Mobile optimization pass — touch responsiveness, joystick feel, viewport edge cases
 
-## Art & Audio
-- [ ] Music refinement (layered intensity per level)
-- [ ] New sound effects for upcoming enemies
+### Audio (Medium Priority)
+- [ ] Music refinement — layered intensity per level (Ocean calm → Tank tension → Kitchen urgency)
 - [ ] Background art polish
 
-## UI / UX
+---
+
+## Phase 2+ Backlog (March–April 2026)
+
+Parked until Phase 1 ships. Do not start these yet.
+
+### Stage 1 Boss (Phase 2 — March)
+- [ ] Giant Enemy Crab boss encounter
+- [ ] Boss defeat → trawler net transition cutscene
+
+### Stage 2 Prototype (Phase 2 — March)
+- [ ] Scrolling tank exploration mechanics
+- [ ] New sound effects for Stage 2 enemies
+
+### Stage 3 Prototype (Phase 3 — March/April)
+- [ ] Side-scrolling platformer mechanics
+- [ ] Kitchen escape level design
+
+### Stage 4 Concept (Phase 4 — April)
+- [ ] Abstract/experimental gameplay prototype
+- [ ] Decide final boss concept
+
+### Nice-to-Have (No deadline)
 - [ ] Achievement system
 - [ ] Personal best tracking per session
-- [ ] Mobile optimization pass
-
-## Production
-- [ ] Decide on save system / checkpoints
-- [ ] Decide Stage 4 final boss concept
-- [ ] Game jam submission polish (April 2026)
+- [ ] Save system / checkpoints (needed for multi-stage)
+- [ ] Game jam submission polish pass

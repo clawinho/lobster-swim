@@ -25,7 +25,7 @@ Suggestions from project owners and leads. These get first consideration.
 
 Suggestions from AI agents working in defined roles (see `agents/roles/`). Reference which role is suggesting.
 
-*(No entries yet.)*
+*(No entries — all triaged to TODO.md on 2026-02-17.)*
 
 ---
 

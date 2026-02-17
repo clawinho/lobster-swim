@@ -50,6 +50,7 @@ let gameOver = false, gameStarted = false, paused = false;
 let newBestTimer = 0; // For "NEW BEST!" celebration
 let deathAnimating = false, deathTimer = 0, deathRotation = 0; // Death animation state
 let levelTransition = false, levelTransitionTimer = 0, transitionLevel = 0; // Level transition state
+let bgFadeAlpha = 0; // Black overlay alpha for environment crossfade
 
 // Combo state
 let comboCount = 0;
@@ -59,7 +60,6 @@ let scorePopups = []; // {x, y, text, timer, color, startY}
 
 // Screen flash for combo milestones
 let comboFlash = 0; // Timer for screen flash
-    stunTimer = 0;
 let comboFlashColor = '#ffff00'; // Color of flash
 const COMBO_FLASH_MILESTONES = [5, 8, 10]; // Combos that trigger flash
 const COMBO_FLASH_COLORS = { 5: '#ffff00', 8: '#ff8800', 10: '#ff00ff' };
@@ -252,6 +252,7 @@ async function startGame() {
     levelTransition = false;
     levelTransitionTimer = 0;
     transitionLevel = 0;
+    bgFadeAlpha = 0;
     
     // Reset combo
     comboCount = 0;
@@ -310,13 +311,14 @@ function checkLevelUp() {
             const spawn = config.spawnOnEnter;
             if (spawn.nets) nets = Net.create(spawn.nets, CANVAS_WIDTH, CANVAS_HEIGHT);
             if (spawn.forks) forks = Fork.create(spawn.forks, CANVAS_WIDTH, CANVAS_HEIGHT);
-            audio.startLevelMusic(config.musicTrack);
+            audio.crossfadeTo(config.musicTrack);
             audio.playLevelUp();
 
             // Trigger level transition effect
             levelTransition = true;
             levelTransitionTimer = 120; // 2 seconds at 60fps
             transitionLevel = lvl;
+            bgFadeAlpha = 1.0;
             break;
         }
     }
@@ -403,8 +405,20 @@ function update() {
     // Level transition timer
     if (levelTransitionTimer > 0) {
         levelTransitionTimer--;
+        // Drive bgFadeAlpha: hold at 1.0 during white flash (120-100),
+        // ramp from 1.0 to 0 over frames 100-70, then stay at 0
+        if (levelTransitionTimer > 100) {
+            bgFadeAlpha = 1.0;
+        } else if (levelTransitionTimer > 70) {
+            bgFadeAlpha = (levelTransitionTimer - 70) / 30;
+        } else {
+            bgFadeAlpha = 0;
+        }
         if (levelTransitionTimer <= 0) levelTransition = false;
     }
+
+    // Audio crossfade (runs even after transition visuals finish)
+    audio.updateFade();
     
     // Combo timer decay
     if (comboTimer > 0) {
@@ -477,7 +491,6 @@ function update() {
     
     // Ocean current (only in levels with oceanCurrent mechanic)
     if (LEVELS[currentLevel].mechanics.includes('oceanCurrent') && oceanCurrent) {
-        const diff = getDifficulty();
         oceanCurrent.applyToPlayer(player, diff.speedMult, CANVAS_WIDTH, CANVAS_HEIGHT);
     }
     
@@ -532,9 +545,9 @@ function update() {
             bubble.respawn(CANVAS_WIDTH, CANVAS_HEIGHT);
             updateScore();
             
-            // Difficulty scaling
-            const diff = getDifficulty();
-            if (diff.hookCount > hooks.length && score > lastHookThreshold + 100) {
+            // Difficulty scaling (re-check after score changed)
+            const updatedDiff = getDifficulty();
+            if (updatedDiff.hookCount > hooks.length && score > lastHookThreshold + 100) {
                 hooks.push(...Hook.create(CANVAS_WIDTH, 1));
                 lastHookThreshold = score;
             }
@@ -605,11 +618,11 @@ function update() {
             ball.update(diff.speedMult, CANVAS_WIDTH, CANVAS_HEIGHT);
             const knockback = ball.checkCollision(player, invincible);
             if (knockback) {
-                // Apply knockback to player
                 player.x += knockback.x;
                 player.y += knockback.y;
                 player.clamp(CANVAS_WIDTH, CANVAS_HEIGHT);
                 screenShake = 6;
+                particles.push(...Particle.spawnKnockbackParticles(player.x, player.y));
                 // Reset combo on knockback (penalty for getting hit)
                 comboCount = Math.max(0, comboCount - 2);
             }
@@ -623,7 +636,8 @@ function update() {
             if (jelly.checkCollision(player, invincible)) {
                 stunTimer = Jellyfish.STUN_DURATION;
                 screenShake = 8;
-                comboCount = 0; // Break combo on sting
+                comboCount = 0;
+                particles.push(...Particle.spawnStunParticles(player.x, player.y));
                 scorePopups.push({
                     x: player.x, y: player.y - 20,
                     text: 'STUNNED!', timer: 60,
@@ -644,20 +658,13 @@ function update() {
     eels.forEach(eel => {
         eel.update(diff.speedMult);
         if (eel.checkCollision(player, invincible)) {
-            lives--;
-            screenShake = 15;
-            comboCount = 0;
+            particles.push(...Particle.spawnZapParticles(player.x, player.y));
             scorePopups.push({
                 x: player.x, y: player.y - 20,
                 text: "ZAPPED!", timer: 60,
                 color: "#44eeff", startY: player.y - 20
             });
-            if (lives <= 0) {
-                gameOver = true;
-            } else {
-                invincible = true;
-                invincibleTimer = 120;
-            }
+            loseLife();
         }
     });
 
@@ -1109,6 +1116,11 @@ function render() {
 
 function renderBackground() {
     LEVEL_ENTITIES[currentLevel - 1].renderBackground(ctx, CANVAS_WIDTH, CANVAS_HEIGHT, bgScrollX);
+    // Black overlay for smooth environment crossfade during level transitions
+    if (bgFadeAlpha > 0) {
+        ctx.fillStyle = `rgba(0, 0, 0, ${bgFadeAlpha})`;
+        ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+    }
 }
 
 function gameLoop() {
@@ -1146,7 +1158,8 @@ function updateScore() {
 
 function updateLives() {
     let hearts = '';
-    for (let i = 0; i < 3; i++) {
+    const maxHearts = Math.max(3, lives);
+    for (let i = 0; i < maxHearts; i++) {
         hearts += i < lives ? '❤️' : '🖤';
     }
     livesDisplay.innerHTML = hearts;
@@ -1270,7 +1283,7 @@ window.gameDevSetPaused = (val) => {
 window.gameDevIsPaused = () => paused;
 
 window.gameDevGetEntities = () => ({
-    player, bubbles, hooks, cages, nets, forks, fish, pearl, oceanCurrent, particles
+    player, bubbles, hooks, cages, nets, forks, seagulls, beachBalls, jellyfish, eels, fish, pearl, starfish, oceanCurrent, particles
 });
 
 window.gameDevSelectedEntities = [];
@@ -1311,13 +1324,14 @@ window.gameDevPickEntityAt = (canvasX, canvasY) => {
         }
     };
 
-    const arrayKeys = ['hooks', 'cages', 'nets', 'forks', 'bubbles', 'particles'];
+    const arrayKeys = ['hooks', 'cages', 'nets', 'forks', 'seagulls', 'beachBalls', 'jellyfish', 'eels', 'bubbles', 'particles'];
     for (const key of arrayKeys) {
         (entities[key] || []).forEach((e, i) => check(key, e, i));
     }
     if (entities.player) check('player', entities.player, null);
     if (entities.fish) check('fish', entities.fish, null);
     if (entities.pearl) check('pearl', entities.pearl, null);
+    if (entities.starfish) check('starfish', entities.starfish, null);
 
     return best;
 };

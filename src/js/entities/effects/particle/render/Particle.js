@@ -1,4 +1,6 @@
 // Preview renderer for assets page
+import { PARTICLE_PRESETS } from '../actor/Particle.js';
+
 export function render(ctx, width, height, frame, type = 'bubble', count = 8) {
     ctx.fillStyle = '#000810';
     ctx.fillRect(0, 0, width, height);
@@ -6,16 +8,15 @@ export function render(ctx, width, height, frame, type = 'bubble', count = 8) {
     const cx = width / 2;
     const cy = height / 2;
 
+    const preset = PARTICLE_PRESETS[type] || PARTICLE_PRESETS.bubble;
+    const colors = preset.colors;
+    const gravity = preset.gravity;
+
     // Spawn new particles periodically for preview
     const spawnFrame = frame % 60;
 
     if (spawnFrame < 1) {
         // Draw fresh burst
-        const colors = type === 'bubble' ? ['#88ddff', '#aaeeff', '#ffffff'] :
-                       type === 'death' ? ['#ff4500', '#ff6600', '#ff8800'] :
-                       ['#ffd700', '#ffec00', '#fff8dc'];
-        const gravity = type === 'bubble' ? -0.05 : type === 'death' ? 0.1 : -0.03;
-
         for (let i = 0; i < count; i++) {
             const angle = (Math.PI * 2 * i) / count;
             const dist = spawnFrame * 3;
@@ -35,10 +36,6 @@ export function render(ctx, width, height, frame, type = 'bubble', count = 8) {
     } else {
         // Draw expanding particles
         const progress = spawnFrame / 60;
-        const colors = type === 'bubble' ? ['#88ddff', '#aaeeff', '#ffffff'] :
-                       type === 'death' ? ['#ff4500', '#ff6600', '#ff8800'] :
-                       ['#ffd700', '#ffec00', '#fff8dc'];
-        const gravity = type === 'bubble' ? -0.05 : type === 'death' ? 0.1 : -0.03;
 
         for (let i = 0; i < count; i++) {
             const angle = (Math.PI * 2 * i) / count + (Math.random() - 0.5) * 0.3;
