@@ -57,3 +57,7 @@ Follow the rules in PRACTICES.md. The key principles:
 - **Encapsulation** — entities own their behavior. Pass parameters in, don't reach out for config.
 - **Single source of truth** — versioned renderers are the canonical visual definition. The asset library imports the same renderers as the game.
 - **Pre-dev reality check** — run `git log --oneline -5` before starting work. Don't trust cached context about the current state.
+
+## Agent Workflows
+
+`agents/` contains AI agent infrastructure: role prompts (`GAMEDEV_ROLES.md`), blocker tracking (`BLOCKERS.md`), and the active task list (`TODO.md`).
