@@ -23,14 +23,28 @@
 
 ## 🌊 THE FOUR STAGES
 
-| Stage | Name | Gameplay | Status |
-|-------|------|----------|--------|
-| 1 | **The Ocean** | Single-screen survival | Playable ✅ |
-| 2 | **Captivity** | Scrolling exploration | Concept |
-| 3 | **The Kitchen** | Side-scrolling platformer | Concept |
-| 4 | **Transcendence** | Abstract / experimental | Concept |
+| Stage | Name | Levels | Status |
+|-------|------|--------|--------|
+| 1 | **The Ocean** | Ocean → Sea → Beach | Playable ✅ (restructuring) |
+| 2 | **Captivity** | TBD | Concept |
+| 3 | **The Kitchen** | TBD | Concept |
+| 4 | **Transcendence** | TBD | Concept |
 
 Each stage has 3 levels, an end boss, and a transition cutscene.
+
+### Stage 1 Level Design (NEW — 2026-02-17)
+Jeroen's direction: restructure Stage 1 from Ocean/Tank/Kitchen → Ocean/Sea/Beach.
+
+| Level | Setting | Lobster | Gameplay | References |
+|-------|---------|---------|----------|------------|
+| 1 - Ocean | Deep ocean floor | Baby lobster, left/right only | Chill, few enemies, floor-bound | Asteroids (80s) |
+| 2 - Sea | Open sea, slither of sky visible | Swimming lobster | More enemies, full movement | Classic arcade |
+| 3 - Beach | Half sky+waves / half sandy floor+water | Can jump above water, walk on land | Strong currents, children playing, most enemies | 90s platformers |
+
+**Key principles:**
+- Level 1 is CHILL — very few enemies, ease the player in
+- Progressive abilities: floor-crawl → swim → jump/walk
+- Reference 80s/90s iconic games in gameplay feel
 
 > *For full level designs, bosses, mechanics, and transitions, see [STAGES.md](STAGES.md).*
 

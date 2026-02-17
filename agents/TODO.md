@@ -4,25 +4,45 @@ Updated: 2026-02-17
 
 ---
 
-## Phase 1: Stage 1 Polish (Ship by Feb 28)
+## Phase 1: Stage 1 Restructure (Ship by Feb 28)
 
 Priority order — top item is next up.
 
-### Balance (High Priority)
-- [x] Respawn invincibility tuning (reduced from 2s to 1.5s)
-- [x] Progressive difficulty balancing (smoothed speed curves, added cage scaling)
+### Enemy Balance (HIGH PRIORITY — Jeroen directive)
+- [x] Reduce enemies in Level 1 (Ocean) — make it chill, very few enemies
+- [ ] Ramp up enemies in Level 2 (Sea)
+- [ ] Full enemy density in Level 3 (Beach)
 
-### Audio (Medium Priority)
-- [ ] Music refinement — layered intensity per level (Ocean calm → Tank tension → Kitchen urgency)
+### Stage 1 Restructure: Ocean → Sea → Beach (HIGH PRIORITY — Jeroen directive)
+- [ ] Rename/redesign Level 2 from "Seafood Tank" → "Sea" (open sea, slither of sky)
+- [ ] Rename/redesign Level 3 from "The Kitchen" → "Beach" (half sky/waves, half sandy floor)
+- [ ] Update environment renderers for Sea and Beach
+- [ ] Update level transitions and score thresholds
 
-### Visual Polish (Medium Priority)
-- [x] Background art polish — v002 renderers for all 3 environments
+### Progressive Lobster Abilities (HIGH PRIORITY — Jeroen directive)
+- [ ] Level 1: Baby lobster, left/right only on ocean floor (Asteroids-style)
+- [ ] Level 2: Swimming lobster, full movement
+- [ ] Level 3: Can jump above water and walk on land
+
+### Lobster Art (MEDIUM PRIORITY — Jeroen directive)
+- [ ] Design legs for the hero lobster
+
+### Audio (MEDIUM PRIORITY)
+- [ ] Music refinement — layered intensity per level (Ocean calm → Sea tension → Beach urgency)
+
+### 80s/90s Game References (LOW PRIORITY — Jeroen directive)
+- [ ] Research and plan 80s/90s iconic game references for Stage 1 levels
+- [ ] Level 1 Asteroids feel, Level 3 platformer feel
 
 ---
 
 ## Phase 2+ Backlog (March–April 2026)
 
 Parked until Phase 1 ships. Do not start these yet.
+
+### Research: Diverse Game Styles (Jeroen directive)
+- [ ] Research how to refactor game for diverse gameplay styles in stages 2-4
+- [ ] Document findings in a research doc for later reference
 
 ### Stage 1 Boss (Phase 2 — March)
 - [ ] Giant Enemy Crab boss encounter

@@ -22,11 +22,11 @@ const LEVELS = Object.fromEntries(LEVEL_ENTITIES.map((lvl, i) => [i + 1, lvl.con
 
 const DIFFICULTY = {
     THRESHOLDS: [100, 250, 500, 1000],
-    SPEED_MULT: [1.0, 1.15, 1.3, 1.5, 1.8],
-    HOOK_COUNTS: [2, 2, 3, 4, 5],
+    SPEED_MULT: [0.8, 1.0, 1.15, 1.4, 1.8],
+    HOOK_COUNTS: [1, 2, 3, 4, 5],
     TIER_NAMES: ['', 'WARM', 'MEDIUM', 'HARD', 'HELL'],
-    CAGE_COUNTS: [1, 1, 2, 2, 3],
-    SPAWN_RATE_MULT: [1.0, 1.1, 1.2, 1.4, 1.6]
+    CAGE_COUNTS: [0, 1, 2, 2, 3],
+    SPAWN_RATE_MULT: [0.6, 1.0, 1.2, 1.4, 1.6]
 };
 
 const DEATH_QUOTES = [
@@ -269,14 +269,14 @@ async function startGame() {
     
     // Create entities
     player = new Lobster(400, 300);
-    bubbles = Bubble.create(8, CANVAS_WIDTH, CANVAS_HEIGHT);
-    cages = Cage.create(2, CANVAS_WIDTH, CANVAS_HEIGHT);
-    hooks = Hook.create(CANVAS_WIDTH, 2);
+    bubbles = Bubble.create(10, CANVAS_WIDTH, CANVAS_HEIGHT);
+    cages = Cage.create(0, CANVAS_WIDTH, CANVAS_HEIGHT);
+    hooks = Hook.create(CANVAS_WIDTH, 1);
     nets = [];
     forks = [];
-    seagulls = Seagull.create(CANVAS_WIDTH, CANVAS_HEIGHT, 2); // Diving seagulls
+    seagulls = Seagull.create(CANVAS_WIDTH, CANVAS_HEIGHT, 0); // Diving seagulls
     beachBalls = BeachBall.create(LEVELS[1].enemies.beachBalls || 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-    jellyfish = Jellyfish.create(3, CANVAS_WIDTH, CANVAS_HEIGHT);
+    jellyfish = Jellyfish.create(1, CANVAS_WIDTH, CANVAS_HEIGHT);
     eels = [];
     eelSpawnTimer = 0;
     fish = null;
