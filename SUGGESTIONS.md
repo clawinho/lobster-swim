@@ -43,3 +43,8 @@ Unvetted ideas from anyone — contributors, outsiders, brainstorms. No gatekeep
 ---
 
 **Precedence:** When suggestions conflict, they resolve in section order — Human Leads overrides Agentic Roles overrides Open Suggestions.
+
+### Level 3 (Beach) — scrolling environment toward shore
+**Author:** Jeroen (pixelprotest)  **Date:** 2026-02-17
+
+The Beach level should have the environment slowly scrolling from right to left, as if the lobster is swimming toward the beach front. As the level progresses: water gets shallower, sand rises, more sky becomes visible, waves get closer. The final boss encounter happens ON the beach — no water, fully on land. This gives the level a sense of journey and progression instead of a static background.
