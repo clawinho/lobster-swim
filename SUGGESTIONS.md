@@ -43,3 +43,8 @@ Unvetted ideas from anyone — contributors, outsiders, brainstorms. No gatekeep
 **Author:** Jeroen (pixelprotest)  **Date:** 2026-02-17
 
 Current thresholds are Ocean→Sea at 200 and Sea→Beach at 500. A few bubble pickups and you're already in the next level. Each level should feel like a proper chapter — increase thresholds significantly so players spend real time in each environment. Suggested: Ocean→Sea at 1000, Sea→Beach at 3000 (or similar). The player should earn the transition.
+
+### Level 1 (Ocean) should have zero enemies
+**Author:** Jeroen (pixelprotest)  **Date:** 2026-02-17
+
+The first level should be completely innocent — no enemies at all. It's the intro level to set the vibe, let the player explore, learn the controls, and enjoy the ocean. Just bubbles, maybe some goldfish, peaceful vibes. Enemies start appearing in Level 2 (Sea).
