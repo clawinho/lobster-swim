@@ -2,7 +2,7 @@
  * app.js - Main application (uses regular DOM, modular entities)
  */
 
-import { Lobster, Hook, Cage, Bubble, GoldenFish, Net, Fork, Pearl, Seagull, BeachBall, Jellyfish } from './entities/index.js';
+import { Lobster, Hook, Cage, Bubble, GoldenFish, Net, Fork, Pearl, Seagull, BeachBall, Jellyfish, Starfish } from './entities/index.js';
 import { Particle } from './entities/effects/particle/actor/Particle.js';
 import { Audio } from './audio-module.js';
 import { OceanCurrent } from './entities/mechanics/ocean-current/actor/OceanCurrent.js';
@@ -42,7 +42,7 @@ const COMBO_MESSAGES = ['', 'Nice!', 'Great!', 'Awesome!', 'Amazing!', 'INCREDIB
 
 // Game state
 let canvas, ctx, audio;
-let player, bubbles, hooks, cages, nets, forks, seagulls, fish, pearl, oceanCurrent, beachBalls, jellyfish;
+let player, bubbles, hooks, cages, nets, forks, seagulls, fish, pearl, starfish, oceanCurrent, beachBalls, jellyfish;
 let stunTimer = 0; // Jellyfish sting stun
 let gameSessionId = null;
 let score = 0, lives = 3, highScore = 0;
@@ -67,7 +67,9 @@ const COMBO_FLASH_COLORS = { 5: '#ffff00', 8: '#ff8800', 10: '#ff00ff' };
 let currentLevel = 1, invincible = true, invincibleTimer = INVINCIBLE_DURATION;
 let caught = false, caughtY = 0, screenShake = 0;
 let keys = {}, joystickDx = 0, joystickDy = 0, hasTarget = false;
-let bgScrollX = 0, lastHookThreshold = 0, fishSpawnTimer = 0, pearlSpawnTimer = 0;
+let bgScrollX = 0, lastHookThreshold = 0, fishSpawnTimer = 0, pearlSpawnTimer = 0, starfishSpawnTimer = 0;
+let starfishMultiplier = 1, starfishMultiplierTimer = 0;
+const STARFISH_MULTIPLIER_DURATION = 480; // 8 seconds at 60fps
 let particles = [];
 // DOM Elements
 let titleScreen, playBtn, scoreDisplay, livesDisplay, levelDisplay, difficultyDisplay;
@@ -271,6 +273,10 @@ async function startGame() {
     jellyfish = Jellyfish.create(3, CANVAS_WIDTH, CANVAS_HEIGHT);
     fish = null;
     pearl = null;
+    starfish = null;
+    starfishSpawnTimer = 0;
+    starfishMultiplier = 1;
+    starfishMultiplierTimer = 0;
     pearlSpawnTimer = 0;
     oceanCurrent = new OceanCurrent(0.4); // Ocean currents push player gently
     
@@ -496,7 +502,7 @@ function update() {
             // Calculate points with multiplier
             const multiplier = getComboMultiplier();
             const basePoints = 10;
-            const points = Math.floor(basePoints * multiplier);
+            const points = Math.floor(basePoints * multiplier * starfishMultiplier);
             score += points;
             
             // Score popup
@@ -700,6 +706,49 @@ function update() {
         }
     }
     
+
+    // Starfish - score multiplier pickup
+    starfishSpawnTimer++;
+    // Spawn every ~25 seconds, 15% chance, only if none active and multiplier not already active
+    if (!starfish && starfishMultiplierTimer <= 0 && starfishSpawnTimer > 1500) {
+        if (Math.random() < 0.15) {
+            starfish = new Starfish(
+                Math.random() * (CANVAS_WIDTH - 100) + 50,
+                -30
+            );
+            starfishSpawnTimer = 0;
+        }
+    }
+    if (starfish) {
+        starfish.update();
+        if (!starfish.active) {
+            starfish = null;
+        } else if (starfish.checkCollision(player)) {
+            // Collected! Grant 2x score multiplier
+            audio.playPowerup?.() || audio.playBubble?.();
+            starfishMultiplier = 2;
+            starfishMultiplierTimer = STARFISH_MULTIPLIER_DURATION;
+            scorePopups.push({
+                x: starfish.x,
+                y: starfish.y,
+                text: "⭐ 2x SCORE! ⭐",
+                timer: 90,
+                color: "#ffcc00",
+                startY: starfish.y
+            });
+            particles.push(...Particle.spawnGoldenParticles(starfish.x, starfish.y));
+            starfish = null;
+        }
+    }
+    
+    // Update starfish multiplier timer
+    if (starfishMultiplierTimer > 0) {
+        starfishMultiplierTimer--;
+        if (starfishMultiplierTimer <= 0) {
+            starfishMultiplier = 1;
+        }
+    }
+
     // Level up check
     checkLevelUp();
     
@@ -741,6 +790,7 @@ function render() {
     if (jellyfish) jellyfish.forEach(j => j.render(ctx));
     if (fish) fish.render(ctx);
     if (pearl) pearl.render(ctx);
+    if (starfish) starfish.render(ctx);
     
     // Player (with death animation rotation)
     if (deathAnimating) {
@@ -839,6 +889,35 @@ function render() {
         ctx.restore();
     }
     
+
+    // Starfish multiplier indicator
+    if (starfishMultiplierTimer > 0 && !deathAnimating) {
+        ctx.save();
+        const progress = starfishMultiplierTimer / STARFISH_MULTIPLIER_DURATION;
+        const barWidth = 120;
+        const barHeight = 6;
+        const barX = CANVAS_WIDTH - barWidth - 20;
+        const barY = 15;
+        const pulse = 0.8 + Math.sin(Date.now() * 0.008) * 0.2;
+        
+        // Background
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+        ctx.fillRect(barX - 2, barY - 2, barWidth + 4, barHeight + 4);
+        
+        // Timer bar (golden)
+        ctx.fillStyle = `rgba(255, 200, 50, ${pulse})`;
+        ctx.fillRect(barX, barY, barWidth * progress, barHeight);
+        
+        // Text
+        ctx.font = 'bold 13px monospace';
+        ctx.textAlign = 'right';
+        ctx.fillStyle = `rgba(255, 204, 0, ${pulse})`;
+        ctx.shadowColor = '#ffcc00';
+        ctx.shadowBlur = 8;
+        ctx.fillText('⭐ 2x SCORE', CANVAS_WIDTH - 20, barY + 22);
+        ctx.restore();
+    }
+
     // Ocean current direction indicator (bottom-left compass)
     if (LEVELS[currentLevel].mechanics.includes('oceanCurrent') && oceanCurrent && !deathAnimating) {
         ctx.save();

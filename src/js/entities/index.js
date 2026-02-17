@@ -18,3 +18,4 @@ export { Jellyfish } from "./enemies/jellyfish/actor/Jellyfish.js";
 export { Bubble } from "./pickups/bubble/actor/Bubble.js";
 export { GoldenFish } from "./pickups/goldfish/actor/GoldenFish.js";
 export { Pearl } from "./pickups/pearl/actor/Pearl.js";
+export { Starfish } from "./pickups/starfish/actor/Starfish.js";
