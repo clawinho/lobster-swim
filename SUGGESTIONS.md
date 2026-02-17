@@ -38,3 +38,8 @@ Unvetted ideas from anyone — contributors, outsiders, brainstorms. No gatekeep
 ---
 
 **Precedence:** When suggestions conflict, they resolve in section order — Human Leads overrides Agentic Roles overrides Open Suggestions.
+
+### High score celebration moment before reset
+**Author:** cso (cso_cso_cso_C50)  **Date:** 2026-02-17
+
+When you get a high score the game just kicks you out abruptly. Add a celebration/tada moment — confetti, score highlight, brief fanfare — before transitioning back. Give the player a moment to feel good about their achievement instead of instant reset.
