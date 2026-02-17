@@ -11,8 +11,8 @@ export class Kitchen {
         background: '#1a0a05',
         scoreThreshold: 500,
         musicTrack: 'assets/music/music_kitchen.mp3',
-        enemies: { hooks: 2, nets: 2, forks: 3 },
-        spawnOnEnter: { forks: 3 },
+        enemies: { hooks: 4, nets: 3, forks: 4 },
+        spawnOnEnter: { forks: 4, hooks: 2 },
         mechanics: [],
     };
 

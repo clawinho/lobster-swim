@@ -11,8 +11,8 @@ export class Tank {
         background: '#002030',
         scoreThreshold: 200,
         musicTrack: 'assets/music/music_tank.mp3',
-        enemies: { hooks: 2, nets: 2 },
-        spawnOnEnter: { nets: 2 },
+        enemies: { hooks: 3, nets: 3 },
+        spawnOnEnter: { nets: 3, hooks: 2 },
         mechanics: [],
     };
 

@@ -318,6 +318,7 @@ function checkLevelUp() {
             const spawn = config.spawnOnEnter;
             if (spawn.nets) nets = Net.create(spawn.nets, CANVAS_WIDTH, CANVAS_HEIGHT);
             if (spawn.forks) forks = Fork.create(spawn.forks, CANVAS_WIDTH, CANVAS_HEIGHT);
+            if (spawn.hooks) hooks.push(...Hook.create(CANVAS_WIDTH, spawn.hooks));
             audio.crossfadeTo(config.musicTrack);
             audio.playLevelUp();
 
