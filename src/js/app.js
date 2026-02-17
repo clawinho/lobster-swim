@@ -7,8 +7,8 @@ import { Particle } from './entities/effects/particle/actor/Particle.js';
 import { Audio } from './audio-module.js';
 import { OceanCurrent } from './entities/mechanics/ocean-current/actor/OceanCurrent.js';
 import { Ocean } from './entities/environments/ocean/actor/Ocean.js';
-import { Tank } from './entities/environments/tank/actor/Tank.js';
-import { Kitchen } from './entities/environments/kitchen/actor/Kitchen.js';
+import { Sea } from './entities/environments/sea/actor/Sea.js';
+import { Beach } from './entities/environments/beach/actor/Beach.js';
 
 // Constants
 const CANVAS_WIDTH = 800;
@@ -16,7 +16,7 @@ const CANVAS_HEIGHT = 600;
 const INVINCIBLE_DURATION = 90; // ~1.5s at 60fps — enough to recover, not exploitable
 
 // Level entities — ordered by scoreThreshold descending for checkLevelUp iteration
-const LEVEL_ENTITIES = [new Ocean(), new Tank(), new Kitchen()];
+const LEVEL_ENTITIES = [new Ocean(), new Sea(), new Beach()];
 const LEVELS = Object.fromEntries(LEVEL_ENTITIES.map((lvl, i) => [i + 1, lvl.constructor.config]));
 
 
@@ -32,7 +32,7 @@ const DIFFICULTY = {
 const DEATH_QUOTES = [
     "The void claims all eventually...",
     "Even the mightiest lobster falls...",
-    "The kitchen always wins...",
+    "The tide always turns...",
     "Butter and garlic await...",
     "Another one for the pot..."
 ];
