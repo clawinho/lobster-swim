@@ -12,8 +12,8 @@ Priority order — top item is next up.
 - [x] Reduce enemies in Level 1 (Ocean) — make it chill, very few enemies
 - [x] Ramp up enemies in Level 2 (Sea)
 - [x] Full enemy density in Level 3 (Beach)
-- [ ] Sea level still too many enemies at low scores — reduce initial spawn counts and delay ramp (QA: score 235 already has hooks+cages+jellyfish)
-- [ ] Per-level enemy filtering — limit enemy types by environment (no eels on Beach, etc.)
+- [x] Sea level still too many enemies at low scores — reduce initial spawn counts and delay ramp (QA: score 235 already has hooks+cages+jellyfish)
+- [x] Per-level enemy filtering — limit enemy types by environment (no eels on Beach, etc.)
 
 ### Stage 1 Restructure: Ocean → Sea → Beach (HIGH PRIORITY — Jeroen directive)
 - [x] Rename/redesign Level 2 from "Seafood Tank" → "Sea" (open sea, slither of sky)
