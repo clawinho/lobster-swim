@@ -28,8 +28,8 @@ export class Eel {
         this.baseY = this.y;
         
         this.speed = BASE_SPEED + Math.random() * 1.5;
-        this.waveAmp = 30 + Math.random() * 40;
-        this.waveFreq = 0.02 + Math.random() * 0.015;
+        this.waveAmp = 12 + Math.random() * 15;
+        this.waveFreq = 0.012 + Math.random() * 0.008;
         
         this.phase = Math.random() * Math.PI * 2;
         this.sparkPhase = Math.random() * Math.PI * 2;

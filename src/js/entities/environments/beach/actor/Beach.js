@@ -9,7 +9,7 @@ export class Beach {
         name: 'The Beach',
         subtitle: 'Sun, sand, and survival',
         background: '#1a2a35',
-        scoreThreshold: 500,
+        scoreThreshold: 3000,
         musicTrack: 'assets/music/music_kitchen.mp3',
         enemies: { hooks: 4, nets: 3, forks: 4, jellyfish: 2, eels: true },
         spawnOnEnter: { forks: 4, hooks: 2 },

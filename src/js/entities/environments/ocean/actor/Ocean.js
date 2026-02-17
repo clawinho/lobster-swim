@@ -11,7 +11,7 @@ export class Ocean {
         background: '#001020',
         scoreThreshold: 0,
         musicTrack: 'assets/music/music_ocean.mp3',
-        enemies: { hooks: 1, beachBalls: 0, jellyfish: 0, eels: false },
+        enemies: { hooks: 0, beachBalls: 0, jellyfish: 0, eels: false },
         spawnOnEnter: {},
         mechanics: ['oceanCurrent'],
     };

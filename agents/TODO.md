@@ -8,18 +8,12 @@ Updated: 2026-02-17
 
 Priority order — top item is next up.
 
-### Enemy Balance (HIGH PRIORITY — Jeroen directive + QA feedback)
-- [x] Reduce enemies in Level 1 (Ocean) — make it chill, very few enemies
-- [x] Ramp up enemies in Level 2 (Sea)
-- [x] Full enemy density in Level 3 (Beach)
-- [x] Sea level still too many enemies at low scores — reduce initial spawn counts and delay ramp (QA: score 235 already has hooks+cages+jellyfish)
-- [x] Per-level enemy filtering — limit enemy types by environment (no eels on Beach, etc.)
-
-### Stage 1 Restructure: Ocean → Sea → Beach (HIGH PRIORITY — Jeroen directive)
-- [x] Rename/redesign Level 2 from "Seafood Tank" → "Sea" (open sea, slither of sky)
-- [x] Rename/redesign Level 3 from "The Kitchen" → "Beach" (half sky/waves, half sandy floor)
-- [x] Update environment renderers for Sea and Beach
-- [ ] Update level transitions and score thresholds
+### Beach Visual Redesign (HIGH PRIORITY — Jeroen directive)
+- [ ] Redesign Beach level: camera underwater looking toward shore
+- [ ] Top half sky, middle waterline with crashing waves, bottom half sea with yellow sand floor
+- [ ] Sand bank slopes up left to right
+- [ ] Beach-specific enemies: seagulls dive from above waterline, beach balls float at surface
+- [ ] Lobster POV: still submerged but near shore
 
 ### Progressive Lobster Abilities (HIGH PRIORITY — Jeroen directive)
 - [ ] Level 1: Baby lobster, left/right only on ocean floor (Asteroids-style)
@@ -32,6 +26,21 @@ Priority order — top item is next up.
 
 ### Audio (MEDIUM PRIORITY)
 - [ ] Music refinement — layered intensity per level (Ocean calm → Sea tension → Beach urgency)
+
+### Enemy Balance (DONE)
+- [x] Reduce enemies in Level 1 (Ocean) — make it chill, very few enemies
+- [x] Level 1 now has ZERO enemies (Jeroen directive)
+- [x] Ramp up enemies in Level 2 (Sea)
+- [x] Full enemy density in Level 3 (Beach)
+- [x] Sea level still too many enemies at low scores — reduce initial spawn counts and delay ramp
+- [x] Per-level enemy filtering — limit enemy types by environment
+- [x] Eel movement toned down — smoother slithering, less erratic (Jeroen directive)
+
+### Stage 1 Restructure: Ocean → Sea → Beach (DONE)
+- [x] Rename/redesign Level 2 from "Seafood Tank" → "Sea"
+- [x] Rename/redesign Level 3 from "The Kitchen" → "Beach"
+- [x] Update environment renderers for Sea and Beach
+- [x] Update level transitions — Ocean→Sea at 1000, Sea→Beach at 3000 (Jeroen directive)
 
 ### 80s/90s Game References (LOW PRIORITY — Jeroen directive)
 - [ ] Research and plan 80s/90s iconic game references for Stage 1 levels
