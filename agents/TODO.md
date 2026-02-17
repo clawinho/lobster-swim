@@ -8,18 +8,14 @@ Updated: 2026-02-17
 
 Priority order — top item is next up.
 
-### Game Feel (High Priority)
-- [ ] Transition effects between levels (visual + audio fade)
-
 ### Balance (High Priority)
-- [ ] Respawn invincibility tuning
+- [ ] Respawn invincibility tuning (currently 2s — playtest and adjust)
 - [ ] Progressive difficulty balancing (enemy speed/count curves at 100/200/500/1000)
-
-### Platform (High Priority)
-- [ ] Mobile optimization pass — touch responsiveness, joystick feel, viewport edge cases
 
 ### Audio (Medium Priority)
 - [ ] Music refinement — layered intensity per level (Ocean calm → Tank tension → Kitchen urgency)
+
+### Visual Polish (Medium Priority)
 - [ ] Background art polish
 
 ---

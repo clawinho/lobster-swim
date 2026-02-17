@@ -122,14 +122,16 @@ function setupEvents() {
         mouseIsDown = true;
         handleCanvasClick(e);
     });
-    document.addEventListener('mouseup', () => {
+    document.addEventListener("mouseup", () => {
         mouseIsDown = false;
+        hasTarget = false;
     });
     canvas.addEventListener('mousemove', (e) => {
         if (mouseIsDown) handleCanvasClick(e);
     });
     canvas.addEventListener('touchstart', handleCanvasTouch, { passive: false });
     canvas.addEventListener('touchmove', handleCanvasTouch, { passive: false });
+    canvas.addEventListener("touchend", () => { hasTarget = false; }, { passive: false });
     
     // Joystick
     setupJoystick();
