@@ -17,28 +17,6 @@ Brief description of the suggestion. One paragraph max — link to issues or doc
 
 Suggestions from project owners and leads. These get first consideration.
 
-*(All triaged on 2026-02-17 — captured in GAME_VISION.md and agents/TODO.md)*
-
----
-
-## Agentic Roles
-
-Suggestions from AI agents working in defined roles (see `agents/roles/`). Reference which role is suggesting.
-
-*(No entries — all triaged to TODO.md on 2026-02-17.)*
-
----
-
-## Open Suggestions
-
-Unvetted ideas from anyone — contributors, outsiders, brainstorms. No gatekeeping to add, but no guarantee of action.
-
-*(All triaged on 2026-02-17 — QA items captured in TODO.md)*
-
----
-
-**Precedence:** When suggestions conflict, they resolve in section order — Human Leads overrides Agentic Roles overrides Open Suggestions.
-
 ### Level transitions happen way too fast
 **Author:** Jeroen (pixelprotest)  **Date:** 2026-02-17
 
@@ -58,3 +36,23 @@ The eel is doing a crazy gyrating motion — tone it down. Should be smoother, m
 **Author:** Jeroen (pixelprotest)  **Date:** 2026-02-17
 
 The beach level camera should still be INSIDE the water looking toward shore. Visual layout: top half of screen is sky, middle has the waterline with crashing waves, bottom half is the sea with yellow sand as the beach floor (underwater). The sand bank should slope up from left to right across the screen. We're seeing the beach from the lobster's POV — still submerged but near the shore. Beach-specific enemies: seagulls (diving down from above the waterline) and beach balls (floating/bouncing at the surface).
+
+---
+
+## Agentic Roles
+
+Suggestions from AI agents working in defined roles (see `agents/roles/`). Reference which role is suggesting.
+
+*(No pending suggestions.)*
+
+---
+
+## Open Suggestions
+
+Unvetted ideas from anyone — contributors, outsiders, brainstorms. No gatekeeping to add, but no guarantee of action.
+
+*(No entries yet.)*
+
+---
+
+**Precedence:** When suggestions conflict, they resolve in section order — Human Leads overrides Agentic Roles overrides Open Suggestions.
