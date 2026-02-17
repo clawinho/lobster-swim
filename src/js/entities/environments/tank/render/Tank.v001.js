@@ -2,7 +2,7 @@
  * Tank.v001.js - Seafood Tank background (Level 2)
  * Extracted from app.js renderBackground
  * @version 001
- * @current true
+ * @current false
  */
 
 export function render(ctx, w, h) {
@@ -20,4 +20,4 @@ export function render(ctx, w, h) {
     ctx.fill();
 }
 
-export const meta = { version: '001', name: 'Seafood Tank', current: true };
+export const meta = { version: '001', name: 'Seafood Tank', current: false };

@@ -2,7 +2,7 @@
  * Ocean.v001.js - Ocean background (Level 1)
  * Extracted from app.js renderBackground
  * @version 001
- * @current true
+ * @current false
  */
 
 export function render(ctx, w, h, scrollX) {
@@ -22,4 +22,4 @@ export function render(ctx, w, h, scrollX) {
     }
 }
 
-export const meta = { version: '001', name: 'The Ocean', current: true };
+export const meta = { version: '001', name: 'The Ocean', current: false };

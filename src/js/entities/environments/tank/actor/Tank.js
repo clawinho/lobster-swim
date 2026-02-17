@@ -2,7 +2,7 @@
  * Tank.js - Level 2 game class
  * Self-contained level entity following the game-class + versioned-renderer pattern.
  */
-import { render as renderTankBg } from '../render/Tank.v001.js';
+import { render as renderTankBg } from '../render/Tank.v002.js';
 
 export class Tank {
     static config = {

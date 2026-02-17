@@ -2,7 +2,7 @@
  * Kitchen.js - Level 3 game class
  * Self-contained level entity following the game-class + versioned-renderer pattern.
  */
-import { render as renderKitchenBg } from '../render/Kitchen.v001.js';
+import { render as renderKitchenBg } from '../render/Kitchen.v002.js';
 
 export class Kitchen {
     static config = {

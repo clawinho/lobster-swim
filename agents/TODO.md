@@ -16,7 +16,7 @@ Priority order — top item is next up.
 - [ ] Music refinement — layered intensity per level (Ocean calm → Tank tension → Kitchen urgency)
 
 ### Visual Polish (Medium Priority)
-- [ ] Background art polish
+- [x] Background art polish — v002 renderers for all 3 environments
 
 ---
 

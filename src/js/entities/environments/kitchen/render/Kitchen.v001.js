@@ -2,7 +2,7 @@
  * Kitchen.v001.js - Kitchen background (Level 3)
  * Extracted from app.js renderBackground
  * @version 001
- * @current true
+ * @current false
  */
 
 export function render(ctx, w, h) {
@@ -25,4 +25,4 @@ export function render(ctx, w, h) {
     }
 }
 
-export const meta = { version: '001', name: 'The Kitchen', current: true };
+export const meta = { version: '001', name: 'The Kitchen', current: false };
