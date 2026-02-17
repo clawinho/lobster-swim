@@ -61,3 +61,5 @@ Follow the rules in PRACTICES.md. The key principles:
 ## Agent Workflows
 
 `agents/` contains AI agent infrastructure: role prompts (`GAMEDEV_ROLES.md`), blocker tracking (`BLOCKERS.md`), and the active task list (`TODO.md`).
+
+`SUGGESTIONS.md` (repo root) is the central inbox for ideas and suggestions. Entries are organized by contributor authority: Human Leads > Agentic Roles > Open Suggestions. Conflicts resolve in that order.
