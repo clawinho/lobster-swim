@@ -2,6 +2,11 @@
  * audio-module.js - Sound effects and music management (ES6 module version)
  */
 
+// Crossfade timing constants (frame counts at 60fps)
+const FADE_OUT_FRAMES = 90;  // 1.5s fade out
+const FADE_IN_FRAMES = 60;   // 1s fade in
+const FADE_IN_DELAY = 30;    // 0.5s delay before new track starts
+
 export class Audio {
     constructor() {
         this.ctx = null;
@@ -9,6 +14,14 @@ export class Audio {
         this.sfxEnabled = true;
         this.currentTrack = null;
         this.currentTrackPath = null;
+
+        // Crossfade state
+        this.fadingOutTrack = null;
+        this.fadeOutTimer = 0;
+        this.pendingTrackEl = null;
+        this.pendingTrackPath = null;
+        this.fadeInTimer = 0;
+        this.fadeInDelay = 0;
     }
 
     init() {
@@ -38,12 +51,96 @@ export class Audio {
         this.currentTrack.play().catch(() => {});
     }
 
+    // Crossfade from current track to a new track
+    crossfadeTo(trackPath) {
+        if (!this.musicEnabled) return;
+        if (this.currentTrackPath === trackPath && this.currentTrack) return;
+
+        // Move current track to fading-out slot
+        if (this.currentTrack) {
+            this.fadingOutTrack = this.currentTrack;
+            this.fadeOutTimer = FADE_OUT_FRAMES;
+        }
+
+        // Clean up any previous pending track
+        if (this.pendingTrackEl) {
+            this.pendingTrackEl.pause();
+            this.pendingTrackEl = null;
+        }
+
+        this.currentTrack = null;
+        this.currentTrackPath = trackPath;
+
+        if (!trackPath) return;
+
+        // Create new track at volume 0, queue it
+        this.pendingTrackEl = new window.Audio(trackPath);
+        this.pendingTrackEl.loop = true;
+        this.pendingTrackEl.volume = 0;
+        this.pendingTrackPath = trackPath;
+        this.fadeInDelay = FADE_IN_DELAY;
+        this.fadeInTimer = 0;
+    }
+
+    // Call every frame from the game loop to drive crossfade volumes
+    updateFade() {
+        // Fade out old track
+        if (this.fadingOutTrack && this.fadeOutTimer > 0) {
+            this.fadeOutTimer--;
+            this.fadingOutTrack.volume = Math.max(0, this.fadeOutTimer / FADE_OUT_FRAMES);
+            if (this.fadeOutTimer <= 0) {
+                this.fadingOutTrack.pause();
+                this.fadingOutTrack.currentTime = 0;
+                this.fadingOutTrack = null;
+            }
+        }
+
+        // Delay before starting new track
+        if (this.pendingTrackEl && this.fadeInDelay > 0) {
+            this.fadeInDelay--;
+            if (this.fadeInDelay <= 0) {
+                // Start playing the new track
+                this.pendingTrackEl.play().catch(() => {});
+                this.fadeInTimer = FADE_IN_FRAMES;
+            }
+        }
+
+        // Fade in new track
+        if (this.pendingTrackEl && this.fadeInTimer > 0) {
+            this.fadeInTimer--;
+            const progress = 1 - (this.fadeInTimer / FADE_IN_FRAMES);
+            this.pendingTrackEl.volume = Math.min(1, progress);
+            if (this.fadeInTimer <= 0) {
+                // Fade-in complete — promote to current track
+                this.pendingTrackEl.volume = 1.0;
+                this.currentTrack = this.pendingTrackEl;
+                this.currentTrackPath = this.pendingTrackPath;
+                this.pendingTrackEl = null;
+                this.pendingTrackPath = null;
+            }
+        }
+    }
+
     stopMusic() {
         if (this.currentTrack) {
             this.currentTrack.pause();
             this.currentTrack.currentTime = 0;
             this.currentTrack = null;
         }
+        // Clean up crossfade state
+        if (this.fadingOutTrack) {
+            this.fadingOutTrack.pause();
+            this.fadingOutTrack.currentTime = 0;
+            this.fadingOutTrack = null;
+        }
+        if (this.pendingTrackEl) {
+            this.pendingTrackEl.pause();
+            this.pendingTrackEl = null;
+        }
+        this.fadeOutTimer = 0;
+        this.fadeInTimer = 0;
+        this.fadeInDelay = 0;
+        this.pendingTrackPath = null;
     }
 
     toggleMusic() {
