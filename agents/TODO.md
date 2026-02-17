@@ -10,8 +10,8 @@ Priority order — top item is next up.
 
 ### Enemy Balance (HIGH PRIORITY — Jeroen directive)
 - [x] Reduce enemies in Level 1 (Ocean) — make it chill, very few enemies
-- [ ] Ramp up enemies in Level 2 (Sea)
-- [ ] Full enemy density in Level 3 (Beach)
+- [x] Ramp up enemies in Level 2 (Sea)
+- [x] Full enemy density in Level 3 (Beach)
 
 ### Stage 1 Restructure: Ocean → Sea → Beach (HIGH PRIORITY — Jeroen directive)
 - [ ] Rename/redesign Level 2 from "Seafood Tank" → "Sea" (open sea, slither of sky)
