@@ -9,8 +9,8 @@ Updated: 2026-02-17
 Priority order — top item is next up.
 
 ### Balance (High Priority)
-- [ ] Respawn invincibility tuning (currently 2s — playtest and adjust)
-- [ ] Progressive difficulty balancing (enemy speed/count curves at 100/200/500/1000)
+- [x] Respawn invincibility tuning (reduced from 2s to 1.5s)
+- [x] Progressive difficulty balancing (smoothed speed curves, added cage scaling)
 
 ### Audio (Medium Priority)
 - [ ] Music refinement — layered intensity per level (Ocean calm → Tank tension → Kitchen urgency)

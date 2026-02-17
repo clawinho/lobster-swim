@@ -13,7 +13,7 @@ import { Kitchen } from './entities/environments/kitchen/actor/Kitchen.js';
 // Constants
 const CANVAS_WIDTH = 800;
 const CANVAS_HEIGHT = 600;
-const INVINCIBLE_DURATION = 120;
+const INVINCIBLE_DURATION = 90; // ~1.5s at 60fps — enough to recover, not exploitable
 
 // Level entities — ordered by scoreThreshold descending for checkLevelUp iteration
 const LEVEL_ENTITIES = [new Ocean(), new Tank(), new Kitchen()];
@@ -21,10 +21,12 @@ const LEVELS = Object.fromEntries(LEVEL_ENTITIES.map((lvl, i) => [i + 1, lvl.con
 
 
 const DIFFICULTY = {
-    THRESHOLDS: [100, 200, 500, 1000],
-    SPEED_MULT: [1.0, 1.2, 1.4, 1.6, 2.0],
-    HOOK_COUNTS: [2, 2, 3, 3, 4],
-    TIER_NAMES: ['', 'WARM', 'MEDIUM', 'HARD', 'HELL']
+    THRESHOLDS: [100, 250, 500, 1000],
+    SPEED_MULT: [1.0, 1.15, 1.3, 1.5, 1.8],
+    HOOK_COUNTS: [2, 2, 3, 4, 5],
+    TIER_NAMES: ['', 'WARM', 'MEDIUM', 'HARD', 'HELL'],
+    CAGE_COUNTS: [1, 1, 2, 2, 3],
+    SPAWN_RATE_MULT: [1.0, 1.1, 1.2, 1.4, 1.6]
 };
 
 const DEATH_QUOTES = [
@@ -67,7 +69,7 @@ const COMBO_FLASH_COLORS = { 5: '#ffff00', 8: '#ff8800', 10: '#ff00ff' };
 let currentLevel = 1, invincible = true, invincibleTimer = INVINCIBLE_DURATION;
 let caught = false, caughtY = 0, screenShake = 0;
 let keys = {}, joystickDx = 0, joystickDy = 0, hasTarget = false;
-let bgScrollX = 0, lastHookThreshold = 0, fishSpawnTimer = 0, pearlSpawnTimer = 0, starfishSpawnTimer = 0, eelSpawnTimer = 0;
+let bgScrollX = 0, lastHookThreshold = 0, lastCageThreshold = 0, fishSpawnTimer = 0, pearlSpawnTimer = 0, starfishSpawnTimer = 0, eelSpawnTimer = 0;
 let starfishMultiplier = 1, starfishMultiplierTimer = 0;
 const STARFISH_MULTIPLIER_DURATION = 480; // 8 seconds at 60fps
 let particles = [];
@@ -244,6 +246,7 @@ async function startGame() {
     invincibleTimer = INVINCIBLE_DURATION;
     caught = false;
     lastHookThreshold = 0;
+    lastCageThreshold = 0;
     fishSpawnTimer = 0;
     particles = [];
     paused = false;
@@ -298,7 +301,9 @@ function getDifficulty() {
         tier,
         name: DIFFICULTY.TIER_NAMES[tier],
         speedMult: DIFFICULTY.SPEED_MULT[tier],
-        hookCount: DIFFICULTY.HOOK_COUNTS[tier]
+        hookCount: DIFFICULTY.HOOK_COUNTS[tier],
+        cageCount: DIFFICULTY.CAGE_COUNTS[tier],
+        spawnRateMult: DIFFICULTY.SPAWN_RATE_MULT[tier]
     };
 }
 
@@ -552,6 +557,10 @@ function update() {
             if (updatedDiff.hookCount > hooks.length && score > lastHookThreshold + 100) {
                 hooks.push(...Hook.create(CANVAS_WIDTH, 1));
                 lastHookThreshold = score;
+            }
+            if (updatedDiff.cageCount > cages.length && score > lastCageThreshold + 150) {
+                cages.push(...Cage.create(1, CANVAS_WIDTH, CANVAS_HEIGHT));
+                lastCageThreshold = score;
             }
         }
     });
