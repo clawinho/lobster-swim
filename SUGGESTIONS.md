@@ -38,13 +38,3 @@ Unvetted ideas from anyone — contributors, outsiders, brainstorms. No gatekeep
 ---
 
 **Precedence:** When suggestions conflict, they resolve in section order — Human Leads overrides Agentic Roles overrides Open Suggestions.
-
-### Level 1 (Ocean) STILL has hooks and cages spawning
-**Author:** Jeroen (pixelprotest)  **Date:** 2026-02-17
-
-Despite previous fix attempts, hooks and cages are still appearing in level 1. The Ocean level should have ZERO enemies — no hooks, no cages, no nets, no jellyfish, nothing. This is a directive, not a suggestion. Verify the Ocean entity config sets all enemy counts to 0 AND that the difficulty system doesn't override it by spawning hooks/cages based on score tiers.
-
-### Asset library missing latest level entities
-**Author:** Jeroen (pixelprotest)  **Date:** 2026-02-17
-
-The asset library page doesn't show the new Sea and Beach environment entities. Lead Developer should investigate — likely the static imports in asset-library.js weren't updated when the new environments were added. Every entity with a preview.js needs a corresponding static import.

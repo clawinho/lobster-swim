@@ -271,7 +271,7 @@ async function startGame() {
     player = new Lobster(400, 300);
     bubbles = Bubble.create(10, CANVAS_WIDTH, CANVAS_HEIGHT);
     cages = Cage.create(0, CANVAS_WIDTH, CANVAS_HEIGHT);
-    hooks = Hook.create(CANVAS_WIDTH, 1);
+    hooks = Hook.create(CANVAS_WIDTH, LEVELS[1].enemies.hooks || 0);
     nets = [];
     forks = [];
     seagulls = Seagull.create(CANVAS_WIDTH, CANVAS_HEIGHT, 0); // Diving seagulls
@@ -562,11 +562,12 @@ function update() {
             
             // Difficulty scaling (re-check after score changed)
             const updatedDiff = getDifficulty();
-            if (updatedDiff.hookCount > hooks.length && score > lastHookThreshold + 100) {
+            const lvlEnemies = LEVELS[currentLevel].enemies;
+            if (lvlEnemies.hooks > 0 && updatedDiff.hookCount > hooks.length && score > lastHookThreshold + 100) {
                 hooks.push(...Hook.create(CANVAS_WIDTH, 1));
                 lastHookThreshold = score;
             }
-            if (updatedDiff.cageCount > cages.length && score > lastCageThreshold + 150) {
+            if (lvlEnemies.cages > 0 && updatedDiff.cageCount > cages.length && score > lastCageThreshold + 150) {
                 cages.push(...Cage.create(1, CANVAS_WIDTH, CANVAS_HEIGHT));
                 lastCageThreshold = score;
             }

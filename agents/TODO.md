@@ -34,7 +34,9 @@ Priority order — top item is next up.
 - [x] Full enemy density in Level 3 (Beach)
 - [x] Sea level still too many enemies at low scores — reduce initial spawn counts and delay ramp
 - [x] Per-level enemy filtering — limit enemy types by environment
-- [x] Eel movement toned down — smoother slithering, less erratic (Jeroen directive)
+- [x] Eel movement toned down
+- [x] Fix difficulty system spawning hooks/cages in Ocean (bypassed level config)
+- [x] Add Sea and Beach environments to asset library — smoother slithering, less erratic (Jeroen directive)
 
 ### Stage 1 Restructure: Ocean → Sea → Beach (DONE)
 - [x] Rename/redesign Level 2 from "Seafood Tank" → "Sea"

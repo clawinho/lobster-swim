@@ -36,6 +36,8 @@ import * as mod_17 from './entities/pickups/goldfish/preview.js';
 import * as mod_18 from './entities/pickups/pearl/preview.js';
 import * as mod_19 from './entities/pickups/starfish/preview.js';
 import * as mod_20 from './entities/enemies/jellyfish/preview.js';
+import * as mod_21 from './entities/environments/sea/preview.js';
+import * as mod_22 from './entities/environments/beach/preview.js';
 
 const modules = Object.fromEntries([
   ['./entities/effects/particle/preview.js', mod_0],
@@ -59,6 +61,8 @@ const modules = Object.fromEntries([
   ['./entities/pickups/pearl/preview.js', mod_18],
   ['./entities/pickups/starfish/preview.js', mod_19],
   ['./entities/enemies/jellyfish/preview.js', mod_20],
+  ['./entities/environments/sea/preview.js', mod_21],
+  ['./entities/environments/beach/preview.js', mod_22],
 ]);
 
 export function buildAssetLibrary(container) {
