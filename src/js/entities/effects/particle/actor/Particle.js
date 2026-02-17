@@ -96,6 +96,62 @@ export class Particle {
         }
         return particles;
     }
+    static spawnStunParticles(x, y, count = 10) {
+        const particles = [];
+        const colors = ['#cc44ff', '#aa22dd', '#ee66ff', '#8800cc'];
+        for (let i = 0; i < count; i++) {
+            const angle = (Math.PI * 2 * i) / count;
+            const speed = 1.5 + Math.random() * 2;
+            particles.push(new Particle(
+                x, y,
+                Math.cos(angle) * speed,
+                Math.sin(angle) * speed,
+                colors[Math.floor(Math.random() * colors.length)],
+                2 + Math.random() * 2,
+                25 + Math.random() * 15,
+                0
+            ));
+        }
+        return particles;
+    }
+
+    static spawnKnockbackParticles(x, y, count = 6) {
+        const particles = [];
+        const colors = ['#ffffff', '#dddddd', '#ffeecc', '#ffffaa'];
+        for (let i = 0; i < count; i++) {
+            const angle = Math.random() * Math.PI * 2;
+            const speed = 2 + Math.random() * 2;
+            particles.push(new Particle(
+                x, y,
+                Math.cos(angle) * speed,
+                Math.sin(angle) * speed,
+                colors[Math.floor(Math.random() * colors.length)],
+                3 + Math.random() * 2,
+                20 + Math.random() * 10,
+                0.05
+            ));
+        }
+        return particles;
+    }
+
+    static spawnZapParticles(x, y, count = 12) {
+        const particles = [];
+        const colors = ['#44eeff', '#00ccff', '#88ffff', '#ffffff'];
+        for (let i = 0; i < count; i++) {
+            const angle = Math.random() * Math.PI * 2;
+            const speed = 3 + Math.random() * 3;
+            particles.push(new Particle(
+                x, y,
+                Math.cos(angle) * speed,
+                Math.sin(angle) * speed,
+                colors[Math.floor(Math.random() * colors.length)],
+                2 + Math.random() * 3,
+                20 + Math.random() * 15,
+                0
+            ));
+        }
+        return particles;
+    }
 }
 
 export default Particle;

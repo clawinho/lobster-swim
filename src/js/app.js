@@ -603,11 +603,11 @@ function update() {
             ball.update(diff.speedMult, CANVAS_WIDTH, CANVAS_HEIGHT);
             const knockback = ball.checkCollision(player, invincible);
             if (knockback) {
-                // Apply knockback to player
                 player.x += knockback.x;
                 player.y += knockback.y;
                 player.clamp(CANVAS_WIDTH, CANVAS_HEIGHT);
                 screenShake = 6;
+                particles.push(...Particle.spawnKnockbackParticles(player.x, player.y));
                 // Reset combo on knockback (penalty for getting hit)
                 comboCount = Math.max(0, comboCount - 2);
             }
@@ -621,7 +621,8 @@ function update() {
             if (jelly.checkCollision(player, invincible)) {
                 stunTimer = Jellyfish.STUN_DURATION;
                 screenShake = 8;
-                comboCount = 0; // Break combo on sting
+                comboCount = 0;
+                particles.push(...Particle.spawnStunParticles(player.x, player.y));
                 scorePopups.push({
                     x: player.x, y: player.y - 20,
                     text: 'STUNNED!', timer: 60,
@@ -642,6 +643,7 @@ function update() {
     eels.forEach(eel => {
         eel.update(diff.speedMult);
         if (eel.checkCollision(player, invincible)) {
+            particles.push(...Particle.spawnZapParticles(player.x, player.y));
             scorePopups.push({
                 x: player.x, y: player.y - 20,
                 text: "ZAPPED!", timer: 60,

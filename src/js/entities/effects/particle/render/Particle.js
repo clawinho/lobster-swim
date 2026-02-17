@@ -13,8 +13,11 @@ export function render(ctx, width, height, frame, type = 'bubble', count = 8) {
         // Draw fresh burst
         const colors = type === 'bubble' ? ['#88ddff', '#aaeeff', '#ffffff'] :
                        type === 'death' ? ['#ff4500', '#ff6600', '#ff8800'] :
+                       type === 'stun' ? ['#cc44ff', '#aa22dd', '#ee66ff'] :
+                       type === 'knockback' ? ['#ffffff', '#dddddd', '#ffeecc'] :
+                       type === 'zap' ? ['#44eeff', '#00ccff', '#88ffff'] :
                        ['#ffd700', '#ffec00', '#fff8dc'];
-        const gravity = type === 'bubble' ? -0.05 : type === 'death' ? 0.1 : -0.03;
+        const gravity = type === 'bubble' ? -0.05 : type === 'death' ? 0.1 : type === 'knockback' ? 0.05 : -0.03;
 
         for (let i = 0; i < count; i++) {
             const angle = (Math.PI * 2 * i) / count;
@@ -37,8 +40,11 @@ export function render(ctx, width, height, frame, type = 'bubble', count = 8) {
         const progress = spawnFrame / 60;
         const colors = type === 'bubble' ? ['#88ddff', '#aaeeff', '#ffffff'] :
                        type === 'death' ? ['#ff4500', '#ff6600', '#ff8800'] :
+                       type === 'stun' ? ['#cc44ff', '#aa22dd', '#ee66ff'] :
+                       type === 'knockback' ? ['#ffffff', '#dddddd', '#ffeecc'] :
+                       type === 'zap' ? ['#44eeff', '#00ccff', '#88ffff'] :
                        ['#ffd700', '#ffec00', '#fff8dc'];
-        const gravity = type === 'bubble' ? -0.05 : type === 'death' ? 0.1 : -0.03;
+        const gravity = type === 'bubble' ? -0.05 : type === 'death' ? 0.1 : type === 'knockback' ? 0.05 : -0.03;
 
         for (let i = 0; i < count; i++) {
             const angle = (Math.PI * 2 * i) / count + (Math.random() - 0.5) * 0.3;
