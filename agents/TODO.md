@@ -9,9 +9,6 @@ Updated: 2026-02-17
 Priority order — top item is next up.
 
 ### Game Feel (High Priority)
-- [ ] Screen shake on death
-- [ ] Better death animation
-- [ ] Particle effects — expand use of existing particle system (bubble pops, enemy deaths, pickups)
 - [ ] Transition effects between levels (visual + audio fade)
 
 ### Balance (High Priority)
