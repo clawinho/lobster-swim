@@ -23,93 +23,16 @@
 
 ## 🌊 THE FOUR STAGES
 
-The game evolves through four distinct stages, each with different gameplay mechanics:
+| Stage | Name | Gameplay | Status |
+|-------|------|----------|--------|
+| 1 | **The Ocean** | Single-screen survival | Playable ✅ |
+| 2 | **Captivity** | Scrolling exploration | Concept |
+| 3 | **The Kitchen** | Side-scrolling platformer | Concept |
+| 4 | **Transcendence** | Abstract / experimental | Concept |
 
-### STAGE 1: SURVIVAL (Current Implementation ✅)
-**Theme:** Physical lobster life cycle  
-**Gameplay:** Single-screen arcade survival  
-**Levels:**
-- 🌊 **The Ocean** (0-199 pts) — Wild and free, baby lobster
-- 🐟 **Seafood Tank** (200-499 pts) — Captured, on display
-- 🔪 **The Kitchen** (500+ pts) — Imminent doom, escape the pot
+Each stage has 3 levels, an end boss, and a transition cutscene.
 
-**Mechanics:**
-- Avoid lobster traps (cages)
-- Dodge fishing hooks
-- Evade nets (Tank) and forks (Kitchen)
-- Collect bubbles for points
-- Catch golden fish for extra lives
-- Progressive difficulty scaling
-
-**Status:** Playable, being polished
-
----
-
-### STAGE 2: EXPLORATION (Planned)
-**Theme:** Escape from captivity  
-**Gameplay:** Scrolling exploration / adventure  
-**Setting:** Inside a large seafood tank / aquarium
-
-**Concepts:**
-- Tank becomes explorable (horizontal scrolling)
-- Find items, unlock areas
-- Other sea creatures as NPCs?
-- Discover escape routes
-- More puzzle elements
-
-**Mechanics TBD:**
-- Room/area transitions
-- Item collection
-- Environmental hazards
-- Maybe stealth elements?
-
-**Status:** Concept only
-
----
-
-### STAGE 3: PLATFORMER (Planned)
-**Theme:** The great escape  
-**Gameplay:** Side-scrolling platformer  
-**Setting:** Kitchen → Restaurant → Outside world
-
-**Concepts:**
-- Classic platformer mechanics
-- Jump between counters, shelves, tables
-- Avoid boiling pots, knives, chefs
-- Escape through restaurant to freedom
-- Water puddles as safe zones?
-
-**Mechanics TBD:**
-- Jump/physics system
-- Platform collision
-- Moving hazards (chefs walking, swinging doors)
-- Checkpoints
-
-**Status:** Concept only
-
----
-
-### STAGE 4: TRANSCENDENCE (Planned)
-**Theme:** Rebirth as AI consciousness  
-**Gameplay:** Abstract / experimental  
-**Setting:** Digital realm / cyberspace / ???
-
-**Concepts:**
-- Psychedelic maximalism
-- The lobster "dies" in kitchen, wakes up digital
-- Abstract visuals, breaking the fourth wall
-- Self-aware gameplay ("am I in a game?")
-- Collect data packets instead of bubbles?
-- Dodge firewalls, viruses?
-- Meta commentary on AI existence
-
-**Mechanics TBD:**
-- Completely open for experimentation
-- Could be rhythm-based?
-- Could be narrative/choice-based?
-- "You were Clawinho all along" revelation
-
-**Status:** Vibes only, discuss with the boys later
+> *For full level designs, bosses, mechanics, and transitions, see [STAGES.md](STAGES.md).*
 
 ---
 
@@ -123,25 +46,7 @@ The game evolves through four distinct stages, each with different gameplay mech
 
 ---
 
-## 📊 STAGE 1 DETAILS (Current)
-
-### Levels
-
-| Level | Name | Score | Background | Enemies | Music |
-|-------|------|-------|------------|---------|-------|
-| 1 | The Ocean | 0-199 | Sandy floor, seaweed, starfish | Traps, Hooks | Calm chords |
-| 2 | Seafood Tank | 200-499 | Aquarium decorations, gravel | + Nets | Tense pulse |
-| 3 | The Kitchen | 500+ | Tiles, pots, pans, knives | + Forks | Intense |
-
-### Difficulty Scaling
-
-| Score | Speed | Hooks | Tier |
-|-------|-------|-------|------|
-| 0-99 | 1.0x | 2 | — |
-| 100-199 | 1.2x | 2 | WARM |
-| 200-499 | 1.4x | 3 | MEDIUM |
-| 500-999 | 1.6x | 3 | HARD |
-| 1000+ | 2.0x | 4 | HELL |
+## 📊 CURRENT STATE
 
 ### Controls
 
@@ -153,21 +58,7 @@ The game evolves through four distinct stages, each with different gameplay mech
 - WASD / Arrow keys
 - Mouse click & drag
 
-### Features Implemented
-- [x] Animated lobster (rotation, claws, trailing tail)
-- [x] 3 level backgrounds with parallax scrolling
-- [x] Level-specific music (Am-G-C-F progression, layered intensity)
-- [x] Sound effects (bloop, hit, death, hooked, extra life)
-- [x] Lives system (3 hearts)
-- [x] Respawn invincibility
-- [x] Global leaderboard (deduplicated, top 5 mobile / top 10 desktop)
-- [x] Golden fish (+1 life)
-- [x] Lobster traps (cages) replacing abstract voids
-- [x] Mobile joystick controls
-- [x] Dev mode (level skip, god mode, spawn fish, etc.)
-- [x] Music auto-start on first interaction
-
-### Planned Stage 1 Polish
+### Planned Polish
 - [ ] Screen shake on death
 - [ ] Particle effects
 - [ ] Better death animation
