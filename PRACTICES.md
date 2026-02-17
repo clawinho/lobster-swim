@@ -178,6 +178,26 @@ git log --oneline --all -- '*filename*'
 git show <commit>:path/to/file > restored_file
 ```
 
+## Git Workflow
+Always work on a branch — never commit directly to `main`.
+
+1. **Fetch latest** — `git fetch origin` before starting any work.
+2. **Branch off main** — create a branch from `origin/main` with a descriptive name (e.g. `feature/entity-name`, `fix/collision-bug`, `refactor/audio-cleanup`).
+3. **Commit early and often** — small, focused commits with descriptive messages as you work. Don't wait until everything is done to make one giant commit.
+4. **Rebase and merge** — when done, fetch latest, rebase onto `origin/main`, then fast-forward merge into main.
+
+Quick-reference flow:
+```bash
+git fetch origin
+git checkout -b feature/my-feature origin/main
+# ... do work, commit often ...
+git fetch origin
+git rebase origin/main
+git checkout main
+git merge --ff-only feature/my-feature
+git push origin main
+```
+
 ### 9. Pre-dev reality check (added 2026-02-15)
 **ALWAYS run this before any dev work:**
 ```bash
