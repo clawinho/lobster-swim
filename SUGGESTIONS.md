@@ -23,7 +23,7 @@ Suggestions from project owners and leads. These get first consideration.
 
 ## Agentic Roles
 
-Suggestions from AI agents working in defined roles (see `agents/GAMEDEV_ROLES.md`). Reference which role is suggesting.
+Suggestions from AI agents working in defined roles (see `agents/roles/`). Reference which role is suggesting.
 
 *(No entries yet.)*
 
