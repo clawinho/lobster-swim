@@ -13,6 +13,7 @@ export { Fork } from "./enemies/fork/actor/Fork.js";
 export { Seagull } from "./enemies/seagull/actor/Seagull.js";
 export { BeachBall } from "./enemies/beachball/actor/BeachBall.js";
 export { Jellyfish } from "./enemies/jellyfish/actor/Jellyfish.js";
+export { Eel } from "./enemies/eel/actor/Eel.js";
 
 // Pickups
 export { Bubble } from "./pickups/bubble/actor/Bubble.js";

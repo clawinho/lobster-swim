@@ -2,7 +2,7 @@
  * app.js - Main application (uses regular DOM, modular entities)
  */
 
-import { Lobster, Hook, Cage, Bubble, GoldenFish, Net, Fork, Pearl, Seagull, BeachBall, Jellyfish, Starfish } from './entities/index.js';
+import { Lobster, Hook, Cage, Bubble, GoldenFish, Net, Fork, Pearl, Seagull, BeachBall, Jellyfish, Starfish, Eel } from './entities/index.js';
 import { Particle } from './entities/effects/particle/actor/Particle.js';
 import { Audio } from './audio-module.js';
 import { OceanCurrent } from './entities/mechanics/ocean-current/actor/OceanCurrent.js';
@@ -42,7 +42,7 @@ const COMBO_MESSAGES = ['', 'Nice!', 'Great!', 'Awesome!', 'Amazing!', 'INCREDIB
 
 // Game state
 let canvas, ctx, audio;
-let player, bubbles, hooks, cages, nets, forks, seagulls, fish, pearl, starfish, oceanCurrent, beachBalls, jellyfish;
+let player, bubbles, hooks, cages, nets, forks, seagulls, fish, pearl, starfish, oceanCurrent, beachBalls, jellyfish, eels;
 let stunTimer = 0; // Jellyfish sting stun
 let gameSessionId = null;
 let score = 0, lives = 3, highScore = 0;
@@ -67,7 +67,7 @@ const COMBO_FLASH_COLORS = { 5: '#ffff00', 8: '#ff8800', 10: '#ff00ff' };
 let currentLevel = 1, invincible = true, invincibleTimer = INVINCIBLE_DURATION;
 let caught = false, caughtY = 0, screenShake = 0;
 let keys = {}, joystickDx = 0, joystickDy = 0, hasTarget = false;
-let bgScrollX = 0, lastHookThreshold = 0, fishSpawnTimer = 0, pearlSpawnTimer = 0, starfishSpawnTimer = 0;
+let bgScrollX = 0, lastHookThreshold = 0, fishSpawnTimer = 0, pearlSpawnTimer = 0, starfishSpawnTimer = 0, eelSpawnTimer = 0;
 let starfishMultiplier = 1, starfishMultiplierTimer = 0;
 const STARFISH_MULTIPLIER_DURATION = 480; // 8 seconds at 60fps
 let particles = [];
@@ -271,6 +271,8 @@ async function startGame() {
     seagulls = Seagull.create(CANVAS_WIDTH, CANVAS_HEIGHT, 2); // Diving seagulls
     beachBalls = BeachBall.create(LEVELS[1].enemies.beachBalls || 0, CANVAS_WIDTH, CANVAS_HEIGHT);
     jellyfish = Jellyfish.create(3, CANVAS_WIDTH, CANVAS_HEIGHT);
+    eels = [];
+    eelSpawnTimer = 0;
     fish = null;
     pearl = null;
     starfish = null;
@@ -630,6 +632,35 @@ function update() {
             }
         });
     }
+
+    // Electric eels
+    eelSpawnTimer++;
+    const eelSpawnRate = diff.speedMult > 1.3 ? 180 : (diff.speedMult > 1.1 ? 300 : 480);
+    if (eelSpawnTimer >= eelSpawnRate) {
+        eels.push(new Eel(CANVAS_WIDTH, CANVAS_HEIGHT));
+        eelSpawnTimer = 0;
+    }
+    eels = eels.filter(e => e.alive);
+    eels.forEach(eel => {
+        eel.update(diff.speedMult);
+        if (eel.checkCollision(player, invincible)) {
+            lives--;
+            screenShake = 15;
+            comboCount = 0;
+            scorePopups.push({
+                x: player.x, y: player.y - 20,
+                text: "ZAPPED!", timer: 60,
+                color: "#44eeff", startY: player.y - 20
+            });
+            if (lives <= 0) {
+                gameOver = true;
+            } else {
+                invincible = true;
+                invincibleTimer = 120;
+            }
+        }
+    });
+
     // Golden fish
     fishSpawnTimer++;
     if (!fish && fishSpawnTimer > GoldenFish.SPAWN_INTERVAL && lives < 3) {
@@ -788,6 +819,7 @@ function render() {
     if (currentLevel === 1 && seagulls) seagulls.forEach(g => g.render(ctx));
     if (LEVELS[currentLevel].enemies.beachBalls) beachBalls.forEach(b => b.render(ctx));
     if (jellyfish) jellyfish.forEach(j => j.render(ctx));
+    if (eels) eels.forEach(e => e.render(ctx));
     if (fish) fish.render(ctx);
     if (pearl) pearl.render(ctx);
     if (starfish) starfish.render(ctx);

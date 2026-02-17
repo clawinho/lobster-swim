@@ -15,3 +15,5 @@ export const seagullVersions = ["001"];
 export const beachBallVersions = ["001"];
 export { render as renderJellyfishV001, meta as jellyfishMetaV001 } from "./jellyfish/render/Jellyfish.v001.js";
 export const jellyfishVersions = ["001"];
+export { render as renderEelV001, meta as eelMetaV001 } from "./eel/render/Eel.v001.js";
+export const eelVersions = ["001"];
