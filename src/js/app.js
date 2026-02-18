@@ -2,7 +2,7 @@
  * app.js - Main application (uses regular DOM, modular entities)
  */
 
-import { Lobster, Hook, Cage, Bubble, GoldenFish, Net, Fork, Pearl, Seagull, BeachBall, Jellyfish, Starfish, Eel } from './entities/index.js';
+import { Lobster, Hook, Cage, Bubble, GoldenFish, Net, Fork, Pearl, Seagull, BeachBall, Jellyfish, Starfish, Eel, FallingPickup } from './entities/index.js';
 import { Particle } from './entities/effects/particle/actor/Particle.js';
 import { Audio } from './audio-module.js';
 import { OceanCurrent } from './entities/mechanics/ocean-current/actor/OceanCurrent.js';
@@ -91,6 +91,7 @@ let isInWater = true;
 let keys = {}, joystickDx = 0, joystickDy = 0, hasTarget = false;
 let bgScrollX = 0, lastHookThreshold = 0, lastCageThreshold = 0, fishSpawnTimer = 0, pearlSpawnTimer = 0, starfishSpawnTimer = 0, eelSpawnTimer = 0;
 let starfishMultiplier = 1, starfishMultiplierTimer = 0;
+let fallingPickups = [], fallingPickupTimer = 0;
 const STARFISH_MULTIPLIER_DURATION = 480; // 8 seconds at 60fps
 let particles = [];
 // DOM Elements
@@ -293,7 +294,7 @@ async function startGame() {
     // Create entities
     player = new Lobster(400, LEVELS[1].floorY || 300);
     velocityY = 0; isOnGround = true; isInWater = true;
-    bubbles = Bubble.create(10, CANVAS_WIDTH, CANVAS_HEIGHT, getBubbleSpawnZone());
+    bubbles = Bubble.create(3, CANVAS_WIDTH, CANVAS_HEIGHT, getBubbleSpawnZone());
     cages = Cage.create(0, CANVAS_WIDTH, CANVAS_HEIGHT);
     hooks = Hook.create(CANVAS_WIDTH, LEVELS[1].enemies.hooks || 0);
     nets = [];
@@ -310,6 +311,8 @@ async function startGame() {
     starfishMultiplier = 1;
     starfishMultiplierTimer = 0;
     pearlSpawnTimer = 0;
+    fallingPickups = [];
+    fallingPickupTimer = 0;
     oceanCurrent = new OceanCurrent(0.4); // Ocean currents push player gently
     
     updateUI();
@@ -982,6 +985,40 @@ function update() {
         }
     }
 
+    // Falling pickups (Level 1 only — ocean floor treasures)
+    if (currentLevel === 1) {
+        fallingPickupTimer++;
+        // Spawn a new falling pickup every ~3 seconds (180 frames)
+        if (fallingPickupTimer > 180 && fallingPickups.length < 5) {
+            if (Math.random() < 0.3) {
+                const floorY = LEVELS[1].floorY || 480;
+                fallingPickups.push(FallingPickup.spawnOne(CANVAS_WIDTH, floorY));
+                fallingPickupTimer = 0;
+            }
+        }
+        // Update and check collisions
+        for (let i = fallingPickups.length - 1; i >= 0; i--) {
+            const fp = fallingPickups[i];
+            fp.update();
+            if (fp.checkCollision(player)) {
+                audio.playBubble?.();
+                const pts = fp.points * getComboMultiplier() * starfishMultiplier;
+                score += pts;
+                scorePopups.push({
+                    x: fp.x, y: fp.y, text: "+" + pts,
+                    alpha: 1.5, startY: fp.y
+                });
+                comboCount++;
+                comboTimer = COMBO_TIMEOUT;
+                particles.push(...Particle.spawnBubbleParticles(fp.x, fp.y));
+                fallingPickups.splice(i, 1);
+            }
+        }
+    } else {
+        // Clear falling pickups when leaving Level 1
+        fallingPickups = [];
+        fallingPickupTimer = 0;
+    }
     // Level up check
     checkLevelUp();
     
@@ -1018,6 +1055,8 @@ function render() {
 
     // Entities
     bubbles.forEach(b => b.render(ctx, player.x, player.y));
+    // Falling pickups
+    fallingPickups.forEach(fp => fp.render(ctx));
     cages.forEach(c => c.render(ctx));
     hooks.forEach(h => h.render(ctx));
 
