@@ -4,6 +4,7 @@ import { render as v003 } from './render/Lobster.v003.js';
 import { render as v004 } from './render/Lobster.v004.js';
 import { render as v005 } from './render/Lobster.v005.js';
 import { render as v006 } from './render/Lobster.v006.js';
+import { render as egg001 } from './render/LobsterEgg.v001.js';
 
 export const manifest = {
     id: 'lobster',
@@ -73,6 +74,24 @@ export const versions = [
         preview: (ctx, w, h, frame, state) => {
             const x = w / 2, y = h / 2;
             v006(ctx, x, y, state.size, 0, fakeTail(x, y, state.size), false, 0, 2);
+        },
+    },
+    {
+        meta: { version: 'egg-early', name: 'Egg (Early)', current: true },
+        preview: (ctx, w, h, frame, state) => {
+            egg001(ctx, w / 2, h / 2, state.size * 0.6, frame, 0.15);
+        },
+    },
+    {
+        meta: { version: 'egg-mid', name: 'Egg (Mid Growth)', current: true },
+        preview: (ctx, w, h, frame, state) => {
+            egg001(ctx, w / 2, h / 2, state.size * 0.6, frame, 0.5);
+        },
+    },
+    {
+        meta: { version: 'egg-late', name: 'Egg (Ready to Hatch)', current: true },
+        preview: (ctx, w, h, frame, state) => {
+            egg001(ctx, w / 2, h / 2, state.size * 0.6, frame, 0.9);
         },
     },
 ];

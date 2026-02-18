@@ -8,15 +8,17 @@ Updated: 2026-02-18
 
 Priority order — top item is next up.
 
-### Birth Level — New Level 0 (HIGH PRIORITY — Jeroen directive)
-- [ ] Design Birth level: lobster egg among thousands under mother's tail
-- [ ] Create Birth environment entity (egg clutch visual, mother tail backdrop)
-- [ ] Implement pulse mechanic (tap to nudge egg, rhythm-based movement)
-- [ ] Nutrient absorption system (growth meter instead of score)
-- [ ] Predator threat system (small fish eating eggs, visible hunger paths)
-- [ ] Growth meter UI — embryonic development stages leading to hatch
-- [ ] Hatch transition to Level 1 (Ocean) — egg cracks open, baby lobster emerges
-- [ ] Shift all current levels up by 1 (Ocean=L2, Sea=L3, Beach=L4)
+### Birth Level Polish (HIGH PRIORITY)
+- [x] Design Birth level: lobster egg among thousands under mother's tail
+- [x] Create Birth environment entity (egg clutch visual, mother tail backdrop)
+- [x] Implement pulse mechanic (tap to nudge egg, rhythm-based movement)
+- [x] Nutrient absorption system (growth meter instead of score)
+- [x] Predator threat system (small fish eating eggs, visible hunger paths)
+- [x] Growth meter UI — embryonic development stages leading to hatch
+- [x] Hatch transition to Level 1 (Ocean) — egg cracks open, baby lobster emerges
+- [x] Shift all current levels up by 1 (Ocean=L2, Sea=L3, Beach=L4)
+- [ ] Birth level visual polish — egg glow effects, better clutch backdrop
+- [ ] Birth level difficulty tuning — predator spawn rates, nutrient density
 
 ### Beach Boss Encounter
 - [ ] Final boss encounter happens ON the beach — no water, fully on land
@@ -38,12 +40,8 @@ Priority order — top item is next up.
 Parked until Phase 1 ships. Do not start these yet.
 
 ### Director Ideas — Birth Level Details (triaged 2026-02-18)
-- [ ] "The Clutch" — discover yourself among thousands of identical eggs
-- [ ] "Pulse to Survive" — heartbeat mechanic, rhythm-based nudging
-- [ ] "The Hungry Parade" — predator fish with visible hunger paths
 - [ ] "Temperature Tides" — environmental hazard waves (warm/cold)
 - [ ] "The Detachment" — mid-level crisis, egg detaches from mother
-- [ ] "The Growth Meter" — embryonic development as health/progress bar
 - [ ] "Egg Glow" — bioluminescent chain reactions, screenshot-worthy visuals
 - [ ] "The Konami Egg" — secret golden egg easter egg
 

@@ -5,6 +5,7 @@
  */
 
 import { render as renderLobster } from '../render/Lobster.v006.js';
+import { render as renderEgg } from '../render/LobsterEgg.v001.js';
 
 export class Lobster {
     static TAIL_SEGMENTS = 3;
@@ -21,6 +22,8 @@ export class Lobster {
         this.prevX = x;
         this.prevY = y;
         
+        this.frame = 0;
+        this.growthProgress = 0;
         // Initialize tail segments
         this.tailSegments = [];
         for (let i = 0; i < Lobster.TAIL_SEGMENTS; i++) {
@@ -36,6 +39,8 @@ export class Lobster {
         this.angle = 0;
         this.prevX = x;
         this.prevY = y;
+        this.frame = 0;
+        this.growthProgress = 0;
         this.tailSegments.forEach(seg => {
             seg.x = x;
             seg.y = y;
@@ -114,9 +119,15 @@ export class Lobster {
     }
 
     render(ctx, invincible = false, invincibleTimer = 0, stage = 2) {
-        this.updateAngle();
-        this.updateTail();
-        renderLobster(ctx, this.x, this.y, this.size, this.angle, this.tailSegments, invincible, invincibleTimer, stage);
+        this.frame++;
+        if (stage === 1) {
+            // Birth level: render as egg with embryo growth stages
+            renderEgg(ctx, this.x, this.y, this.size * 0.6, this.frame, this.growthProgress);
+        } else {
+            this.updateAngle();
+            this.updateTail();
+            renderLobster(ctx, this.x, this.y, this.size, this.angle, this.tailSegments, invincible, invincibleTimer, stage);
+        }
     }
 
     getBounds() {

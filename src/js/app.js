@@ -1041,9 +1041,11 @@ function update() {
     if (currentLevel === 1) {
         const birthEntity = LEVEL_ENTITIES[0];
 
-        // Spawn nutrients periodically
+        // Spawn nutrients — faster early game, scales with growth progress
         nutrientTimer++;
-        if (nutrientTimer > 120 && nutrients.length < 12) {
+        const nutrientInterval = growthMeter < 100 ? 60 : growthMeter < 300 ? 90 : 120;
+        const maxNutrients = growthMeter < 100 ? 15 : 12;
+        if (nutrientTimer > nutrientInterval && nutrients.length < maxNutrients) {
             nutrients.push(Nutrient.spawnOne(CANVAS_WIDTH, CANVAS_HEIGHT));
             nutrientTimer = 0;
         }
@@ -1066,12 +1068,14 @@ function update() {
             }
         }
 
-        // Update growth progress on birth entity
+        // Update growth progress on birth entity and player egg appearance
         birthEntity.updateGrowth(growthMeter);
+        player.growthProgress = growthMeter / 500;
 
-        // Spawn egg predators gradually (after growth > 20%)
-        if (growthMeter > 100 && eggPredators.length < 2) {
-            eggPredators = EggPredator.create(1 + (growthMeter > 250 ? 1 : 0), CANVAS_WIDTH, CANVAS_HEIGHT);
+        // Spawn egg predators gradually — 3 difficulty tiers
+        const targetPredators = growthMeter < 100 ? 0 : growthMeter < 250 ? 1 : growthMeter < 400 ? 2 : 3;
+        if (eggPredators.length < targetPredators) {
+            eggPredators.push(...EggPredator.create(targetPredators - eggPredators.length, CANVAS_WIDTH, CANVAS_HEIGHT));
         }
 
         // Update predators and check collisions
