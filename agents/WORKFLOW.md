@@ -22,6 +22,7 @@ This document defines the automated gamedev cycle for Lobster Swim. It is design
 | BLOCKERS.md | agents/BLOCKERS.md | Blocker tracking across all roles |
 | GAMEDEV_ROLES.md | agents/GAMEDEV_ROLES.md | Index of all available roles |
 | Role definitions | agents/roles/*.md | Individual role prompts and responsibilities |
+| ROLE_DEVLOG.md | agents/ROLE_DEVLOG.md | Append-only log of role activity |
 | PRACTICES.md | repo root | Development rules — law of the land |
 | GAME_VISION.md | repo root | North star design document |
 | STAGES.md | repo root | Detailed level/stage designs |
@@ -46,7 +47,11 @@ Execute in order. Never skip a step. Each step that mentions reading a file — 
   - **Agentic Roles:** Verify against GAME_VISION.md, convert valid ones to TODO items
   - Remove processed suggestions
 - Read and update `agents/TODO.md`:
-  - Mark completed items (cross-reference git log)
+  - Cross-reference git log against TODO.md statuses:
+    - `[ ]` items where work was clearly done → change to `[~]` (awaiting review)
+    - `[~]` items → leave as-is (only human approval changes these to `[x]`)
+    - `[x]` items (human-approved) → move to "Approved (Archive)" section at bottom of TODO.md
+  - **Never write `[x]` — only a human marks items approved**
   - Remove stale items
   - Reprioritize — top item should be next up
 - Read and triage `agents/BLOCKERS.md`:
@@ -59,7 +64,11 @@ Execute in order. Never skip a step. Each step that mentions reading a file — 
 Execute the highest priority work, then resolve any blockers it created. Repeat until clean.
 
 **3a. Execute**
-- Read `agents/TODO.md` — identify the highest priority item(s)
+- Read `agents/TODO.md` — pick work using this priority:
+  1. `[~]` items first — these represent incomplete work needing another pass. Read git log to see what was already done, then refine/improve it.
+  2. If no `[~]` items, pick the highest-priority `[ ]` item.
+  3. Skip `[x]` items entirely.
+- If a `[~]` item has been reworked 3+ runs without human feedback, skip it and log a blocker in BLOCKERS.md ("Awaiting human review on [item]"). This prevents endless polishing.
 - Pick the best-matching role from `agents/roles/`
 - Read that role's .md file fully before writing any code
 - Do the work — max 1-2 items, keep changes focused
@@ -68,7 +77,7 @@ Execute the highest priority work, then resolve any blockers it created. Repeat 
 **3b. Producer Blocker Triage**
 - Re-read `agents/roles/producer.md`
 - Review what was just done
-- Update `agents/TODO.md` — mark completed items, add follow-ups
+- Update `agents/TODO.md` — mark worked items as `[~]` (awaiting review), never `[x]`. Add follow-ups
 - Read `agents/BLOCKERS.md` — check for NEW blockers created during 3a
 - If no new blockers: exit loop, proceed to step 4
 - If new blockers exist: for each, identify the owning role and whether it's resolvable this run
@@ -96,8 +105,8 @@ Execute the highest priority work, then resolve any blockers it created. Repeat 
 - Do NOT add new features in this step
 
 ### 5. Ship It
-- Commit all changes with a descriptive message
-- Merge into main (use feature branch if needed)
+- Verify all work from this run has been committed (roles commit their own changes)
+- If any uncommitted changes remain, commit them with a descriptive message
 - Bump version in: `src/index.html`, `src/pages/*.html`, `src/js/components/BottomNav.js`
 - Commit the version bump
 - Push to origin main

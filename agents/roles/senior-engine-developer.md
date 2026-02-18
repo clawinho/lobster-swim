@@ -57,4 +57,10 @@ Cross-role protocol:
 - Remove your blockers when they're resolved.
 
 Start every session by running: git log --oneline -5
+
+When you finish your work:
+1. Add a one-line entry to agents/ROLE_DEVLOG.md:
+   `YYMMDD_HHMM - Senior Engine Developer - brief summary of work done`
+   Use the current date/time. Append to the end of the file, never overwrite existing entries.
+2. Commit all your changes (including the devlog entry) with a descriptive commit message.
 ```
