@@ -69,6 +69,12 @@ const COMBO_FLASH_COLORS = { 5: '#ffff00', 8: '#ff8800', 10: '#ff00ff' };
 
 let currentLevel = 1, invincible = true, invincibleTimer = INVINCIBLE_DURATION;
 let caught = false, caughtY = 0, screenShake = 0;
+// Amphibious mode (Level 3) — gravity + jump physics
+let velocityY = 0;
+const GRAVITY = 0.4;
+const JUMP_FORCE = -8;
+let isOnGround = false;
+let isInWater = true;
 let keys = {}, joystickDx = 0, joystickDy = 0, hasTarget = false;
 let bgScrollX = 0, lastHookThreshold = 0, lastCageThreshold = 0, fishSpawnTimer = 0, pearlSpawnTimer = 0, starfishSpawnTimer = 0, eelSpawnTimer = 0;
 let starfishMultiplier = 1, starfishMultiplierTimer = 0;
@@ -273,6 +279,7 @@ async function startGame() {
     
     // Create entities
     player = new Lobster(400, LEVELS[1].floorY || 300);
+    velocityY = 0; isOnGround = false; isInWater = true;
     bubbles = Bubble.create(10, CANVAS_WIDTH, CANVAS_HEIGHT);
     cages = Cage.create(0, CANVAS_WIDTH, CANVAS_HEIGHT);
     hooks = Hook.create(CANVAS_WIDTH, LEVELS[1].enemies.hooks || 0);
@@ -393,6 +400,7 @@ function loseLife() {
     } else {
         audio.playHit();
         player.reset(400, LEVELS[currentLevel].floorY || 300);
+        velocityY = 0; isOnGround = false; isInWater = true;
         hasTarget = false;
         caught = false;
         invincible = true;
@@ -516,37 +524,110 @@ function update() {
     // Player movement — progressive abilities per level
     const levelConfig = LEVELS[currentLevel];
     const isFloorMode = levelConfig.movementMode === 'floor';
+    const isAmphibious = levelConfig.movementMode === 'amphibious';
     
-    // Keyboard movement
-    if (!isFloorMode) {
-        if (keys['ArrowUp'] || keys['w'] || keys['W']) player.y -= effectiveSpeed;
-        if (keys['ArrowDown'] || keys['s'] || keys['S']) player.y += effectiveSpeed;
-    }
-    if (keys['ArrowLeft'] || keys['a'] || keys['A']) player.x -= effectiveSpeed;
-    if (keys['ArrowRight'] || keys['d'] || keys['D']) player.x += effectiveSpeed;
-    
-    // Joystick movement
-    if (joystickDx !== 0 || joystickDy !== 0) {
-        player.x += joystickDx * effectiveSpeed;
-        if (!isFloorMode) player.y += joystickDy * effectiveSpeed;
-    }
-    
-    // Touch/click target movement
-    if (hasTarget) {
-        const dx = player.targetX - player.x;
-        const dy = isFloorMode ? 0 : (player.targetY - player.y);
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        if (dist > 10) {
-            player.x += (dx / dist) * effectiveSpeed;
-            if (!isFloorMode) player.y += (dy / dist) * effectiveSpeed;
+    if (isAmphibious) {
+        // --- Amphibious mode (Level 3): swim in water, gravity + jump on land ---
+        const beachEntity = LEVEL_ENTITIES[2];
+        const surfaceY = beachEntity.getSurfaceY(CANVAS_HEIGHT);
+        const sandY = beachEntity.getSandY(player.x, CANVAS_WIDTH, CANVAS_HEIGHT);
+        isInWater = player.y > surfaceY;
+        
+        if (isInWater) {
+            // Underwater: free swimming (like swim mode)
+            velocityY = 0;
+            isOnGround = false;
+            if (keys['ArrowUp'] || keys['w'] || keys['W']) player.y -= effectiveSpeed;
+            if (keys['ArrowDown'] || keys['s'] || keys['S']) player.y += effectiveSpeed;
+            if (keys['ArrowLeft'] || keys['a'] || keys['A']) player.x -= effectiveSpeed;
+            if (keys['ArrowRight'] || keys['d'] || keys['D']) player.x += effectiveSpeed;
+            if (joystickDx !== 0 || joystickDy !== 0) {
+                player.x += joystickDx * effectiveSpeed;
+                player.y += joystickDy * effectiveSpeed;
+            }
+            if (hasTarget) {
+                const dx = player.targetX - player.x;
+                const dy = player.targetY - player.y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                if (dist > 10) {
+                    player.x += (dx / dist) * effectiveSpeed;
+                    player.y += (dy / dist) * effectiveSpeed;
+                } else { hasTarget = false; }
+            }
         } else {
-            hasTarget = false;
+            // Above water: gravity + jump + walk on sand
+            velocityY += GRAVITY;
+            
+            // Horizontal movement
+            if (keys['ArrowLeft'] || keys['a'] || keys['A']) player.x -= effectiveSpeed;
+            if (keys['ArrowRight'] || keys['d'] || keys['D']) player.x += effectiveSpeed;
+            if (joystickDx !== 0) player.x += joystickDx * effectiveSpeed;
+            
+            // Jump (only when on ground or at water surface)
+            const wantsJump = keys['ArrowUp'] || keys['w'] || keys['W'] || (joystickDy < -0.5);
+            if (wantsJump && (isOnGround || player.y >= surfaceY - 5)) {
+                velocityY = JUMP_FORCE;
+                isOnGround = false;
+            }
+            
+            // Dive back into water (press down near surface)
+            const wantsDive = keys['ArrowDown'] || keys['s'] || keys['S'] || (joystickDy > 0.5);
+            if (wantsDive && player.y >= surfaceY - 20) {
+                player.y = surfaceY + 5;
+                velocityY = 2;
+            }
+            
+            // Apply gravity
+            player.y += velocityY;
+            
+            // Sand collision — land on sand surface
+            const currentSandY = beachEntity.getSandY(player.x, CANVAS_WIDTH, CANVAS_HEIGHT);
+            if (player.y + player.size >= currentSandY) {
+                player.y = currentSandY - player.size;
+                velocityY = 0;
+                isOnGround = true;
+            }
+            
+            // Don't fall below canvas
+            if (player.y > CANVAS_HEIGHT - player.size) {
+                player.y = CANVAS_HEIGHT - player.size;
+                velocityY = 0;
+                isOnGround = true;
+            }
         }
-    }
-    
-    // Floor mode: pin lobster to ocean floor
-    if (isFloorMode && levelConfig.floorY) {
-        player.y = levelConfig.floorY;
+    } else {
+        // --- Standard modes: floor or swim ---
+        // Keyboard movement
+        if (!isFloorMode) {
+            if (keys['ArrowUp'] || keys['w'] || keys['W']) player.y -= effectiveSpeed;
+            if (keys['ArrowDown'] || keys['s'] || keys['S']) player.y += effectiveSpeed;
+        }
+        if (keys['ArrowLeft'] || keys['a'] || keys['A']) player.x -= effectiveSpeed;
+        if (keys['ArrowRight'] || keys['d'] || keys['D']) player.x += effectiveSpeed;
+        
+        // Joystick movement
+        if (joystickDx !== 0 || joystickDy !== 0) {
+            player.x += joystickDx * effectiveSpeed;
+            if (!isFloorMode) player.y += joystickDy * effectiveSpeed;
+        }
+        
+        // Touch/click target movement
+        if (hasTarget) {
+            const dx = player.targetX - player.x;
+            const dy = isFloorMode ? 0 : (player.targetY - player.y);
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist > 10) {
+                player.x += (dx / dist) * effectiveSpeed;
+                if (!isFloorMode) player.y += (dy / dist) * effectiveSpeed;
+            } else {
+                hasTarget = false;
+            }
+        }
+        
+        // Floor mode: pin lobster to ocean floor
+        if (isFloorMode && levelConfig.floorY) {
+            player.y = levelConfig.floorY;
+        }
     }
     
     // Ocean current (only in levels with oceanCurrent mechanic)
