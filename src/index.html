@@ -111,7 +111,11 @@
     <!-- Dev panel toggle -->
     <script>
         let devPanelOpen = false;
-        function toggleDevPanel() {
+        async function toggleDevPanel() {
+            await Promise.all([
+                customElements.whenDefined('entity-inspector'),
+                customElements.whenDefined('entity-outliner'),
+            ]);
             devPanelOpen = !devPanelOpen;
             document.getElementById('dev-panel').style.display = devPanelOpen ? 'flex' : 'none';
             if (!devPanelOpen) {
@@ -130,7 +134,11 @@
             }
         }
 
-        function devTogglePause() {
+        async function devTogglePause() {
+            await Promise.all([
+                customElements.whenDefined('entity-inspector'),
+                customElements.whenDefined('entity-outliner'),
+            ]);
             const isPaused = window.gameDevIsPaused?.();
             const nowPaused = !isPaused;
             window.gameDevSetPaused?.(nowPaused);
