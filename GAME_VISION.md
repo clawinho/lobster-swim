@@ -25,7 +25,7 @@
 
 | Stage | Name | Levels | Status |
 |-------|------|--------|--------|
-| 1 | **The Ocean** | Ocean → Sea → Beach | Playable ✅ (restructuring) |
+| 1 | **The Ocean** | Birth → Ocean → Sea → Beach | Playable ✅ (restructuring) |
 | 2 | **Captivity** | TBD | Concept |
 | 3 | **The Kitchen** | TBD | Concept |
 | 4 | **Transcendence** | TBD | Concept |
@@ -37,6 +37,7 @@ Jeroen's direction: restructure Stage 1 from Ocean/Tank/Kitchen → Ocean/Sea/Be
 
 | Level | Setting | Lobster | Gameplay | References |
 |-------|---------|---------|----------|------------|
+| 0 - Birth | Lobster egg clutch under mother | Egg (one of thousands) | Pulse mechanic, nutrient absorption, predator avoidance | Existential / nature doc |
 | 1 - Ocean | Deep ocean floor | Baby lobster, left/right only | Chill, few enemies, floor-bound | Asteroids (80s) |
 | 2 - Sea | Open sea, slither of sky visible | Swimming lobster | More enemies, full movement | Classic arcade |
 | 3 - Beach | Half sky+waves / half sandy floor+water | Can jump above water, walk on land | Strong currents, children playing, most enemies | 90s platformers |

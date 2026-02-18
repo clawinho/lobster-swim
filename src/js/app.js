@@ -2,7 +2,7 @@
  * app.js - Main application (uses regular DOM, modular entities)
  */
 
-import { Lobster, Hook, Cage, Bubble, GoldenFish, Net, Fork, Pearl, Seagull, BeachBall, Jellyfish, Starfish, Eel, FallingPickup, ClawsPowerup } from './entities/index.js';
+import { Lobster, Hook, Cage, Bubble, GoldenFish, Net, Fork, Pearl, Seagull, BeachBall, Jellyfish, Starfish, Eel, FallingPickup, ClawsPowerup, SwimPowerup } from './entities/index.js';
 import { Particle } from './entities/effects/particle/actor/Particle.js';
 import { Audio } from './audio-module.js';
 import { OceanCurrent } from './entities/mechanics/ocean-current/actor/OceanCurrent.js';
@@ -93,6 +93,7 @@ let bgScrollX = 0, lastHookThreshold = 0, lastCageThreshold = 0, fishSpawnTimer 
 let starfishMultiplier = 1, starfishMultiplierTimer = 0;
 let fallingPickups = [], fallingPickupTimer = 0;
 let clawsPowerup = null, hasClaws = false, clawsSpawned = false;
+let swimPowerup = null, swimSpawned = false;
 const STARFISH_MULTIPLIER_DURATION = 480; // 8 seconds at 60fps
 let particles = [];
 // DOM Elements
@@ -319,6 +320,7 @@ async function startGame() {
     fallingPickups = [];
     fallingPickupTimer = 0;
     clawsPowerup = null; hasClaws = false; clawsSpawned = false;
+    swimPowerup = null; swimSpawned = false;
     oceanCurrent = new OceanCurrent(0.4); // Ocean currents push player gently
     
     updateUI();
@@ -1047,11 +1049,31 @@ function update() {
                 clawsPowerup = null;
             }
         }
+        // Swim powerup — spawn once at score 700 in Level 1 (after claws at 400)
+        if (!swimSpawned && hasClaws && score >= 700) {
+            const floorY = LEVELS[1].floorY || 480;
+            swimPowerup = SwimPowerup.spawnOne(CANVAS_WIDTH, floorY);
+            swimSpawned = true;
+        }
+        if (swimPowerup) {
+            swimPowerup.update();
+            if (swimPowerup.checkCollision(player)) {
+                audio.playLevelUp?.() || audio.playBloop?.();
+                particles.push(...Particle.spawnBubbleParticles(swimPowerup.x, swimPowerup.y));
+                scorePopups.push({ x: swimPowerup.x, y: swimPowerup.y, text: 'SWIM!', alpha: 2.5, startY: swimPowerup.y });
+                screenShake = 6;
+                swimPowerup = null;
+                // Force transition to Level 2
+                score = Math.max(score, LEVELS[2].scoreThreshold);
+                checkLevelUp();
+            }
+        }
     } else {
         // Clear falling pickups when leaving Level 1
         fallingPickups = [];
         fallingPickupTimer = 0;
         clawsPowerup = null;
+        swimPowerup = null;
     }
     // Level up check
     checkLevelUp();
@@ -1092,6 +1114,7 @@ function render() {
     // Falling pickups
     fallingPickups.forEach(fp => fp.render(ctx));
     if (clawsPowerup) clawsPowerup.render(ctx);
+    if (swimPowerup) swimPowerup.render(ctx);
     cages.forEach(c => c.render(ctx));
     hooks.forEach(h => h.render(ctx));
 

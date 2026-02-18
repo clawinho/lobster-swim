@@ -8,16 +8,26 @@ Updated: 2026-02-18
 
 Priority order — top item is next up.
 
-### Level 1 Bubble Reduction + Falling Pickups (HIGH PRIORITY — Jeroen directive)
+### Level 1 Bubble Reduction + Falling Pickups (DONE)
 - [x] Reduce bubble spawns significantly in Level 1 — each one should feel like a reward, not a carpet
 - [x] Add falling pickups that drop from top of screen and land on ocean floor
 - [x] CLAWS pickup — visual upgrade + defensive ability
-- [ ] SWIM pickup — collecting this transitions player to Level 2
+- [x] SWIM pickup — collecting this transitions player to Level 2
 
-### Level 2 Grace Period (HIGH PRIORITY — Jeroen directive)
+### Level 2 Grace Period (DONE)
 - [x] No enemies at start of Level 2 (Sea) — player just learned to swim
 - [x] Grace period before any enemies appear (5 seconds)
 - [x] Gradual enemy introduction after grace period ends (spawnOnEnter deferred)
+
+### Birth Level — New Level 0 (HIGH PRIORITY — Jeroen directive)
+- [ ] Design Birth level: lobster egg among thousands under mother's tail
+- [ ] Create Birth environment entity (egg clutch visual, mother tail backdrop)
+- [ ] Implement pulse mechanic (tap to nudge egg, rhythm-based movement)
+- [ ] Nutrient absorption system (growth meter instead of score)
+- [ ] Predator threat system (small fish eating eggs, visible hunger paths)
+- [ ] Growth meter UI — embryonic development stages leading to hatch
+- [ ] Hatch transition to Level 1 (Ocean) — egg cracks open, baby lobster emerges
+- [ ] Shift all current levels up by 1 (Ocean=L2, Sea=L3, Beach=L4)
 
 ### Beach Boss Encounter
 - [ ] Final boss encounter happens ON the beach — no water, fully on land
@@ -38,14 +48,24 @@ Priority order — top item is next up.
 
 Parked until Phase 1 ships. Do not start these yet.
 
-### Director Ideas (triaged 2026-02-18)
-- [ ] Boil Meter mechanic for Stage 3 Kitchen — water temp rising, screen color shift, ice cube pickups
-- [ ] Molting mechanic — risk/reward shell-shedding at score thresholds (growth requires vulnerability)
-- [ ] Death ghost system — ghost lobsters appear at previous death locations (Dark Souls style)
-- [ ] Spectator ghost mode — 10-second post-death observation before retry
-- [ ] Konami code Easter egg — lobster facts mode on title screen
-- [ ] Metadata Easter eggs — HTML comments, console.log lore, hidden API headers
-- [ ] New Game Plus — remixed stages with carried-over score
+### Director Ideas — Birth Level Details (triaged 2026-02-18)
+- [ ] "The Clutch" — discover yourself among thousands of identical eggs
+- [ ] "Pulse to Survive" — heartbeat mechanic, rhythm-based nudging
+- [ ] "The Hungry Parade" — predator fish with visible hunger paths
+- [ ] "Temperature Tides" — environmental hazard waves (warm/cold)
+- [ ] "The Detachment" — mid-level crisis, egg detaches from mother
+- [ ] "The Growth Meter" — embryonic development as health/progress bar
+- [ ] "Egg Glow" — bioluminescent chain reactions, screenshot-worthy visuals
+- [ ] "The Konami Egg" — secret golden egg easter egg
+
+### Director Ideas — Other (triaged 2026-02-18)
+- [ ] Boil Meter mechanic for Stage 3 Kitchen
+- [ ] Molting mechanic — risk/reward shell-shedding
+- [ ] Death ghost system — ghost lobsters at previous death locations
+- [ ] Spectator ghost mode — post-death observation
+- [ ] Konami code Easter egg — lobster facts on title screen
+- [ ] Metadata Easter eggs — HTML comments, console.log lore
+- [ ] New Game Plus — remixed stages
 
 ### Research: Diverse Game Styles (Jeroen directive)
 - [ ] Research how to refactor game for diverse gameplay styles in stages 2-4
