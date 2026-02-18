@@ -15,6 +15,7 @@ export class Sea {
         spawnOnEnter: { nets: 1, hooks: 1 },
         mechanics: [],
         waterLine: 0.1, // sky sliver at top
+        movementMode: 'swim', // full 2D swimming
     };
 
     renderBackground(ctx, w, h, scrollX) {

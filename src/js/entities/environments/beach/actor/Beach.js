@@ -16,6 +16,7 @@ export class Beach {
         spawnOnEnter: { forks: 4, hooks: 2, seagulls: 3, beachBalls: 2 },
         mechanics: [],
         waterLine: 0.5,
+        movementMode: 'swim', // full 2D swimming
         scrolling: true,         // Beach level scrolls
         progressStart: 3000,     // score at which Beach starts
         progressEnd: 6000,       // score at which progress reaches 1.0

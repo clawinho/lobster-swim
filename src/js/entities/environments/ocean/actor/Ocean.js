@@ -15,6 +15,8 @@ export class Ocean {
         spawnOnEnter: {},
         mechanics: ['oceanCurrent'],
         waterLine: 0, // fully submerged
+        movementMode: 'floor', // baby lobster — left/right only on ocean floor
+        floorY: 480, // Y position of the ocean floor
     };
 
     renderBackground(ctx, w, h, scrollX) {

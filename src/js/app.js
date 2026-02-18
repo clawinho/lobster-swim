@@ -272,7 +272,7 @@ async function startGame() {
     stunTimer = 0;
     
     // Create entities
-    player = new Lobster(400, 300);
+    player = new Lobster(400, LEVELS[1].floorY || 300);
     bubbles = Bubble.create(10, CANVAS_WIDTH, CANVAS_HEIGHT);
     cages = Cage.create(0, CANVAS_WIDTH, CANVAS_HEIGHT);
     hooks = Hook.create(CANVAS_WIDTH, LEVELS[1].enemies.hooks || 0);
@@ -382,7 +382,7 @@ function loseLife() {
         screenShake = 20;
         // Reset player to visible position for death animation
         player.x = CANVAS_WIDTH / 2;
-        player.y = CANVAS_HEIGHT / 3;
+        player.y = LEVELS[currentLevel].floorY || (CANVAS_HEIGHT / 3);
         // Check for new high score
         if (score > highScore) {
             highScore = score;
@@ -392,7 +392,7 @@ function loseLife() {
         }
     } else {
         audio.playHit();
-        player.reset(400, 300);
+        player.reset(400, LEVELS[currentLevel].floorY || 300);
         hasTarget = false;
         caught = false;
         invincible = true;
@@ -513,27 +513,40 @@ function update() {
     const speedMod = stunTimer > 0 ? Jellyfish.STUN_SPEED_MULT : 1;
     const effectiveSpeed = player.speed * speedMod;
 
-    // Player movement
-    if (keys['ArrowUp'] || keys['w'] || keys['W']) player.y -= effectiveSpeed;
-    if (keys['ArrowDown'] || keys['s'] || keys['S']) player.y += effectiveSpeed;
+    // Player movement — progressive abilities per level
+    const levelConfig = LEVELS[currentLevel];
+    const isFloorMode = levelConfig.movementMode === 'floor';
+    
+    // Keyboard movement
+    if (!isFloorMode) {
+        if (keys['ArrowUp'] || keys['w'] || keys['W']) player.y -= effectiveSpeed;
+        if (keys['ArrowDown'] || keys['s'] || keys['S']) player.y += effectiveSpeed;
+    }
     if (keys['ArrowLeft'] || keys['a'] || keys['A']) player.x -= effectiveSpeed;
     if (keys['ArrowRight'] || keys['d'] || keys['D']) player.x += effectiveSpeed;
     
+    // Joystick movement
     if (joystickDx !== 0 || joystickDy !== 0) {
         player.x += joystickDx * effectiveSpeed;
-        player.y += joystickDy * effectiveSpeed;
+        if (!isFloorMode) player.y += joystickDy * effectiveSpeed;
     }
     
+    // Touch/click target movement
     if (hasTarget) {
         const dx = player.targetX - player.x;
-        const dy = player.targetY - player.y;
+        const dy = isFloorMode ? 0 : (player.targetY - player.y);
         const dist = Math.sqrt(dx * dx + dy * dy);
         if (dist > 10) {
             player.x += (dx / dist) * effectiveSpeed;
-            player.y += (dy / dist) * effectiveSpeed;
+            if (!isFloorMode) player.y += (dy / dist) * effectiveSpeed;
         } else {
             hasTarget = false;
         }
+    }
+    
+    // Floor mode: pin lobster to ocean floor
+    if (isFloorMode && levelConfig.floorY) {
+        player.y = levelConfig.floorY;
     }
     
     // Ocean current (only in levels with oceanCurrent mechanic)
