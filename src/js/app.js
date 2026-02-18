@@ -845,7 +845,12 @@ function update() {
     checkLevelUp();
     
     // Background scroll
-    bgScrollX += 0.5;
+    bgScrollX += (currentLevel === 3) ? 1.5 : 0.5;
+
+    // Update Beach progress (shore approach — only on Beach level)
+    if (currentLevel === 3) {
+        LEVEL_ENTITIES[2].updateProgress(score);
+    }
     
     // Update particles
     particles = particles.filter(p => p.update());
