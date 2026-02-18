@@ -133,8 +133,12 @@ function init() {
 }
 
 function setupEvents() {
-    // Play button
+    // Play button — click + touchend for iOS compatibility
     playBtn.addEventListener('click', startGame);
+    playBtn.addEventListener('touchend', (e) => {
+        e.preventDefault();
+        startGame();
+    }, { passive: false });
     
     // Keyboard
     document.addEventListener('keydown', e => keys[e.key] = true);

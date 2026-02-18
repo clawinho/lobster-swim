@@ -98,6 +98,8 @@ canvas {
 }
 
 #play-btn {
+    touch-action: auto;
+    -webkit-tap-highlight-color: transparent;
     background: linear-gradient(180deg, #ff5500 0%, #cc3300 100%);
     border: none;
     color: #fff;
