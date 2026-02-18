@@ -1,6 +1,6 @@
 /**
  * BottomNav.js - Reusable bottom navigation component
- * Usage: <bottom-nav version="1.0.4"></bottom-nav>
+ * Usage: <bottom-nav version="1.0.5"></bottom-nav>
  */
 
 class BottomNav extends HTMLElement {
