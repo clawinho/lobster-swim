@@ -403,6 +403,8 @@ class EntityOutliner extends HTMLElement {
     }
 }
 
-customElements.define('entity-outliner', EntityOutliner);
+if (!customElements.get('entity-outliner')) {
+    customElements.define('entity-outliner', EntityOutliner);
+}
 
 export default EntityOutliner;
