@@ -14,8 +14,8 @@ Priority order — top item is next up.
 - [x] No hooks flying in the sky, no jellyfish in the air, no beach balls deep underwater
 
 ### Beach Scrolling Environment (HIGH PRIORITY — Jeroen directive)
-- [ ] Beach level scrolls right-to-left (lobster swimming toward shore)
-- [ ] Water gets shallower, sand rises, more sky visible, waves closer as level progresses
+- [x] Beach level scrolls right-to-left (lobster swimming toward shore)
+- [x] Water gets shallower, sand rises, more sky visible, waves closer as level progresses
 - [ ] Final boss encounter happens ON the beach — no water, fully on land
 
 ### Beach Visual Redesign (DONE)
