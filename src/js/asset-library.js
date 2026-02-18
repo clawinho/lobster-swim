@@ -39,6 +39,13 @@ import * as mod_20 from './entities/enemies/jellyfish/preview.js';
 import * as mod_21 from './entities/environments/sea/preview.js';
 import * as mod_22 from './entities/environments/beach/preview.js';
 
+import * as mod_23 from './entities/enemies/egg-predator/preview.js';
+import * as mod_24 from './entities/environments/birth/preview.js';
+import * as mod_25 from './entities/pickups/claws-powerup/preview.js';
+import * as mod_26 from './entities/pickups/falling-pickup/preview.js';
+import * as mod_27 from './entities/pickups/nutrient/preview.js';
+import * as mod_28 from './entities/pickups/swim-powerup/preview.js';
+
 const modules = Object.fromEntries([
   ['./entities/effects/particle/preview.js', mod_0],
   ['./entities/enemies/beachball/preview.js', mod_1],
@@ -63,6 +70,12 @@ const modules = Object.fromEntries([
   ['./entities/enemies/jellyfish/preview.js', mod_20],
   ['./entities/environments/sea/preview.js', mod_21],
   ['./entities/environments/beach/preview.js', mod_22],
+  ['./entities/enemies/egg-predator/preview.js', mod_23],
+  ['./entities/environments/birth/preview.js', mod_24],
+  ['./entities/pickups/claws-powerup/preview.js', mod_25],
+  ['./entities/pickups/falling-pickup/preview.js', mod_26],
+  ['./entities/pickups/nutrient/preview.js', mod_27],
+  ['./entities/pickups/swim-powerup/preview.js', mod_28],
 ]);
 
 export function buildAssetLibrary(container) {
