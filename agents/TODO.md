@@ -11,7 +11,7 @@ Priority order — top item is next up.
 ### Asset Library Fixes (HIGH PRIORITY — Jeroen directives)
 - [~] **[Senior Engine Dev]** Fix entity assets not visible in asset library — added 6 missing hardcoded imports
 - [~] **[Senior Engine Dev]** Asset library uses hardcoded imports (no Vite on VPS) — added all recent entity imports
-- [ ] **[UI/UX Dev]** Version tabs overflow with 6+ versions — center active tab, scroll overflow
+- [~] **[UI/UX Dev]** Version tabs overflow with 6+ versions — center active tab, scroll overflow
 - [~] **[Senior Engine Dev]** Ocean environment not showing in asset library — import exists, needs browser verification
 
 ### Birth Level Polish (HIGH PRIORITY)
