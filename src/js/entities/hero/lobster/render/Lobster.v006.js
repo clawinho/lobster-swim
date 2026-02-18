@@ -1,11 +1,11 @@
 /**
- * Lobster.v005.js - Stage-aware renderer: baby (Level 1) → adult (Level 2+)
- * @version 005
- * @current false
+ * Lobster.v006.js - Adds walking legs to baby and adult lobster
+ * @version 006
+ * @current true
  *
- * Baby lobster (stage 1): rounder body, stubby claws, bigger eyes, no tail fan, pinkish
- * Adult lobster (stage 2+): full v004 look with claws, tail fan, antennae
- * Accepts optional `stage` parameter (defaults to 2 = adult for backward compat).
+ * Baby lobster: 3 pairs of tiny stubby legs, subtle wiggle
+ * Adult lobster: 4 pairs of jointed walking legs, animated walk cycle
+ * Everything else inherited from v005 design.
  */
 export function render(ctx, x, y, size, angle, tailSegments, invincible, invincibleTimer, stage = 2) {
     if (invincible && Math.floor(invincibleTimer / 5) % 2 === 0) {
@@ -58,16 +58,74 @@ export function render(ctx, x, y, size, angle, tailSegments, invincible, invinci
     ctx.translate(x, y);
     ctx.rotate(angle);
 
+    // === LEGS (drawn BEFORE body so they appear underneath) ===
+    const legTime = Date.now() / 180;
+    ctx.strokeStyle = isBaby ? '#ee5533' : '#cc3300';
+    ctx.lineWidth = isBaby ? 1.5 : 2;
+
+    if (isBaby) {
+        // Baby: 3 pairs of tiny stubby legs
+        const legPairs = 3;
+        for (let i = 0; i < legPairs; i++) {
+            const xOff = size * (0.1 - i * 0.2); // spread along body
+            const wave = Math.sin(legTime + i * 1.2) * 0.2;
+            const legLen = size * 0.35;
+            // Top leg
+            ctx.beginPath();
+            ctx.moveTo(xOff, -size * 0.45);
+            ctx.quadraticCurveTo(xOff - 2, -size * 0.45 - legLen * 0.6 + wave * 3, xOff - 4, -size * 0.45 - legLen + wave * 5);
+            ctx.stroke();
+            // Bottom leg
+            ctx.beginPath();
+            ctx.moveTo(xOff, size * 0.45);
+            ctx.quadraticCurveTo(xOff - 2, size * 0.45 + legLen * 0.6 - wave * 3, xOff - 4, size * 0.45 + legLen - wave * 5);
+            ctx.stroke();
+        }
+    } else {
+        // Adult: 4 pairs of jointed walking legs
+        const legPairs = 4;
+        for (let i = 0; i < legPairs; i++) {
+            const xOff = size * (0.25 - i * 0.22); // spread along body
+            const wave = Math.sin(legTime + i * 1.0) * 0.3;
+            const upperLen = size * 0.35;
+            const lowerLen = size * 0.3;
+
+            // Top leg (upper side)
+            const topJointX = xOff - upperLen * 0.3;
+            const topJointY = -size * 0.4 - upperLen * 0.5;
+            const topEndX = topJointX - lowerLen * 0.2;
+            const topEndY = topJointY - lowerLen * 0.4 + wave * 6;
+            ctx.beginPath();
+            ctx.moveTo(xOff, -size * 0.38);
+            ctx.lineTo(topJointX, topJointY);
+            ctx.lineTo(topEndX, topEndY);
+            ctx.stroke();
+
+            // Bottom leg (lower side)
+            const botJointX = xOff - upperLen * 0.3;
+            const botJointY = size * 0.4 + upperLen * 0.5;
+            const botEndX = botJointX - lowerLen * 0.2;
+            const botEndY = botJointY + lowerLen * 0.4 - wave * 6;
+            ctx.beginPath();
+            ctx.moveTo(xOff, size * 0.38);
+            ctx.lineTo(botJointX, botJointY);
+            ctx.lineTo(botEndX, botEndY);
+            ctx.stroke();
+        }
+    }
+
+    ctx.lineWidth = 1;
+
+    // Body ellipse (on top of legs)
     ctx.fillStyle = isBaby ? '#ff6644' : '#ff4500';
     ctx.beginPath();
-    // Baby: rounder (0.8 height ratio), Adult: elongated (0.6)
     ctx.ellipse(0, 0, size, size * (isBaby ? 0.8 : 0.6), 0, 0, Math.PI * 2);
     ctx.fill();
 
     const clawWave = Math.sin(Date.now() / 200) * 0.15;
 
     if (isBaby) {
-        // Baby: tiny stubby claws — just little bumps
+        // Baby: tiny stubby claws
         const stubSize = size * 0.25;
         ctx.fillStyle = '#ff8866';
         ctx.save();
@@ -83,8 +141,7 @@ export function render(ctx, x, y, size, angle, tailSegments, invincible, invinci
         ctx.fill();
         ctx.restore();
     } else {
-        // Adult: full claws (v004 style)
-        // Upper claw
+        // Adult: full claws
         ctx.save();
         ctx.rotate(-0.5 + clawWave);
         ctx.fillStyle = '#ff4500';
@@ -99,7 +156,6 @@ export function render(ctx, x, y, size, angle, tailSegments, invincible, invinci
         ctx.closePath();
         ctx.fill();
         ctx.restore();
-        // Lower claw
         ctx.save();
         ctx.rotate(0.5 - clawWave);
         ctx.fillStyle = '#ff4500';
@@ -116,7 +172,7 @@ export function render(ctx, x, y, size, angle, tailSegments, invincible, invinci
         ctx.restore();
     }
 
-    // Eyes — baby: bigger proportionally (radius 5), adult: v004 (radius 4)
+    // Eyes
     const eyeR = isBaby ? 5 : 4;
     const eyeY = isBaby ? 0.25 : 0.2;
     const eyeX = isBaby ? 0.35 : 0.3;
@@ -125,19 +181,17 @@ export function render(ctx, x, y, size, angle, tailSegments, invincible, invinci
     ctx.arc(size * eyeX, -size * eyeY, eyeR, 0, Math.PI * 2);
     ctx.arc(size * eyeX, size * eyeY, eyeR, 0, Math.PI * 2);
     ctx.fill();
-    // Highlights
     ctx.fillStyle = '#fff';
     ctx.beginPath();
     ctx.arc(size * (eyeX + 0.02), -size * (eyeY + 0.02), eyeR * 0.4, 0, Math.PI * 2);
     ctx.arc(size * (eyeX + 0.02), size * (eyeY - 0.02), eyeR * 0.4, 0, Math.PI * 2);
     ctx.fill();
 
-    // Antennae — adults only; baby gets tiny feelers
+    // Antennae
     ctx.strokeStyle = isBaby ? '#ff8866' : '#ff6600';
     ctx.lineWidth = isBaby ? 1.5 : 2;
     const antWave = Math.sin(Date.now() / 150) * (isBaby ? 3 : 5);
     if (isBaby) {
-        // Short feelers
         ctx.beginPath();
         ctx.moveTo(size * 0.5, -size * 0.3);
         ctx.quadraticCurveTo(size * 0.6, -size * 0.5 + antWave, size * 0.7, -size * 0.4 + antWave);
@@ -173,8 +227,8 @@ export function render(ctx, x, y, size, angle, tailSegments, invincible, invinci
 }
 
 export const meta = {
-    version: "005",
-    name: "Stage-Aware (Baby → Adult)",
-    current: false,
-    features: ["stage-aware rendering", "baby lobster (L1)", "adult lobster (L2+)", "real tail physics", "animated claws", "invincibility shield"]
+    version: "006",
+    name: "Lobster with Legs",
+    current: true,
+    features: ["walking legs", "stage-aware rendering", "baby lobster (L1)", "adult lobster (L2+)", "jointed leg animation", "real tail physics", "animated claws", "invincibility shield"]
 };

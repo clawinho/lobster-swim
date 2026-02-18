@@ -38,7 +38,7 @@ Priority order — top item is next up.
 - [x] Lobster sprite changes between levels (v005 stage-aware renderer)
 
 ### Lobster Art (MEDIUM PRIORITY — Jeroen directive)
-- [ ] Design legs for the hero lobster
+- [x] Design legs for the hero lobster
 
 ### Audio (MEDIUM PRIORITY)
 - [ ] Music refinement — layered intensity per level (Ocean calm → Sea tension → Beach urgency)

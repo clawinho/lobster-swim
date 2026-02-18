@@ -4,7 +4,7 @@
  * Supports stage-aware rendering (baby in Level 1, adult in Level 2+)
  */
 
-import { render as renderLobster } from '../render/Lobster.v005.js';
+import { render as renderLobster } from '../render/Lobster.v006.js';
 
 export class Lobster {
     static TAIL_SEGMENTS = 3;
