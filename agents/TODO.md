@@ -36,6 +36,7 @@ Priority order — top item is next up.
 - [x] Level 2: Swimming lobster, full movement (v005 renderer — baby→adult visual transition)
 - [x] Level 3: Can jump above water and walk on land
 - [x] Lobster sprite changes between levels (v005 stage-aware renderer)
+- [x] Level 1 baby lobster small hop/jump ability (Jeroen directive — dodge obstacles on ocean floor)
 
 ### Lobster Art (MEDIUM PRIORITY — Jeroen directive)
 - [x] Design legs for the hero lobster

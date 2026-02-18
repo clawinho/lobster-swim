@@ -73,6 +73,7 @@ let caught = false, caughtY = 0, screenShake = 0;
 let velocityY = 0;
 const GRAVITY = 0.4;
 const JUMP_FORCE = -8;
+const HOP_FORCE = -5.5; // Baby lobster small hop in floor mode
 let isOnGround = false;
 let isInWater = true;
 let keys = {}, joystickDx = 0, joystickDy = 0, hasTarget = false;
@@ -279,7 +280,7 @@ async function startGame() {
     
     // Create entities
     player = new Lobster(400, LEVELS[1].floorY || 300);
-    velocityY = 0; isOnGround = false; isInWater = true;
+    velocityY = 0; isOnGround = true; isInWater = true;
     bubbles = Bubble.create(10, CANVAS_WIDTH, CANVAS_HEIGHT);
     cages = Cage.create(0, CANVAS_WIDTH, CANVAS_HEIGHT);
     hooks = Hook.create(CANVAS_WIDTH, LEVELS[1].enemies.hooks || 0);
@@ -400,7 +401,7 @@ function loseLife() {
     } else {
         audio.playHit();
         player.reset(400, LEVELS[currentLevel].floorY || 300);
-        velocityY = 0; isOnGround = false; isInWater = true;
+        velocityY = 0; isOnGround = true; isInWater = true;
         hasTarget = false;
         caught = false;
         invincible = true;
@@ -624,9 +625,23 @@ function update() {
             }
         }
         
-        // Floor mode: pin lobster to ocean floor
+        // Floor mode: baby lobster on ocean floor with small hop ability
         if (isFloorMode && levelConfig.floorY) {
-            player.y = levelConfig.floorY;
+            const wantsHop = keys['ArrowUp'] || keys['w'] || keys['W'] || (joystickDy < -0.5);
+            if (wantsHop && isOnGround) {
+                velocityY = HOP_FORCE;
+                isOnGround = false;
+            }
+            if (!isOnGround) {
+                velocityY += GRAVITY;
+                player.y += velocityY;
+            }
+            // Land back on floor
+            if (player.y >= levelConfig.floorY) {
+                player.y = levelConfig.floorY;
+                velocityY = 0;
+                isOnGround = true;
+            }
         }
     }
     
