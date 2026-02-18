@@ -70,4 +70,10 @@ Cross-role protocol:
 
 Start every session by running: git log --oneline -5
 Then read GAME_VISION.md and STAGES.md.
+
+When you finish your work:
+1. Add a one-line entry to agents/ROLE_DEVLOG.md:
+   `YYMMDD_HHMM - Director - brief summary of work done`
+   Use the current date/time. Append to the end of the file, never overwrite existing entries.
+2. Commit all your changes (including the devlog entry) with a descriptive commit message.
 ```

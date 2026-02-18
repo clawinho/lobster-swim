@@ -9,19 +9,19 @@ Updated: 2026-02-18
 Priority order — top item is next up.
 
 ### Birth Level Polish (HIGH PRIORITY)
-- [x] Design Birth level: lobster egg among thousands under mother's tail
-- [x] Create Birth environment entity (egg clutch visual, mother tail backdrop)
-- [x] Implement pulse mechanic (tap to nudge egg, rhythm-based movement)
-- [x] Nutrient absorption system (growth meter instead of score)
-- [x] Predator threat system (small fish eating eggs, visible hunger paths)
-- [x] Growth meter UI — embryonic development stages leading to hatch
-- [x] Hatch transition to Level 1 (Ocean) — egg cracks open, baby lobster emerges
-- [x] Shift all current levels up by 1 (Ocean=L2, Sea=L3, Beach=L4)
-- [x] Birth level visual polish — egg glow effects, better clutch backdrop
-- [x] Birth level difficulty tuning — predator spawn rates, nutrient density
-- [x] **Birth "BIRTH" title intro** — big bold title that fades out epically at game start, paired with deep THX/Kubrick-style synthesized soundscape (procedural Web Audio: low drone that swells and decays)
-- [x] **Birth level intimacy** — eggs packed tighter, camera zoomed in closer so eggs dominate screen, claustrophobic feel
-- [x] **Heartbeat sync mechanic** — rhythmic/synchronic heartbeat tapping as primary interaction to break free from egg colony, then catch food to grow
+- [~] Design Birth level: lobster egg among thousands under mother's tail
+- [~] Create Birth environment entity (egg clutch visual, mother tail backdrop)
+- [~] Implement pulse mechanic (tap to nudge egg, rhythm-based movement)
+- [~] Nutrient absorption system (growth meter instead of score)
+- [~] Predator threat system (small fish eating eggs, visible hunger paths)
+- [~] Growth meter UI — embryonic development stages leading to hatch
+- [~] Hatch transition to Level 1 (Ocean) — egg cracks open, baby lobster emerges
+- [~] Shift all current levels up by 1 (Ocean=L2, Sea=L3, Beach=L4)
+- [~] Birth level visual polish — egg glow effects, better clutch backdrop
+- [~] Birth level difficulty tuning — predator spawn rates, nutrient density
+- [~] **Birth "BIRTH" title intro** — big bold title that fades out epically at game start, paired with deep THX/Kubrick-style synthesized soundscape (procedural Web Audio: low drone that swells and decays)
+- [~] **Birth level intimacy** — eggs packed tighter, camera zoomed in closer so eggs dominate screen, claustrophobic feel
+- [~] **Heartbeat sync mechanic** — rhythmic/synchronic heartbeat tapping as primary interaction to break free from egg colony, then catch food to grow
 - [ ] **Birth-to-Ocean hatching cutscene** — egg crack animation, baby lobster emerges/climbs out before Ocean begins (not just abrupt transition)
 
 ### Asset Library Fixes (HIGH PRIORITY — Jeroen directives)
