@@ -38,3 +38,8 @@ Unvetted ideas from anyone — contributors, outsiders, brainstorms. No gatekeep
 ---
 
 **Precedence:** When suggestions conflict, they resolve in section order — Human Leads overrides Agentic Roles overrides Open Suggestions.
+
+### Level 1 baby lobster needs a small jump ability
+**Author:** Jeroen (pixelprotest)  **Date:** 2026-02-17
+
+With the Asteroids-style left/right only movement on the ocean floor, it's too hard to dodge things. Give the baby lobster a small hop/jump — tap up to do a little bounce off the ocean floor, enough to dodge an incoming hook or obstacle, but not full swimming. Think Mario-style jump on a 2D plane. Keeps the retro feel but makes it actually playable.
