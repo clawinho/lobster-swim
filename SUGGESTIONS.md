@@ -15,7 +15,7 @@ Suggestions from project owners and leads. These get first consideration.
 ### New Level 0: Birth — lobster egg survival
 **Author:** Jeroen (pixelprotest)  **Date:** 2026-02-18
 
-Add a new level BEFORE the current Ocean level. Called Birth — you are a lobster egg among thousands of translucent jelly eggs filling the screen. You're the one that needs to hatch and survive. This becomes the new Level 1, and all current levels shift up (Ocean becomes L2, Sea becomes L3, Beach becomes L4). Stage 1 is now 4 levels: Birth → Ocean → Sea → Beach. Need Director to brainstorm gameplay mechanics for this level — what does a lobster egg do? What are the threats? How do you hatch?
+Add a new level BEFORE the current Ocean level. Called Birth — you are a lobster egg among thousands of translucent jelly eggs filling the screen. You're the one that needs to hatch and survive. This becomes the new Level 1, and all current levels shift up (Ocean becomes L2, Sea becomes L3, Beach becomes L4). Stage 1 is now 4 levels: Birth → Ocean → Sea → Beach.
 
 ---
 
