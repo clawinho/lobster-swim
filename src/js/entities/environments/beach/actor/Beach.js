@@ -11,8 +11,8 @@ export class Beach {
         background: '#1a2a35',
         scoreThreshold: 3000,
         musicTrack: 'assets/music/music_kitchen.mp3',
-        enemies: { hooks: 4, cages: 4, nets: 3, forks: 4, jellyfish: 2, eels: true },
-        spawnOnEnter: { forks: 4, hooks: 2 },
+        enemies: { hooks: 4, cages: 4, nets: 3, forks: 4, jellyfish: 2, eels: true, seagulls: 3, beachBalls: 2 },
+        spawnOnEnter: { forks: 4, hooks: 2, seagulls: 3, beachBalls: 2 },
         mechanics: [],
     };
 

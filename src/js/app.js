@@ -323,6 +323,8 @@ function checkLevelUp() {
             if (spawn.nets) nets = Net.create(spawn.nets, CANVAS_WIDTH, CANVAS_HEIGHT);
             if (spawn.forks) forks = Fork.create(spawn.forks, CANVAS_WIDTH, CANVAS_HEIGHT);
             if (spawn.hooks) hooks.push(...Hook.create(CANVAS_WIDTH, spawn.hooks));
+            if (spawn.seagulls) seagulls = Seagull.create(CANVAS_WIDTH, CANVAS_HEIGHT, spawn.seagulls);
+            if (spawn.beachBalls) beachBalls = BeachBall.create(spawn.beachBalls, CANVAS_WIDTH, CANVAS_HEIGHT);
             // Spawn jellyfish based on level config
             const jellyfishCount = config.enemies.jellyfish || 0;
             if (jellyfishCount > jellyfish.length) {
@@ -330,6 +332,8 @@ function checkLevelUp() {
             }
             // Clear eels when entering a level without them
             if (!config.enemies.eels) { eels = []; eelSpawnTimer = 0; }
+            if (!config.enemies.seagulls) { seagulls = []; }
+            if (!config.enemies.beachBalls) { beachBalls = []; }
             audio.crossfadeTo(config.musicTrack);
             audio.playLevelUp();
 
@@ -650,8 +654,8 @@ function update() {
         });
     }
 
-    // Seagulls (Ocean level only - Beach Shallows danger)
-    if (currentLevel === 1 && seagulls) {
+    // Seagulls (config-driven per level)
+    if (LEVELS[currentLevel].enemies.seagulls && seagulls) {
         seagulls.forEach(gull => {
             gull.update(player.x, player.y, CANVAS_WIDTH, CANVAS_HEIGHT);
             if (gull.checkCollision(player, invincible)) {
@@ -873,7 +877,7 @@ function render() {
 
     if (LEVELS[currentLevel].enemies.nets) nets.forEach(n => n.render(ctx));
     if (LEVELS[currentLevel].enemies.forks) forks.forEach(f => f.render(ctx));
-    if (currentLevel === 1 && seagulls) seagulls.forEach(g => g.render(ctx));
+    if (LEVELS[currentLevel].enemies.seagulls && seagulls) seagulls.forEach(g => g.render(ctx));
     if (LEVELS[currentLevel].enemies.beachBalls) beachBalls.forEach(b => b.render(ctx));
     if (jellyfish) jellyfish.forEach(j => j.render(ctx));
     if (eels) eels.forEach(e => e.render(ctx));
