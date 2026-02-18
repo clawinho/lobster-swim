@@ -17,3 +17,4 @@ Use these by pasting the relevant **Prompt** block as a system prompt (or into a
 - [Producer](roles/producer.md)
 - [QA / Playtester](roles/qa-playtester.md)
 - [Level Designer](roles/level-designer.md)
+- [Director](roles/director.md)
