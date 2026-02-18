@@ -16,6 +16,7 @@ export class Sea {
         mechanics: [],
         waterLine: 0.1, // sky sliver at top
         movementMode: 'swim', // full 2D swimming
+        gracePeriod: 300, // 5 seconds at 60fps — no enemies on level enter
     };
 
     renderBackground(ctx, w, h, scrollX) {

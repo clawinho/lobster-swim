@@ -38,13 +38,3 @@ Unvetted ideas from anyone — contributors, outsiders, brainstorms. No gatekeep
 ---
 
 **Precedence:** When suggestions conflict, they resolve in section order — Human Leads overrides Agentic Roles overrides Open Suggestions.
-
-### Level 1 — fewer bubbles, new falling pickups
-**Author:** Jeroen (pixelprotest)  **Date:** 2026-02-17
-
-Way too many bubbles on the ocean floor right now. Reduce them significantly — make each one feel like a little reward, not a carpet. Add new pickups that fall from the top of the screen and land on the ocean bed where the baby lobster walks: one pickup gives the lobster CLAWS (visual upgrade + maybe a defensive ability), another one gives the ability to SWIM (which is what transitions you to level 2 gameplay). These falling pickups make the ocean floor feel alive and give the player goals beyond just collecting bubbles.
-
-### Level 2 (Sea) — ease into swimming, delay enemies
-**Author:** Jeroen (pixelprotest)  **Date:** 2026-02-17
-
-Level 2 should start chill — the player just learned to swim, let them enjoy it. No enemies right away. Give a grace period at the start of the Sea level before any enemies appear. Let the player explore swimming freely first, THEN gradually introduce threats. The transition from peaceful ocean floor to immediate danger is too jarring.

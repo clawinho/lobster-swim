@@ -79,6 +79,7 @@ const COMBO_FLASH_MILESTONES = [5, 8, 10]; // Combos that trigger flash
 const COMBO_FLASH_COLORS = { 5: '#ffff00', 8: '#ff8800', 10: '#ff00ff' };
 
 let currentLevel = 1, invincible = true, invincibleTimer = INVINCIBLE_DURATION;
+let gracePeriodTimer = 0; // Grace period: no enemies after level transition
 let caught = false, caughtY = 0, screenShake = 0;
 // Amphibious mode (Level 3) — gravity + jump physics
 let velocityY = 0;
@@ -330,6 +331,22 @@ function getDifficulty() {
     };
 }
 
+
+function spawnLevelEnemies(config) {
+    const spawn = config.spawnOnEnter;
+    if (spawn) {
+        if (spawn.nets) nets = Net.create(spawn.nets, CANVAS_WIDTH, CANVAS_HEIGHT);
+        if (spawn.forks) forks = Fork.create(spawn.forks, CANVAS_WIDTH, CANVAS_HEIGHT);
+        if (spawn.hooks) hooks.push(...Hook.create(CANVAS_WIDTH, spawn.hooks));
+        if (spawn.seagulls) seagulls = Seagull.create(CANVAS_WIDTH, CANVAS_HEIGHT, spawn.seagulls, (config.waterLine || 0) * CANVAS_HEIGHT);
+        if (spawn.beachBalls) beachBalls = BeachBall.create(spawn.beachBalls, CANVAS_WIDTH, CANVAS_HEIGHT, (config.waterLine || 0) * CANVAS_HEIGHT);
+    }
+    const jellyfishCount = config.enemies.jellyfish || 0;
+    if (jellyfishCount > jellyfish.length) {
+        jellyfish.push(...Jellyfish.create(jellyfishCount - jellyfish.length, CANVAS_WIDTH, CANVAS_HEIGHT, (config.waterLine || 0) * CANVAS_HEIGHT));
+    }
+}
+
 function checkLevelUp() {
     for (let lvl = 3; lvl >= 1; lvl--) {
         const config = LEVELS[lvl];
@@ -337,22 +354,16 @@ function checkLevelUp() {
             currentLevel = lvl;
             document.body.style.background = config.background;
             levelDisplay.textContent = config.name;
-            // Spawn enemies defined in spawnOnEnter
-            const spawn = config.spawnOnEnter;
-            if (spawn.nets) nets = Net.create(spawn.nets, CANVAS_WIDTH, CANVAS_HEIGHT);
-            if (spawn.forks) forks = Fork.create(spawn.forks, CANVAS_WIDTH, CANVAS_HEIGHT);
-            if (spawn.hooks) hooks.push(...Hook.create(CANVAS_WIDTH, spawn.hooks));
-            if (spawn.seagulls) seagulls = Seagull.create(CANVAS_WIDTH, CANVAS_HEIGHT, spawn.seagulls, (config.waterLine || 0) * CANVAS_HEIGHT);
-            if (spawn.beachBalls) beachBalls = BeachBall.create(spawn.beachBalls, CANVAS_WIDTH, CANVAS_HEIGHT, (config.waterLine || 0) * CANVAS_HEIGHT);
-            // Spawn jellyfish based on level config
-            const jellyfishCount = config.enemies.jellyfish || 0;
-            if (jellyfishCount > jellyfish.length) {
-                jellyfish.push(...Jellyfish.create(jellyfishCount - jellyfish.length, CANVAS_WIDTH, CANVAS_HEIGHT, (config.waterLine || 0) * CANVAS_HEIGHT));
+            // Spawn enemies (deferred if grace period active)
+            if (!config.gracePeriod) {
+                spawnLevelEnemies(config);
             }
             // Clear eels when entering a level without them
             if (!config.enemies.eels) { eels = []; eelSpawnTimer = 0; }
             if (!config.enemies.seagulls) { seagulls = []; }
             if (!config.enemies.beachBalls) { beachBalls = []; }
+            // Start grace period if configured
+            gracePeriodTimer = config.gracePeriod || 0;
             audio.crossfadeTo(config.musicTrack);
             audio.playLevelUp();
 
@@ -422,6 +433,16 @@ function loseLife() {
 
 function update() {
     if (gameOver) return;
+    
+    // Grace period countdown (no enemies during grace)
+    if (gracePeriodTimer > 0) {
+        gracePeriodTimer--;
+        // When grace period ends, spawn the deferred enemies
+        if (gracePeriodTimer === 0) {
+            spawnLevelEnemies(LEVELS[currentLevel]);
+        }
+    }
+    const inGracePeriod = gracePeriodTimer > 0;
     
     // Death animation
     if (deathAnimating) {
@@ -715,19 +736,19 @@ function update() {
             // Difficulty scaling (re-check after score changed)
             const updatedDiff = getDifficulty();
             const lvlEnemies = LEVELS[currentLevel].enemies;
-            if (lvlEnemies.hooks > 0 && updatedDiff.hookCount > hooks.length && score > lastHookThreshold + 100) {
+            if (!inGracePeriod && lvlEnemies.hooks > 0 && updatedDiff.hookCount > hooks.length && score > lastHookThreshold + 100) {
                 hooks.push(...Hook.create(CANVAS_WIDTH, 1));
                 lastHookThreshold = score;
             }
-            if (lvlEnemies.cages > 0 && updatedDiff.cageCount > cages.length && score > lastCageThreshold + 150) {
+            if (!inGracePeriod && lvlEnemies.cages > 0 && updatedDiff.cageCount > cages.length && score > lastCageThreshold + 150) {
                 cages.push(...Cage.create(1, CANVAS_WIDTH, CANVAS_HEIGHT));
                 lastCageThreshold = score;
             }
         }
     });
     
-    // Cages
-    cages.forEach(cage => {
+    // Cages (skip during grace period)
+    if (!inGracePeriod) cages.forEach(cage => {
         cage.update(diff.speedMult, CANVAS_WIDTH, CANVAS_HEIGHT);
         if (cage.checkCollision(player, invincible)) {
             caught = true;
@@ -736,8 +757,8 @@ function update() {
         }
     });
     
-    // Hooks - with smart dropping behavior
-    hooks.forEach(hook => {
+    // Hooks - with smart dropping behavior (skip during grace period)
+    if (!inGracePeriod) hooks.forEach(hook => {
         hook.update(diff.speedMult);
         
         // Smart drop: if player swims beneath hook, chance to drop and snag them!
@@ -755,7 +776,7 @@ function update() {
     });
     
     // Nets (active when level config includes nets)
-    if (LEVELS[currentLevel].enemies.nets) {
+    if (LEVELS[currentLevel].enemies.nets && !inGracePeriod) {
         nets.forEach(net => {
             net.update(diff.speedMult, CANVAS_WIDTH, CANVAS_HEIGHT);
             if (net.checkCollision(player, invincible)) {
@@ -765,7 +786,7 @@ function update() {
     }
 
     // Forks (active when level config includes forks)
-    if (LEVELS[currentLevel].enemies.forks) {
+    if (LEVELS[currentLevel].enemies.forks && !inGracePeriod) {
         forks.forEach(fork => {
             fork.update(diff.speedMult, CANVAS_WIDTH, CANVAS_HEIGHT);
             if (fork.checkCollision(player, invincible)) {
@@ -775,7 +796,7 @@ function update() {
     }
 
     // Seagulls (config-driven per level)
-    if (LEVELS[currentLevel].enemies.seagulls && seagulls) {
+    if (LEVELS[currentLevel].enemies.seagulls && seagulls && !inGracePeriod) {
         seagulls.forEach(gull => {
             gull.update(player.x, player.y, CANVAS_WIDTH, CANVAS_HEIGHT);
             if (gull.checkCollision(player, invincible)) {
@@ -785,7 +806,7 @@ function update() {
     }
     
     // Beach Balls (active in ocean level - knockback only, not death)
-    if (LEVELS[currentLevel].enemies.beachBalls) {
+    if (LEVELS[currentLevel].enemies.beachBalls && !inGracePeriod) {
         beachBalls.forEach(ball => {
             ball.update(diff.speedMult, CANVAS_WIDTH, CANVAS_HEIGHT);
             const knockback = ball.checkCollision(player, invincible);
@@ -802,7 +823,7 @@ function update() {
     }
     
     // Jellyfish (sting = stun)
-    if (jellyfish) {
+    if (jellyfish && !inGracePeriod) {
         jellyfish.forEach(jelly => {
             jelly.update(diff.speedMult, CANVAS_WIDTH, CANVAS_HEIGHT);
             if (jelly.checkCollision(player, invincible)) {
@@ -820,7 +841,7 @@ function update() {
     }
 
     // Electric eels (only in levels with eels enabled)
-    if (LEVELS[currentLevel].enemies.eels) {
+    if (LEVELS[currentLevel].enemies.eels && !inGracePeriod) {
         eelSpawnTimer++;
         const eelSpawnRate = diff.speedMult > 1.3 ? 180 : (diff.speedMult > 1.1 ? 300 : 480);
         if (eelSpawnTimer >= eelSpawnRate) {

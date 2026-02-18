@@ -8,59 +8,25 @@ Updated: 2026-02-18
 
 Priority order — top item is next up.
 
-### Enemy Spawn Zones (HIGH PRIORITY — Jeroen directive)
-- [x] Each environment defines a water level Y coordinate
-- [x] Enemies constrained to valid zones: hooks from above water, jellyfish underwater, beach balls at surface, seagulls from sky
-- [x] No hooks flying in the sky, no jellyfish in the air, no beach balls deep underwater
+### Level 1 Bubble Reduction + Falling Pickups (HIGH PRIORITY — Jeroen directive)
+- [ ] Reduce bubble spawns significantly in Level 1 — each one should feel like a reward, not a carpet
+- [ ] Add falling pickups that drop from top of screen and land on ocean floor
+- [ ] CLAWS pickup — visual upgrade + defensive ability
+- [ ] SWIM pickup — collecting this transitions player to Level 2
 
-### Beach Scrolling Environment (HIGH PRIORITY — Jeroen directive)
-- [x] Beach level scrolls right-to-left (lobster swimming toward shore)
-- [x] Water gets shallower, sand rises, more sky visible, waves closer as level progresses
+### Level 2 Grace Period (HIGH PRIORITY — Jeroen directive)
+- [x] No enemies at start of Level 2 (Sea) — player just learned to swim
+- [x] Grace period before any enemies appear (5 seconds)
+- [x] Gradual enemy introduction after grace period ends (spawnOnEnter deferred)
+
+### Beach Boss Encounter
 - [ ] Final boss encounter happens ON the beach — no water, fully on land
-
-### Beach Visual Redesign (DONE)
-- [x] Redesign Beach level: camera underwater looking toward shore
-- [x] Top half sky, middle waterline with crashing waves, bottom half sea with yellow sand floor
-- [x] Sand bank slopes up left to right
-- [x] Beach-specific enemies: seagulls dive from above waterline, beach balls float at surface
-
-### High Score Celebration (DONE)
-- [x] Add celebration moment when player gets a new high score (confetti, score highlight, brief fanfare)
-- [x] Brief delay before transitioning back — let player feel the achievement
 
 ### Lobster POV (MEDIUM PRIORITY)
 - [ ] Lobster POV: still submerged but near shore in Beach level
 
-### Progressive Lobster Abilities (HIGH PRIORITY — Jeroen directive)
-- [x] Level 1: Baby lobster, left/right only on ocean floor (Asteroids-style)
-- [x] Level 2: Swimming lobster, full movement (v005 renderer — baby→adult visual transition)
-- [x] Level 3: Can jump above water and walk on land
-- [x] Lobster sprite changes between levels (v005 stage-aware renderer)
-- [x] Level 1 baby lobster small hop/jump ability (Jeroen directive — dodge obstacles on ocean floor)
-- [x] Level 1 bubbles spawn near ocean floor so baby lobster can reach them (Jom report)
-
-### Lobster Art (MEDIUM PRIORITY — Jeroen directive)
-- [x] Design legs for the hero lobster
-
 ### Audio (MEDIUM PRIORITY)
 - [ ] Music refinement — layered intensity per level (Ocean calm → Sea tension → Beach urgency)
-
-### Enemy Balance (DONE)
-- [x] Reduce enemies in Level 1 (Ocean) — make it chill, very few enemies
-- [x] Level 1 now has ZERO enemies (Jeroen directive)
-- [x] Ramp up enemies in Level 2 (Sea)
-- [x] Full enemy density in Level 3 (Beach)
-- [x] Sea level still too many enemies at low scores — reduce initial spawn counts and delay ramp
-- [x] Per-level enemy filtering — limit enemy types by environment
-- [x] Eel movement toned down
-- [x] Fix difficulty system spawning hooks/cages in Ocean (bypassed level config)
-- [x] Add Sea and Beach environments to asset library — smoother slithering, less erratic (Jeroen directive)
-
-### Stage 1 Restructure: Ocean → Sea → Beach (DONE)
-- [x] Rename/redesign Level 2 from "Seafood Tank" → "Sea"
-- [x] Rename/redesign Level 3 from "The Kitchen" → "Beach"
-- [x] Update environment renderers for Sea and Beach
-- [x] Update level transitions — Ocean→Sea at 1000, Sea→Beach at 3000 (Jeroen directive)
 
 ### 80s/90s Game References (LOW PRIORITY — Jeroen directive)
 - [ ] Research and plan 80s/90s iconic game references for Stage 1 levels
