@@ -12,7 +12,7 @@ Priority order — top item is next up.
 - [x] Redesign Beach level: camera underwater looking toward shore
 - [x] Top half sky, middle waterline with crashing waves, bottom half sea with yellow sand floor
 - [x] Sand bank slopes up left to right
-- [ ] Beach-specific enemies: seagulls dive from above waterline, beach balls float at surface
+- [x] Beach-specific enemies: seagulls dive from above waterline, beach balls float at surface
 - [ ] Lobster POV: still submerged but near shore
 
 ### High Score Celebration (HIGH PRIORITY — cso directive)
