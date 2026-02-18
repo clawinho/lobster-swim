@@ -97,6 +97,13 @@ let nutrients = [], nutrientTimer = 0;
 let eggPredators = [];
 let growthMeter = 0; // 0-500 for birth level
 let birthIntroActive = false, birthIntroTimer = 0, birthIntroDuration = 240; // ~4 sec at 60fps
+let birthZoom = 1.4; // Camera zoom for birth intimacy (starts zoomed in, eases out with growth)
+let heartbeatPhase = 0; // Heartbeat rhythm phase (0 to 2PI)
+let heartbeatBPM = 60; // Heartbeat tempo — slow, embryonic
+let heartbeatSyncWindow = false; // True during the "beat" window
+let heartbeatTapBonus = 0; // Bonus speed from synced taps
+let heartbeatTapFlash = 0; // Visual feedback timer for synced tap
+let lastTapTime = 0; // Timestamp of last tap/click
 let clawsPowerup = null, hasClaws = false, clawsSpawned = false;
 let swimPowerup = null, swimSpawned = false;
 const STARFISH_MULTIPLIER_DURATION = 480; // 8 seconds at 60fps
@@ -147,7 +154,14 @@ function setupEvents() {
     }, { passive: false });
     
     // Keyboard
-    document.addEventListener('keydown', e => keys[e.key] = true);
+    document.addEventListener('keydown', e => {
+        keys[e.key] = true;
+        // Spacebar = heartbeat tap in Birth level
+        if (e.key === ' ' && LEVELS[currentLevel]?.isBirthLevel) {
+            e.preventDefault();
+            checkHeartbeatTap();
+        }
+    });
     document.addEventListener('keyup', e => keys[e.key] = false);
     
     // Canvas mouse/touch - hold-down drag support
@@ -235,14 +249,47 @@ function setupJoystick() {
     });
 }
 
+// Heartbeat sync — check if tap landed on the beat
+function checkHeartbeatTap() {
+    const now = performance.now();
+    if (now - lastTapTime < 200) return; // debounce
+    lastTapTime = now;
+    if (heartbeatSyncWindow) {
+        // Synced tap! Give bonus
+        heartbeatTapBonus = 90; // frames of bonus speed
+        heartbeatTapFlash = 20; // visual flash frames
+        // Attract nearby nutrients toward player
+        for (const n of nutrients) {
+            const dx = player.x - n.x;
+            const dy = player.y - n.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist < 150) {
+                n.x += dx * 0.15;
+                n.y += dy * 0.15;
+            }
+        }
+    }
+}
+
 function handleCanvasClick(e) {
     if (!gameStarted || gameOver) return;
     const rect = canvas.getBoundingClientRect();
     const scaleX = canvas.width / rect.width;
     const scaleY = canvas.height / rect.height;
-    player.targetX = (e.clientX - rect.left) * scaleX;
-    player.targetY = (e.clientY - rect.top) * scaleY;
+    let clickX = (e.clientX - rect.left) * scaleX;
+    let clickY = (e.clientY - rect.top) * scaleY;
+    // Adjust for birth zoom — unproject from zoomed coordinates
+    if (LEVELS[currentLevel]?.isBirthLevel && birthZoom > 1) {
+        clickX = player.x + (clickX - CANVAS_WIDTH / 2) / birthZoom;
+        clickY = player.y + (clickY - CANVAS_HEIGHT / 2) / birthZoom;
+    }
+    player.targetX = clickX;
+    player.targetY = clickY;
     hasTarget = true;
+    // Heartbeat sync tap detection
+    if (LEVELS[currentLevel]?.isBirthLevel) {
+        checkHeartbeatTap();
+    }
 }
 
 function handleCanvasTouch(e) {
@@ -252,9 +299,20 @@ function handleCanvasTouch(e) {
     const rect = canvas.getBoundingClientRect();
     const scaleX = canvas.width / rect.width;
     const scaleY = canvas.height / rect.height;
-    player.targetX = (touch.clientX - rect.left) * scaleX;
-    player.targetY = (touch.clientY - rect.top) * scaleY;
+    let touchX = (touch.clientX - rect.left) * scaleX;
+    let touchY = (touch.clientY - rect.top) * scaleY;
+    // Adjust for birth zoom
+    if (LEVELS[currentLevel]?.isBirthLevel && birthZoom > 1) {
+        touchX = player.x + (touchX - CANVAS_WIDTH / 2) / birthZoom;
+        touchY = player.y + (touchY - CANVAS_HEIGHT / 2) / birthZoom;
+    }
+    player.targetX = touchX;
+    player.targetY = touchY;
     hasTarget = true;
+    // Heartbeat sync tap detection
+    if (LEVELS[currentLevel]?.isBirthLevel) {
+        checkHeartbeatTap();
+    }
 }
 
 async function startGame() {
@@ -595,8 +653,28 @@ function update() {
     const isAmphibious = levelConfig.movementMode === 'amphibious';
     
     if (isBirthMode) {
-        // --- Birth mode: gentle floating egg, pulse-nudge movement ---
-        const birthSpeed = effectiveSpeed * 0.4;
+        // --- Birth mode: gentle floating egg with heartbeat rhythm ---
+        // Update heartbeat phase
+        const bps = heartbeatBPM / 60; // beats per second
+        heartbeatPhase += (Math.PI * 2 * bps) / 60; // per frame at 60fps
+        if (heartbeatPhase > Math.PI * 2) heartbeatPhase -= Math.PI * 2;
+        // Play heartbeat sound on beat crossing
+        const prevSyncWindow = heartbeatSyncWindow;
+        // Sync window: true during the "thump" (narrow window around phase 0)
+        heartbeatSyncWindow = (heartbeatPhase < 0.4) || (heartbeatPhase > Math.PI * 2 - 0.4);
+        // Trigger heartbeat sound on rising edge of sync window
+        if (heartbeatSyncWindow && !prevSyncWindow) {
+            audio.playHeartbeat?.(heartbeatTapBonus > 0);
+        }
+        // Decay tap bonus
+        if (heartbeatTapBonus > 0) heartbeatTapBonus--;
+        if (heartbeatTapFlash > 0) heartbeatTapFlash--;
+        // Update camera zoom — starts intimate (1.4x), eases to 1.0 as growth progresses
+        const targetZoom = 1.4 - (growthMeter / 500) * 0.4;
+        birthZoom += (targetZoom - birthZoom) * 0.02;
+        // Base speed + heartbeat bonus
+        const tapMultiplier = heartbeatTapBonus > 0 ? 1.6 : 1.0;
+        const birthSpeed = effectiveSpeed * 0.4 * tapMultiplier;
         if (keys['ArrowUp'] || keys['w'] || keys['W']) player.y -= birthSpeed;
         if (keys['ArrowDown'] || keys['s'] || keys['S']) player.y += birthSpeed;
         if (keys['ArrowLeft'] || keys['a'] || keys['A']) player.x -= birthSpeed;
@@ -1098,6 +1176,7 @@ function update() {
             screenShake = 8;
             audio.playLevelUp?.();
             // Force transition to Ocean level
+            birthZoom = 1.0; // Reset zoom before Ocean
             score = Math.max(score, LEVELS[2].scoreThreshold);
             nutrients = [];
             eggPredators = [];
@@ -1203,6 +1282,13 @@ function render() {
         screenShake--;
     }
     
+    // Birth level camera zoom — follow player, zoom in for intimacy
+    if (LEVELS[currentLevel]?.isBirthLevel && birthZoom > 1.01) {
+        ctx.translate(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2);
+        ctx.scale(birthZoom, birthZoom);
+        ctx.translate(-player.x, -player.y);
+    }
+
     // Background
     renderBackground();
     
@@ -1317,6 +1403,18 @@ function render() {
         ctx.restore();
     });
 
+    // Reset to screen space for HUD (undo birth zoom)
+    if (LEVELS[currentLevel]?.isBirthLevel && birthZoom > 1.01) {
+        ctx.restore(); // undo zoom
+        ctx.save();    // re-save for the outer restore at end
+        // Re-apply screen shake only
+        if (screenShake > 0) {
+            const shakeX = (Math.random() - 0.5) * screenShake * 2;
+            const shakeY = (Math.random() - 0.5) * screenShake * 2;
+            ctx.translate(shakeX, shakeY);
+        }
+    }
+
     // Growth meter HUD (Birth level only)
     if (currentLevel === 1) {
         const barW = 200, barH = 16;
@@ -1348,6 +1446,26 @@ function render() {
         ctx.textAlign = 'center';
         ctx.fillStyle = 'rgba(200, 220, 255, 0.8)';
         ctx.fillText(`GROWTH ${Math.floor(progress * 100)}%`, CANVAS_WIDTH / 2, barY - 4);
+
+        // Heartbeat rhythm indicator — pulsing ring around the growth bar
+        const beatIntensity = Math.sin(heartbeatPhase) * 0.5 + 0.5;
+        const isOnBeat = heartbeatSyncWindow;
+        const ringColor = isOnBeat ? 'rgba(255, 180, 100, 0.6)' : `rgba(100, 150, 200, ${0.15 + beatIntensity * 0.2})`;
+        ctx.strokeStyle = ringColor;
+        ctx.lineWidth = isOnBeat ? 2.5 : 1.5;
+        ctx.beginPath();
+        ctx.roundRect(barX - 3, barY - 3, barW + 6, barH + 6, 10);
+        ctx.stroke();
+
+        // Heartbeat tap flash — screen-edge pulse when synced
+        if (heartbeatTapFlash > 0) {
+            const flashAlpha = (heartbeatTapFlash / 20) * 0.25;
+            const flashGrad = ctx.createRadialGradient(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2, CANVAS_HEIGHT * 0.3, CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2, CANVAS_HEIGHT * 0.7);
+            flashGrad.addColorStop(0, 'rgba(255, 200, 100, 0)');
+            flashGrad.addColorStop(1, `rgba(255, 180, 80, ${flashAlpha})`);
+            ctx.fillStyle = flashGrad;
+            ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+        }
     }
     
     // Combo popups

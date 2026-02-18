@@ -372,4 +372,40 @@ export class Audio {
 
         return duration;
     }
+
+    // Subtle ambient heartbeat thump — played on each beat
+    playHeartbeat(synced = false) {
+        if (!this.sfxEnabled) return;
+        this.init();
+        const ctx = this.ctx;
+        const now = ctx.currentTime;
+
+        const master = ctx.createGain();
+        master.gain.setValueAtTime(synced ? 0.2 : 0.08, now);
+        master.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+        master.connect(ctx.destination);
+
+        // Low thump — sub-bass
+        const osc = ctx.createOscillator();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(synced ? 55 : 40, now);
+        osc.frequency.exponentialRampToValueAtTime(25, now + 0.25);
+        osc.connect(master);
+        osc.start(now);
+        osc.stop(now + 0.35);
+
+        if (synced) {
+            // Second thump for synced tap (lub-DUB)
+            const osc2 = ctx.createOscillator();
+            const gain2 = ctx.createGain();
+            osc2.type = 'sine';
+            osc2.frequency.setValueAtTime(65, now + 0.12);
+            osc2.frequency.exponentialRampToValueAtTime(30, now + 0.35);
+            gain2.gain.setValueAtTime(0.15, now + 0.12);
+            gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+            osc2.connect(gain2).connect(ctx.destination);
+            osc2.start(now + 0.12);
+            osc2.stop(now + 0.45);
+        }
+    }
 }

@@ -7,7 +7,7 @@
 
 const PARTICLE_COUNT = 50;
 const particles = [];
-const EGG_COUNT = 180;
+const EGG_COUNT = 300;
 const eggs = [];
 let initialized = false;
 
@@ -29,21 +29,21 @@ function initScene(w, h) {
     // Pre-generate egg positions in organic clusters
     eggs.length = 0;
     const clusterCenters = [];
-    const numClusters = 8;
+    const numClusters = 14;
     for (let c = 0; c < numClusters; c++) {
         clusterCenters.push({
             x: w * 0.1 + (c / numClusters) * w * 0.8 + (Math.random() - 0.5) * 40,
-            y: h * 0.12 + Math.random() * h * 0.18,
+            y: h * 0.10 + Math.random() * h * 0.35,
         });
     }
     for (let i = 0; i < EGG_COUNT; i++) {
         const cluster = clusterCenters[Math.floor(Math.random() * numClusters)];
         const angle = Math.random() * Math.PI * 2;
-        const dist = Math.random() * 45;
+        const dist = Math.random() * 30;
         eggs.push({
             x: cluster.x + Math.cos(angle) * dist,
             y: cluster.y + Math.sin(angle) * dist,
-            r: 3 + Math.random() * 3,
+            r: 3.5 + Math.random() * 4,
             phaseOffset: Math.random() * Math.PI * 2,
             hue: 190 + Math.random() * 30,
             saturation: 40 + Math.random() * 30,
