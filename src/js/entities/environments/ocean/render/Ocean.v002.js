@@ -112,4 +112,4 @@ export function render(ctx, w, h, scrollX) {
     ctx.restore();
 }
 
-export const meta = { version: '002', name: 'The Ocean — Deep', current: true, features: ['light rays', 'coral', 'sand ripples', 'plankton particles'] };
+export const meta = { version: '002', name: 'The Ocean — Deep', current: false, features: ['light rays', 'coral', 'sand ripples', 'plankton particles'] };

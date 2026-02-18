@@ -32,7 +32,7 @@ Priority order — top item is next up.
 
 ### Art Direction (MEDIUM PRIORITY — Jeroen directives)
 - [~] **[Art Director]** Combine lobster 'a' and 'b' renderer versions into single renderer with parameter/checkbox controls — no more lettered version splits
-- [ ] **[Art Director]** Uplift Ocean level visuals using Birth level quality as reference (deep dark blues, subtle glows, particle specks vs current toyish look)
+- [~] **[Art Director]** Uplift Ocean level visuals using Birth level quality as reference (deep dark blues, subtle glows, particle specks vs current toyish look)
 
 ### Beach Boss Encounter
 - [ ] Final boss encounter happens ON the beach — no water, fully on land

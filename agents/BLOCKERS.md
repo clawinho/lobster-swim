@@ -20,6 +20,7 @@ When the blocker is resolved, remove it (don't check the box — just delete the
 
 
 ## Senior Engine Developer
+- [ ] **[Senior Engine Dev]** Asset library [~] items (imports, ocean visibility) need browser verification — _Waiting on: Human to check asset library in browser and confirm fixes_
 
 
 ## Senior Game Developer
