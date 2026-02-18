@@ -51,6 +51,7 @@ let score = 0, lives = 3, highScore = 0;
 let gameOver = false, gameStarted = false, paused = false;
 let newBestTimer = 0; // For "NEW BEST!" celebration
 let deathAnimating = false, deathTimer = 0, deathRotation = 0; // Death animation state
+let celebrating = false, celebrationTimer = 0, isNewHighScore = false; // High score celebration state
 let levelTransition = false, levelTransitionTimer = 0, transitionLevel = 0; // Level transition state
 let bgFadeAlpha = 0; // Black overlay alpha for environment crossfade
 
@@ -251,6 +252,9 @@ async function startGame() {
     particles = [];
     paused = false;
     deathAnimating = false;
+    celebrating = false;
+    celebrationTimer = 0;
+    isNewHighScore = false;
     deathTimer = 0;
     deathRotation = 0;
     newBestTimer = 0;
@@ -380,6 +384,7 @@ function loseLife() {
             highScore = score;
             localStorage.setItem('lobsterHighScore', highScore.toString());
             newBestTimer = 180; // Show "NEW BEST!" for 3 seconds
+            isNewHighScore = true;
         }
     } else {
         audio.playHit();
@@ -406,14 +411,37 @@ function update() {
         }
         if (deathTimer <= 0) {
             deathAnimating = false;
-            gameOver = true;
-            showGameOver();
+            if (isNewHighScore) {
+                celebrating = true;
+                celebrationTimer = 180; // 3 seconds of celebration
+                audio.playHighScore();
+            } else {
+                gameOver = true;
+                showGameOver();
+            }
         }
         // Update particles during death animation
         particles = particles.filter(p => p.update());
         return;
     }
     
+    // High score celebration phase
+    if (celebrating) {
+        celebrationTimer--;
+        if (celebrationTimer % 6 === 0) {
+            const cx = Math.random() * CANVAS_WIDTH;
+            particles.push(...Particle.spawnConfettiParticles(cx, -10, 3));
+        }
+        particles = particles.filter(p => p.update());
+        if (celebrationTimer <= 0) {
+            celebrating = false;
+            isNewHighScore = false;
+            gameOver = true;
+            showGameOver();
+        }
+        return;
+    }
+
     // New best celebration timer
     if (newBestTimer > 0) newBestTimer--;
     
@@ -1079,6 +1107,32 @@ function render() {
         ctx.restore();
     }
     
+    // High score celebration screen
+    if (celebrating) {
+        ctx.save();
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+        ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+        
+        const pulse = 1 + Math.sin(celebrationTimer * 0.15) * 0.1;
+        ctx.font = `bold ${42 * pulse}px monospace`;
+        ctx.textAlign = 'center';
+        ctx.fillStyle = '#ffd700';
+        ctx.shadowColor = '#ffd700';
+        ctx.shadowBlur = 30;
+        ctx.fillText('\u{1F3C6} NEW HIGH SCORE! \u{1F3C6}', CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2 - 40);
+        
+        ctx.font = 'bold 56px monospace';
+        ctx.fillStyle = '#ffffff';
+        ctx.shadowColor = '#ffffff';
+        ctx.shadowBlur = 20;
+        ctx.fillText(score.toString(), CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2 + 30);
+        
+        // Render confetti particles on top of overlay
+        particles.forEach(p => p.render(ctx));
+        
+        ctx.restore();
+    }
+
     // Level transition effect
     if (levelTransition && levelTransitionTimer > 0) {
         ctx.save();
@@ -1152,7 +1206,7 @@ function gameLoop() {
     render();
 
     // Continue loop during death animation or normal play
-    if (!gameOver || deathAnimating) {
+    if (!gameOver || deathAnimating || celebrating) {
         requestAnimationFrame(gameLoop);
     }
 }

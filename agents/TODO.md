@@ -15,6 +15,10 @@ Priority order — top item is next up.
 - [ ] Beach-specific enemies: seagulls dive from above waterline, beach balls float at surface
 - [ ] Lobster POV: still submerged but near shore
 
+### High Score Celebration (HIGH PRIORITY — cso directive)
+- [ ] Add celebration moment when player gets a new high score (confetti, score highlight, brief fanfare)
+- [ ] Brief delay before transitioning back — let player feel the achievement
+
 ### Progressive Lobster Abilities (HIGH PRIORITY — Jeroen directive)
 - [ ] Level 1: Baby lobster, left/right only on ocean floor (Asteroids-style)
 - [ ] Level 2: Swimming lobster, full movement

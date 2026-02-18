@@ -11,6 +11,7 @@ const PRESETS = {
     stun:      { colors: ['#cc44ff', '#aa22dd', '#ee66ff', '#8800cc'], count: 10, speed: [1.5, 2], size: [2, 2], life: [25, 15], gravity: 0,     vyOffset: 0,  spread: 'even' },
     knockback: { colors: ['#ffffff', '#dddddd', '#ffeecc', '#ffffaa'], count: 6,  speed: [2, 2],   size: [3, 2], life: [20, 10], gravity: 0.05,  vyOffset: 0,  spread: 'random' },
     zap:       { colors: ['#44eeff', '#00ccff', '#88ffff', '#ffffff'], count: 12, speed: [3, 3],   size: [2, 3], life: [20, 15], gravity: 0,     vyOffset: 0,  spread: 'random' },
+    confetti:  { colors: ['#ff4500', '#ffd700', '#00ff00', '#ff00ff', '#00ccff', '#ff6600', '#ffffff'], count: 15, speed: [3, 5], size: [3, 4], life: [60, 40], gravity: 0.08, vyOffset: -3, spread: 'random' },
 };
 
 export { PRESETS as PARTICLE_PRESETS };
@@ -87,6 +88,7 @@ export class Particle {
     static spawnStunParticles(x, y, count)      { return Particle.spawn('stun', x, y, count); }
     static spawnKnockbackParticles(x, y, count) { return Particle.spawn('knockback', x, y, count); }
     static spawnZapParticles(x, y, count)       { return Particle.spawn('zap', x, y, count); }
+    static spawnConfettiParticles(x, y, count)   { return Particle.spawn('confetti', x, y, count); }
 }
 
 export default Particle;
