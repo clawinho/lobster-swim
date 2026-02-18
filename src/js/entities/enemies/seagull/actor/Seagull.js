@@ -8,7 +8,7 @@
 import { render as renderSeagull } from "../render/Seagull.v001.js";
 
 export class Seagull {
-    constructor(x, y, direction = 1) {
+    constructor(x, y, direction = 1, waterLine = 0) {
         this.x = x;
         this.y = y;
         this.direction = direction; // 1 = right, -1 = left
@@ -18,17 +18,20 @@ export class Seagull {
         this.diveSpeed = 0;
         this.diveTarget = null;
         this.baseY = y;
+        this._waterLine = waterLine;
         this.returningUp = false;
     }
 
-    static create(canvasWidth, canvasHeight, count = 2) {
+    static create(canvasWidth, canvasHeight, count = 2, waterLine = 0) {
         const gulls = [];
+        // Seagulls fly above the waterline
+        const maxFlyY = waterLine > 0 ? waterLine - 20 : 90;
         for (let i = 0; i < count; i++) {
             const fromLeft = Math.random() > 0.5;
             const x = fromLeft ? -50 : canvasWidth + 50;
-            const y = 30 + Math.random() * 60; // Top of screen
+            const y = 20 + Math.random() * Math.max(20, maxFlyY - 20);
             const direction = fromLeft ? 1 : -1;
-            gulls.push(new Seagull(x, y, direction));
+            gulls.push(new Seagull(x, y, direction, waterLine));
         }
         return gulls;
     }
@@ -71,11 +74,13 @@ export class Seagull {
         // Respawn when off screen
         if (this.direction > 0 && this.x > canvasWidth + 60) {
             this.x = -50;
-            this.y = 30 + Math.random() * 60;
+            const maxY = (this._waterLine || 90) - 20;
+            this.y = 20 + Math.random() * Math.max(20, maxY - 20);
             this.baseY = this.y;
         } else if (this.direction < 0 && this.x < -60) {
             this.x = canvasWidth + 50;
-            this.y = 30 + Math.random() * 60;
+            const maxY2 = (this._waterLine || 90) - 20;
+            this.y = 20 + Math.random() * Math.max(20, maxY2 - 20);
             this.baseY = this.y;
         }
     }

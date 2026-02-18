@@ -16,9 +16,10 @@ const STUN_DURATION = 120; // 2 seconds at 60fps
 const STUN_SPEED_MULT = 0.3; // 30% speed while stunned
 
 export class Jellyfish {
-    constructor(x, y) {
+    constructor(x, y, waterLine = 0) {
         this.x = x;
         this.y = y;
+        this._waterLine = waterLine;
         this.size = 25 + Math.random() * 15;
         
         // Slow drift
@@ -42,12 +43,13 @@ export class Jellyfish {
     /**
      * Create jellyfish for a level
      */
-    static create(count, canvasWidth, canvasHeight) {
+    static create(count, canvasWidth, canvasHeight, waterLine = 0) {
         const jellies = [];
+        const minY = waterLine + 30; // Always spawn below water surface
         for (let i = 0; i < count; i++) {
             const x = 50 + Math.random() * (canvasWidth - 100);
-            const y = 100 + Math.random() * (canvasHeight - 200);
-            jellies.push(new Jellyfish(x, y));
+            const y = minY + Math.random() * (canvasHeight - minY - 50);
+            jellies.push(new Jellyfish(x, y, waterLine));
         }
         return jellies;
     }
@@ -61,16 +63,17 @@ export class Jellyfish {
         this.x += this.vx * difficultyMult;
         this.y += this.vy * difficultyMult + Math.sin(this.bobPhase) * 0.3;
         
-        // Wrap around screen edges
+        // Wrap around screen edges, respecting waterLine
         if (this.x < -this.size) this.x = canvasWidth + this.size;
         if (this.x > canvasWidth + this.size) this.x = -this.size;
-        if (this.y < -this.size * 2) {
-            // Respawn at bottom
-            this.y = canvasHeight + this.size;
-            this.x = 50 + Math.random() * (canvasWidth - 100);
+        if (this.y < this._waterLine) {
+            // Don't go above water — bounce back down
+            this.y = this._waterLine + 10;
+            this.vy = Math.abs(this.vy);
         }
         if (this.y > canvasHeight + this.size) {
-            this.y = -this.size;
+            this.y = this._waterLine + 30;
+            this.x = 50 + Math.random() * (canvasWidth - 100);
         }
         
         if (this.stingCooldown > 0) this.stingCooldown--;

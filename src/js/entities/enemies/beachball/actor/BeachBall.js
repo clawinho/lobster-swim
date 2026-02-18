@@ -21,10 +21,11 @@ const COLOR_SCHEMES = [
 ];
 
 export class BeachBall {
-    constructor(x, y, radius = 35) {
+    constructor(x, y, radius = 35, waterLine = 0) {
         this.x = x;
         this.y = y;
         this.radius = radius;
+        this._waterLine = waterLine;
         
         // Velocity - random direction
         const angle = Math.random() * Math.PI * 2;
@@ -46,13 +47,14 @@ export class BeachBall {
     /**
      * Create multiple beach balls for a level
      */
-    static create(count, canvasWidth, canvasHeight) {
+    static create(count, canvasWidth, canvasHeight, waterLine = 0) {
         const balls = [];
         for (let i = 0; i < count; i++) {
-            // Spawn in upper portion of screen (floating on water)
+            // Spawn near the water surface
+            const surfaceY = waterLine > 0 ? waterLine : canvasHeight * 0.15;
             const x = 100 + Math.random() * (canvasWidth - 200);
-            const y = 80 + Math.random() * (canvasHeight * 0.5);
-            balls.push(new BeachBall(x, y));
+            const y = surfaceY - 20 + Math.random() * 60; // Float around waterline
+            balls.push(new BeachBall(x, y, 35, waterLine));
         }
         return balls;
     }
@@ -76,12 +78,15 @@ export class BeachBall {
             this.vx = -Math.abs(this.vx);
             this.rotationSpeed = -Math.abs(this.rotationSpeed);
         }
-        if (this.y - this.radius < 0) {
-            this.y = this.radius;
+        // Beach balls float at the water surface — constrain to surface zone
+        const minY = (this._waterLine || 0) - this.radius;
+        const maxY = (this._waterLine || 0) + canvasHeight * 0.25; // Don't sink too deep
+        if (this.y - this.radius < Math.max(0, minY)) {
+            this.y = Math.max(this.radius, minY + this.radius);
             this.vy = Math.abs(this.vy);
         }
-        if (this.y + this.radius > canvasHeight) {
-            this.y = canvasHeight - this.radius;
+        if (this.y + this.radius > Math.min(canvasHeight, maxY)) {
+            this.y = Math.min(canvasHeight, maxY) - this.radius;
             this.vy = -Math.abs(this.vy);
         }
         

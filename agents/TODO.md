@@ -1,6 +1,6 @@
 # TODO
 
-Updated: 2026-02-17
+Updated: 2026-02-18
 
 ---
 
@@ -8,16 +8,28 @@ Updated: 2026-02-17
 
 Priority order — top item is next up.
 
-### Beach Visual Redesign (HIGH PRIORITY — Jeroen directive)
+### Enemy Spawn Zones (HIGH PRIORITY — Jeroen directive)
+- [x] Each environment defines a water level Y coordinate
+- [x] Enemies constrained to valid zones: hooks from above water, jellyfish underwater, beach balls at surface, seagulls from sky
+- [x] No hooks flying in the sky, no jellyfish in the air, no beach balls deep underwater
+
+### Beach Scrolling Environment (HIGH PRIORITY — Jeroen directive)
+- [ ] Beach level scrolls right-to-left (lobster swimming toward shore)
+- [ ] Water gets shallower, sand rises, more sky visible, waves closer as level progresses
+- [ ] Final boss encounter happens ON the beach — no water, fully on land
+
+### Beach Visual Redesign (DONE)
 - [x] Redesign Beach level: camera underwater looking toward shore
 - [x] Top half sky, middle waterline with crashing waves, bottom half sea with yellow sand floor
 - [x] Sand bank slopes up left to right
 - [x] Beach-specific enemies: seagulls dive from above waterline, beach balls float at surface
-- [ ] Lobster POV: still submerged but near shore
 
-### High Score Celebration (HIGH PRIORITY — cso directive)
+### High Score Celebration (DONE)
 - [x] Add celebration moment when player gets a new high score (confetti, score highlight, brief fanfare)
 - [x] Brief delay before transitioning back — let player feel the achievement
+
+### Lobster POV (MEDIUM PRIORITY)
+- [ ] Lobster POV: still submerged but near shore in Beach level
 
 ### Progressive Lobster Abilities (HIGH PRIORITY — Jeroen directive)
 - [ ] Level 1: Baby lobster, left/right only on ocean floor (Asteroids-style)

@@ -14,6 +14,7 @@ export class Beach {
         enemies: { hooks: 4, cages: 4, nets: 3, forks: 4, jellyfish: 2, eels: true, seagulls: 3, beachBalls: 2 },
         spawnOnEnter: { forks: 4, hooks: 2, seagulls: 3, beachBalls: 2 },
         mechanics: [],
+        waterLine: 0.5, // half sky half water
     };
 
     renderBackground(ctx, w, h, scrollX) {

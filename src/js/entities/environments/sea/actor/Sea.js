@@ -14,6 +14,7 @@ export class Sea {
         enemies: { hooks: 3, cages: 3, nets: 2, jellyfish: 1, eels: true },
         spawnOnEnter: { nets: 1, hooks: 1 },
         mechanics: [],
+        waterLine: 0.1, // sky sliver at top
     };
 
     renderBackground(ctx, w, h, scrollX) {

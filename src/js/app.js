@@ -279,8 +279,8 @@ async function startGame() {
     nets = [];
     forks = [];
     seagulls = Seagull.create(CANVAS_WIDTH, CANVAS_HEIGHT, 0); // Diving seagulls
-    beachBalls = BeachBall.create(LEVELS[1].enemies.beachBalls || 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-    jellyfish = Jellyfish.create(LEVELS[1].enemies.jellyfish || 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+    beachBalls = BeachBall.create(LEVELS[1].enemies.beachBalls || 0, CANVAS_WIDTH, CANVAS_HEIGHT, (LEVELS[1].waterLine || 0) * CANVAS_HEIGHT);
+    jellyfish = Jellyfish.create(LEVELS[1].enemies.jellyfish || 0, CANVAS_WIDTH, CANVAS_HEIGHT, (LEVELS[1].waterLine || 0) * CANVAS_HEIGHT);
     eels = [];
     eelSpawnTimer = 0;
     fish = null;
@@ -323,12 +323,12 @@ function checkLevelUp() {
             if (spawn.nets) nets = Net.create(spawn.nets, CANVAS_WIDTH, CANVAS_HEIGHT);
             if (spawn.forks) forks = Fork.create(spawn.forks, CANVAS_WIDTH, CANVAS_HEIGHT);
             if (spawn.hooks) hooks.push(...Hook.create(CANVAS_WIDTH, spawn.hooks));
-            if (spawn.seagulls) seagulls = Seagull.create(CANVAS_WIDTH, CANVAS_HEIGHT, spawn.seagulls);
-            if (spawn.beachBalls) beachBalls = BeachBall.create(spawn.beachBalls, CANVAS_WIDTH, CANVAS_HEIGHT);
+            if (spawn.seagulls) seagulls = Seagull.create(CANVAS_WIDTH, CANVAS_HEIGHT, spawn.seagulls, (config.waterLine || 0) * CANVAS_HEIGHT);
+            if (spawn.beachBalls) beachBalls = BeachBall.create(spawn.beachBalls, CANVAS_WIDTH, CANVAS_HEIGHT, (config.waterLine || 0) * CANVAS_HEIGHT);
             // Spawn jellyfish based on level config
             const jellyfishCount = config.enemies.jellyfish || 0;
             if (jellyfishCount > jellyfish.length) {
-                jellyfish.push(...Jellyfish.create(jellyfishCount - jellyfish.length, CANVAS_WIDTH, CANVAS_HEIGHT));
+                jellyfish.push(...Jellyfish.create(jellyfishCount - jellyfish.length, CANVAS_WIDTH, CANVAS_HEIGHT, (config.waterLine || 0) * CANVAS_HEIGHT));
             }
             // Clear eels when entering a level without them
             if (!config.enemies.eels) { eels = []; eelSpawnTimer = 0; }

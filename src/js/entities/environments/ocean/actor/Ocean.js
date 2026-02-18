@@ -14,6 +14,7 @@ export class Ocean {
         enemies: { hooks: 0, cages: 0, beachBalls: 0, jellyfish: 0, eels: false },
         spawnOnEnter: {},
         mechanics: ['oceanCurrent'],
+        waterLine: 0, // fully submerged
     };
 
     renderBackground(ctx, w, h, scrollX) {
