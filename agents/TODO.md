@@ -8,17 +8,6 @@ Updated: 2026-02-18
 
 Priority order — top item is next up.
 
-### Level 1 Bubble Reduction + Falling Pickups (DONE)
-- [x] Reduce bubble spawns significantly in Level 1 — each one should feel like a reward, not a carpet
-- [x] Add falling pickups that drop from top of screen and land on ocean floor
-- [x] CLAWS pickup — visual upgrade + defensive ability
-- [x] SWIM pickup — collecting this transitions player to Level 2
-
-### Level 2 Grace Period (DONE)
-- [x] No enemies at start of Level 2 (Sea) — player just learned to swim
-- [x] Grace period before any enemies appear (5 seconds)
-- [x] Gradual enemy introduction after grace period ends (spawnOnEnter deferred)
-
 ### Birth Level — New Level 0 (HIGH PRIORITY — Jeroen directive)
 - [ ] Design Birth level: lobster egg among thousands under mother's tail
 - [ ] Create Birth environment entity (egg clutch visual, mother tail backdrop)
