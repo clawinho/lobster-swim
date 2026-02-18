@@ -32,7 +32,7 @@ Priority order — top item is next up.
 - [ ] Lobster POV: still submerged but near shore in Beach level
 
 ### Progressive Lobster Abilities (HIGH PRIORITY — Jeroen directive)
-- [ ] Level 1: Baby lobster, left/right only on ocean floor (Asteroids-style)
+- [x] Level 1: Baby lobster, left/right only on ocean floor (Asteroids-style)
 - [ ] Level 2: Swimming lobster, full movement
 - [ ] Level 3: Can jump above water and walk on land
 - [ ] Lobster sprite should change between levels (QA: swimming sprite on Beach looks wrong)
