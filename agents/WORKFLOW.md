@@ -54,20 +54,39 @@ Execute in order. Never skip a step. Each step that mentions reading a file — 
   - Escalate what you can't
   - Remove resolved blockers
 
-### 3. Execute Highest Priority Work
+### 3. Execute → Resolve Loop
+
+Execute the highest priority work, then resolve any blockers it created. Repeat until clean.
+
+**3a. Execute**
 - Read `agents/TODO.md` — identify the highest priority item(s)
 - Pick the best-matching role from `agents/roles/`
 - Read that role's .md file fully before writing any code
 - Do the work — max 1-2 items, keep changes focused
 - Follow all patterns from PRACTICES.md
 
-### 4. Producer Review
+**3b. Producer Blocker Triage**
 - Re-read `agents/roles/producer.md`
 - Review what was just done
-- Update `agents/TODO.md` and `agents/BLOCKERS.md`
-- Verify changes align with `GAME_VISION.md`
+- Update `agents/TODO.md` — mark completed items, add follow-ups
+- Read `agents/BLOCKERS.md` — check for NEW blockers created during 3a
+- If no new blockers: exit loop, proceed to step 4
+- If new blockers exist: for each, identify the owning role and whether it's resolvable this run
+- Remove blockers that were already resolved by the work done in 3a
 
-### 5. Lead Developer Review
+**3c. Resolve Blockers**
+- Pick the highest-priority unresolved blocker
+- Assume the owning role (read their role .md fully)
+- Do the work to properly resolve it (replace the MVP / remove the TODO comment)
+- Remove the resolved blocker from BLOCKERS.md
+- Return to 3b
+
+**Loop limits:**
+- Max 3 iterations of the 3b→3c loop (the initial execute in 3a doesn't count)
+- After 3 iterations, any remaining blockers stay in BLOCKERS.md for the next run
+- The 10-minute run timeout is the hard ceiling regardless
+
+### 4. Lead Developer Review
 - Read `agents/roles/lead-developer.md`
 - Review all code changes for:
   - DRY violations
@@ -76,19 +95,20 @@ Execute in order. Never skip a step. Each step that mentions reading a file — 
 - Fix any issues found
 - Do NOT add new features in this step
 
-### 6. Ship It
+### 5. Ship It
 - Commit all changes with a descriptive message
 - Merge into main (use feature branch if needed)
 - Bump version in: `src/index.html`, `src/pages/*.html`, `src/js/components/BottomNav.js`
 - Commit the version bump
 - Push to origin main
 
-### 7. Report
+### 6. Report
 - Get the final commit hash: `git rev-parse HEAD`
 - Post a brief summary including:
   - New version number
   - What changed (1-3 bullets)
-  - Any new blockers
+  - Blockers resolved this run: N
+  - Any remaining blockers
   - Link to the GitHub commit: `https://github.com/clawinho/lobster-swim/commit/<HASH>`
   - Link to the live site with cache bust: `https://lobsterswim.com?v=<VERSION>`
 - Keep it short. Use 🦞.
@@ -101,6 +121,7 @@ Execute in order. Never skip a step. Each step that mentions reading a file — 
 - If SUGGESTIONS.md and agents/TODO.md have nothing actionable, report no work needed and stop
 - Quality over quantity — one solid fix beats three sloppy ones
 - Each run is stateless — the repo IS the shared memory
+- The Execute → Resolve loop runs at most 3 blocker iterations per run — don't chase cascading blockers forever
 
 ## For Orchestrator Implementors
 
@@ -108,5 +129,5 @@ To convert this into a scheduled job:
 1. Set up SSH/access to the machine hosting the repo
 2. Schedule the job per the frequency above
 3. Inject these steps as the agent's task prompt
-4. Give the agent access to: shell (git, ssh, cat, sed), file editing, and messaging (for step 7)
+4. Give the agent access to: shell (git, ssh, cat, sed), file editing, and messaging (for step 6)
 5. The agent needs no memory between runs — all state lives in the repo files
