@@ -12,7 +12,7 @@ export function render(ctx, x, y, size, angle, tailSegments, invincible, invinci
         ctx.globalAlpha = 0.4;
     }
 
-    const isBaby = stage <= 1;
+    const isBaby = stage <= 2;
     const tailAngle = Math.sin(Date.now() / 300) * 0.3;
 
     // Tail segments

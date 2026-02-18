@@ -9,7 +9,7 @@ export class Sea {
         name: 'The Sea',
         subtitle: 'Deeper waters, greater dangers',
         background: '#001830',
-        scoreThreshold: 1000,
+        scoreThreshold: 1500,
         musicTrack: 'assets/music/music_tank.mp3',
         enemies: { hooks: 3, cages: 3, nets: 2, jellyfish: 1, eels: true },
         spawnOnEnter: { nets: 1, hooks: 1 },

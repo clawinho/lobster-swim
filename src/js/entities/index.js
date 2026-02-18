@@ -14,6 +14,7 @@ export { Seagull } from "./enemies/seagull/actor/Seagull.js";
 export { BeachBall } from "./enemies/beachball/actor/BeachBall.js";
 export { Jellyfish } from "./enemies/jellyfish/actor/Jellyfish.js";
 export { Eel } from "./enemies/eel/actor/Eel.js";
+export { EggPredator } from "./enemies/egg-predator/actor/EggPredator.js";
 
 // Pickups
 export { Bubble } from "./pickups/bubble/actor/Bubble.js";
@@ -23,3 +24,4 @@ export { Starfish } from "./pickups/starfish/actor/Starfish.js";
 export { FallingPickup } from "./pickups/falling-pickup/actor/FallingPickup.js";
 export { ClawsPowerup } from "./pickups/claws-powerup/actor/ClawsPowerup.js";
 export { SwimPowerup } from "./pickups/swim-powerup/actor/SwimPowerup.js";
+export { Nutrient } from "./pickups/nutrient/actor/Nutrient.js";

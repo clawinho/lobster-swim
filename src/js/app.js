@@ -2,10 +2,11 @@
  * app.js - Main application (uses regular DOM, modular entities)
  */
 
-import { Lobster, Hook, Cage, Bubble, GoldenFish, Net, Fork, Pearl, Seagull, BeachBall, Jellyfish, Starfish, Eel, FallingPickup, ClawsPowerup, SwimPowerup } from './entities/index.js';
+import { Lobster, Hook, Cage, Bubble, GoldenFish, Net, Fork, Pearl, Seagull, BeachBall, Jellyfish, Starfish, Eel, FallingPickup, ClawsPowerup, SwimPowerup, Nutrient, EggPredator } from './entities/index.js';
 import { Particle } from './entities/effects/particle/actor/Particle.js';
 import { Audio } from './audio-module.js';
 import { OceanCurrent } from './entities/mechanics/ocean-current/actor/OceanCurrent.js';
+import { Birth } from './entities/environments/birth/actor/Birth.js';
 import { Ocean } from './entities/environments/ocean/actor/Ocean.js';
 import { Sea } from './entities/environments/sea/actor/Sea.js';
 import { Beach } from './entities/environments/beach/actor/Beach.js';
@@ -16,7 +17,7 @@ const CANVAS_HEIGHT = 600;
 const INVINCIBLE_DURATION = 90; // ~1.5s at 60fps — enough to recover, not exploitable
 
 // Level entities — ordered by scoreThreshold descending for checkLevelUp iteration
-const LEVEL_ENTITIES = [new Ocean(), new Sea(), new Beach()];
+const LEVEL_ENTITIES = [new Birth(), new Ocean(), new Sea(), new Beach()];
 const LEVELS = Object.fromEntries(LEVEL_ENTITIES.map((lvl, i) => [i + 1, lvl.constructor.config]));
 
 // Bubble spawn zone: constrain to near ocean floor in floor-mode levels
@@ -92,6 +93,9 @@ let keys = {}, joystickDx = 0, joystickDy = 0, hasTarget = false;
 let bgScrollX = 0, lastHookThreshold = 0, lastCageThreshold = 0, fishSpawnTimer = 0, pearlSpawnTimer = 0, starfishSpawnTimer = 0, eelSpawnTimer = 0;
 let starfishMultiplier = 1, starfishMultiplierTimer = 0;
 let fallingPickups = [], fallingPickupTimer = 0;
+let nutrients = [], nutrientTimer = 0;
+let eggPredators = [];
+let growthMeter = 0; // 0-500 for birth level
 let clawsPowerup = null, hasClaws = false, clawsSpawned = false;
 let swimPowerup = null, swimSpawned = false;
 const STARFISH_MULTIPLIER_DURATION = 480; // 8 seconds at 60fps
@@ -298,16 +302,16 @@ async function startGame() {
     stunTimer = 0;
     
     // Create entities
-    player = new Lobster(400, LEVELS[1].floorY || 300);
+    player = new Lobster(400, CANVAS_HEIGHT / 2);
     velocityY = 0; isOnGround = true; isInWater = true;
     bubbles = Bubble.create(3, CANVAS_WIDTH, CANVAS_HEIGHT, getBubbleSpawnZone());
     cages = Cage.create(0, CANVAS_WIDTH, CANVAS_HEIGHT);
-    hooks = Hook.create(CANVAS_WIDTH, LEVELS[1].enemies.hooks || 0);
+    hooks = Hook.create(CANVAS_WIDTH, LEVELS[currentLevel].enemies.hooks || 0);
     nets = [];
     forks = [];
     seagulls = Seagull.create(CANVAS_WIDTH, CANVAS_HEIGHT, 0); // Diving seagulls
-    beachBalls = BeachBall.create(LEVELS[1].enemies.beachBalls || 0, CANVAS_WIDTH, CANVAS_HEIGHT, (LEVELS[1].waterLine || 0) * CANVAS_HEIGHT);
-    jellyfish = Jellyfish.create(LEVELS[1].enemies.jellyfish || 0, CANVAS_WIDTH, CANVAS_HEIGHT, (LEVELS[1].waterLine || 0) * CANVAS_HEIGHT);
+    beachBalls = BeachBall.create(LEVELS[currentLevel].enemies.beachBalls || 0, CANVAS_WIDTH, CANVAS_HEIGHT, (LEVELS[currentLevel].waterLine || 0) * CANVAS_HEIGHT);
+    jellyfish = Jellyfish.create(LEVELS[currentLevel].enemies.jellyfish || 0, CANVAS_WIDTH, CANVAS_HEIGHT, (LEVELS[currentLevel].waterLine || 0) * CANVAS_HEIGHT);
     eels = [];
     eelSpawnTimer = 0;
     fish = null;
@@ -321,6 +325,10 @@ async function startGame() {
     fallingPickupTimer = 0;
     clawsPowerup = null; hasClaws = false; clawsSpawned = false;
     swimPowerup = null; swimSpawned = false;
+    nutrients = Nutrient.createBatch(8, CANVAS_WIDTH, CANVAS_HEIGHT);
+    nutrientTimer = 0;
+    eggPredators = [];
+    growthMeter = 0;
     oceanCurrent = new OceanCurrent(0.4); // Ocean currents push player gently
     
     updateUI();
@@ -359,7 +367,7 @@ function spawnLevelEnemies(config) {
 }
 
 function checkLevelUp() {
-    for (let lvl = 3; lvl >= 1; lvl--) {
+    for (let lvl = 4; lvl >= 1; lvl--) {
         const config = LEVELS[lvl];
         if (score >= config.scoreThreshold && currentLevel < lvl) {
             currentLevel = lvl;
@@ -577,12 +585,38 @@ function update() {
 
     // Player movement — progressive abilities per level
     const levelConfig = LEVELS[currentLevel];
-    const isFloorMode = levelConfig.movementMode === 'floor';
+    const isBirthMode = levelConfig.movementMode === "birth";
+    const isFloorMode = levelConfig.movementMode === "floor";
     const isAmphibious = levelConfig.movementMode === 'amphibious';
     
-    if (isAmphibious) {
+    if (isBirthMode) {
+        // --- Birth mode: gentle floating egg, pulse-nudge movement ---
+        const birthSpeed = effectiveSpeed * 0.4;
+        if (keys['ArrowUp'] || keys['w'] || keys['W']) player.y -= birthSpeed;
+        if (keys['ArrowDown'] || keys['s'] || keys['S']) player.y += birthSpeed;
+        if (keys['ArrowLeft'] || keys['a'] || keys['A']) player.x -= birthSpeed;
+        if (keys['ArrowRight'] || keys['d'] || keys['D']) player.x += birthSpeed;
+        if (joystickDx !== 0 || joystickDy !== 0) {
+            player.x += joystickDx * birthSpeed;
+            player.y += joystickDy * birthSpeed;
+        }
+        if (hasTarget) {
+            const dx = player.targetX - player.x;
+            const dy = player.targetY - player.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist > 10) {
+                player.x += (dx / dist) * birthSpeed;
+                player.y += (dy / dist) * birthSpeed;
+            } else { hasTarget = false; }
+        }
+        // Gentle ambient drift
+        player.y += Math.sin(performance.now() * 0.001) * 0.15;
+        // Constrain to play area (below mother tail, above bottom)
+        player.y = Math.max(CANVAS_HEIGHT * 0.2, Math.min(CANVAS_HEIGHT - 30, player.y));
+        player.x = Math.max(20, Math.min(CANVAS_WIDTH - 20, player.x));
+    } else if (isAmphibious) {
         // --- Amphibious mode (Level 3): swim in water, gravity + jump on land ---
-        const beachEntity = LEVEL_ENTITIES[2];
+        const beachEntity = LEVEL_ENTITIES[3];
         const surfaceY = beachEntity.getSurfaceY(CANVAS_HEIGHT);
         const sandY = beachEntity.getSandY(player.x, CANVAS_WIDTH, CANVAS_HEIGHT);
         isInWater = player.y > surfaceY;
@@ -1003,13 +1037,72 @@ function update() {
         }
     }
 
-    // Falling pickups (Level 1 only — ocean floor treasures)
+    // Birth level logic — nutrients, predators, growth meter
     if (currentLevel === 1) {
+        const birthEntity = LEVEL_ENTITIES[0];
+
+        // Spawn nutrients periodically
+        nutrientTimer++;
+        if (nutrientTimer > 120 && nutrients.length < 12) {
+            nutrients.push(Nutrient.spawnOne(CANVAS_WIDTH, CANVAS_HEIGHT));
+            nutrientTimer = 0;
+        }
+
+        // Update and check nutrient collisions
+        for (let i = nutrients.length - 1; i >= 0; i--) {
+            const n = nutrients[i];
+            n.update(CANVAS_WIDTH, CANVAS_HEIGHT);
+            if (!n.alive) { nutrients.splice(i, 1); continue; }
+            if (n.checkCollision(player)) {
+                const pts = n.score * getComboMultiplier();
+                score += pts;
+                growthMeter = Math.min(500, growthMeter + n.score);
+                scorePopups.push({ x: n.x, y: n.y, text: "+" + pts, alpha: 1.5, startY: n.y });
+                comboCount++;
+                comboTimer = COMBO_TIMEOUT;
+                particles.push(...Particle.spawnBubbleParticles(n.x, n.y));
+                audio.playBubble?.();
+                nutrients.splice(i, 1);
+            }
+        }
+
+        // Update growth progress on birth entity
+        birthEntity.updateGrowth(growthMeter);
+
+        // Spawn egg predators gradually (after growth > 20%)
+        if (growthMeter > 100 && eggPredators.length < 2) {
+            eggPredators = EggPredator.create(1 + (growthMeter > 250 ? 1 : 0), CANVAS_WIDTH, CANVAS_HEIGHT);
+        }
+
+        // Update predators and check collisions
+        for (const pred of eggPredators) {
+            pred.update();
+            if (pred.checkCollision(player) && !invincible) {
+                loseLife();
+                break;
+            }
+        }
+
+        // Hatch transition — growth meter full triggers transition to Ocean (Level 2)
+        if (birthEntity.isReadyToHatch()) {
+            scorePopups.push({ x: CANVAS_WIDTH / 2, y: CANVAS_HEIGHT / 2, text: "HATCHED!", alpha: 3.0, startY: CANVAS_HEIGHT / 2 });
+            screenShake = 8;
+            audio.playLevelUp?.();
+            // Force transition to Ocean level
+            score = Math.max(score, LEVELS[2].scoreThreshold);
+            nutrients = [];
+            eggPredators = [];
+            checkLevelUp();
+        }
+    }
+
+    // Falling pickups (Ocean level only — ocean floor treasures)
+    if (currentLevel === 2) {
         fallingPickupTimer++;
         // Spawn a new falling pickup every ~3 seconds (180 frames)
         if (fallingPickupTimer > 180 && fallingPickups.length < 5) {
             if (Math.random() < 0.3) {
-                const floorY = LEVELS[1].floorY || 480;
+                const floorY = LEVELS[2].floorY || 480;
                 fallingPickups.push(FallingPickup.spawnOne(CANVAS_WIDTH, floorY));
                 fallingPickupTimer = 0;
             }
@@ -1034,7 +1127,7 @@ function update() {
         }
         // Claws powerup — spawn once at score 400 in Level 1
         if (!clawsSpawned && !hasClaws && score >= 400) {
-            const floorY = LEVELS[1].floorY || 480;
+            const floorY = LEVELS[2].floorY || 480;
             clawsPowerup = ClawsPowerup.spawnOne(CANVAS_WIDTH, floorY);
             clawsSpawned = true;
         }
@@ -1051,7 +1144,7 @@ function update() {
         }
         // Swim powerup — spawn once at score 700 in Level 1 (after claws at 400)
         if (!swimSpawned && hasClaws && score >= 700) {
-            const floorY = LEVELS[1].floorY || 480;
+            const floorY = LEVELS[2].floorY || 480;
             swimPowerup = SwimPowerup.spawnOne(CANVAS_WIDTH, floorY);
             swimSpawned = true;
         }
@@ -1064,7 +1157,7 @@ function update() {
                 screenShake = 6;
                 swimPowerup = null;
                 // Force transition to Level 2
-                score = Math.max(score, LEVELS[2].scoreThreshold);
+                score = Math.max(score, LEVELS[3].scoreThreshold);
                 checkLevelUp();
             }
         }
@@ -1079,11 +1172,11 @@ function update() {
     checkLevelUp();
     
     // Background scroll
-    bgScrollX += (currentLevel === 3) ? 1.5 : 0.5;
+    bgScrollX += (currentLevel === 4) ? 1.5 : 0.5;
 
     // Update Beach progress (shore approach — only on Beach level)
-    if (currentLevel === 3) {
-        LEVEL_ENTITIES[2].updateProgress(score);
+    if (currentLevel === 4) {
+        LEVEL_ENTITIES[3].updateProgress(score);
     }
     
     // Update particles
@@ -1111,6 +1204,9 @@ function render() {
 
     // Entities
     bubbles.forEach(b => b.render(ctx, player.x, player.y));
+    // Birth level entities
+    nutrients.forEach(n => n.draw(ctx));
+    eggPredators.forEach(p => p.draw(ctx));
     // Falling pickups
     fallingPickups.forEach(fp => fp.render(ctx));
     if (clawsPowerup) clawsPowerup.render(ctx);
@@ -1211,6 +1307,39 @@ function render() {
         ctx.fillText(p.text, p.x, p.startY - rise);
         ctx.restore();
     });
+
+    // Growth meter HUD (Birth level only)
+    if (currentLevel === 1) {
+        const barW = 200, barH = 16;
+        const barX = (CANVAS_WIDTH - barW) / 2;
+        const barY = CANVAS_HEIGHT - 40;
+        const progress = growthMeter / 500;
+
+        // Bar background
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+        ctx.strokeStyle = 'rgba(100, 150, 200, 0.4)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.roundRect(barX, barY, barW, barH, 8);
+        ctx.fill();
+        ctx.stroke();
+
+        // Bar fill
+        const hue = 200 - progress * 160;
+        const fillGrad = ctx.createLinearGradient(barX, barY, barX + barW * progress, barY);
+        fillGrad.addColorStop(0, `hsla(${hue}, 70%, 50%, 0.8)`);
+        fillGrad.addColorStop(1, `hsla(${hue - 20}, 80%, 60%, 0.9)`);
+        ctx.fillStyle = fillGrad;
+        ctx.beginPath();
+        ctx.roundRect(barX + 2, barY + 2, (barW - 4) * progress, barH - 4, 6);
+        ctx.fill();
+
+        // Label
+        ctx.font = 'bold 10px monospace';
+        ctx.textAlign = 'center';
+        ctx.fillStyle = 'rgba(200, 220, 255, 0.8)';
+        ctx.fillText(`GROWTH ${Math.floor(progress * 100)}%`, CANVAS_WIDTH / 2, barY - 4);
+    }
     
     // Combo popups
     comboPopups.forEach(p => {

@@ -10,7 +10,7 @@ export class Beach {
         name: 'The Beach',
         subtitle: 'Sun, sand, and survival',
         background: '#1a2a35',
-        scoreThreshold: 3000,
+        scoreThreshold: 3500,
         musicTrack: 'assets/music/music_kitchen.mp3',
         enemies: { hooks: 4, cages: 4, nets: 3, forks: 4, jellyfish: 2, eels: true, seagulls: 3, beachBalls: 2 },
         spawnOnEnter: { forks: 4, hooks: 2, seagulls: 3, beachBalls: 2 },
@@ -18,8 +18,8 @@ export class Beach {
         waterLine: 0.5,
         movementMode: 'amphibious', // full 2D swimming
         scrolling: true,         // Beach level scrolls
-        progressStart: 3000,     // score at which Beach starts
-        progressEnd: 6000,       // score at which progress reaches 1.0
+        progressStart: 3500,     // score at which Beach starts
+        progressEnd: 6500,       // score at which progress reaches 1.0
     };
 
     constructor() {

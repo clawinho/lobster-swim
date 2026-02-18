@@ -9,7 +9,7 @@ export class Ocean {
         name: 'The Ocean',
         subtitle: null,
         background: '#001020',
-        scoreThreshold: 0,
+        scoreThreshold: 500,
         musicTrack: 'assets/music/music_ocean.mp3',
         enemies: { hooks: 0, cages: 0, beachBalls: 0, jellyfish: 0, eels: false },
         spawnOnEnter: {},

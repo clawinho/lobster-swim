@@ -1,6 +1,7 @@
 /**
  * Environment exports
  */
+export { Birth } from './birth/actor/Birth.js';
 export { Ocean } from './ocean/actor/Ocean.js';
 export { Sea } from './sea/actor/Sea.js';
 export { Beach } from './beach/actor/Beach.js';
