@@ -474,6 +474,8 @@ class EntityInspector extends HTMLElement {
     }
 }
 
-customElements.define('entity-inspector', EntityInspector);
+if (!customElements.get('entity-inspector')) {
+    customElements.define('entity-inspector', EntityInspector);
+}
 
 export default EntityInspector;
