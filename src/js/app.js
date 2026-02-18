@@ -2,7 +2,7 @@
  * app.js - Main application (uses regular DOM, modular entities)
  */
 
-import { Lobster, Hook, Cage, Bubble, GoldenFish, Net, Fork, Pearl, Seagull, BeachBall, Jellyfish, Starfish, Eel, FallingPickup } from './entities/index.js';
+import { Lobster, Hook, Cage, Bubble, GoldenFish, Net, Fork, Pearl, Seagull, BeachBall, Jellyfish, Starfish, Eel, FallingPickup, ClawsPowerup } from './entities/index.js';
 import { Particle } from './entities/effects/particle/actor/Particle.js';
 import { Audio } from './audio-module.js';
 import { OceanCurrent } from './entities/mechanics/ocean-current/actor/OceanCurrent.js';
@@ -92,6 +92,7 @@ let keys = {}, joystickDx = 0, joystickDy = 0, hasTarget = false;
 let bgScrollX = 0, lastHookThreshold = 0, lastCageThreshold = 0, fishSpawnTimer = 0, pearlSpawnTimer = 0, starfishSpawnTimer = 0, eelSpawnTimer = 0;
 let starfishMultiplier = 1, starfishMultiplierTimer = 0;
 let fallingPickups = [], fallingPickupTimer = 0;
+let clawsPowerup = null, hasClaws = false, clawsSpawned = false;
 const STARFISH_MULTIPLIER_DURATION = 480; // 8 seconds at 60fps
 let particles = [];
 // DOM Elements
@@ -313,6 +314,7 @@ async function startGame() {
     pearlSpawnTimer = 0;
     fallingPickups = [];
     fallingPickupTimer = 0;
+    clawsPowerup = null; hasClaws = false; clawsSpawned = false;
     oceanCurrent = new OceanCurrent(0.4); // Ocean currents push player gently
     
     updateUI();
@@ -396,6 +398,16 @@ function getComboColor() {
 }
 
 function loseLife() {
+    // Claws defensive: deflect one hit
+    if (hasClaws) {
+        hasClaws = false;
+        particles.push(...Particle.spawnBubbleParticles(player.x, player.y));
+        screenShake = 6;
+        invincible = true;
+        invincibleTimer = 90;
+        audio.playBloop?.();
+        return;
+    }
     particles.push(...Particle.spawnDeathParticles(player.x, player.y));
     screenShake = 12;
     lives--;
@@ -1014,10 +1026,28 @@ function update() {
                 fallingPickups.splice(i, 1);
             }
         }
+        // Claws powerup — spawn once at score 400 in Level 1
+        if (!clawsSpawned && !hasClaws && score >= 400) {
+            const floorY = LEVELS[1].floorY || 480;
+            clawsPowerup = ClawsPowerup.spawnOne(CANVAS_WIDTH, floorY);
+            clawsSpawned = true;
+        }
+        if (clawsPowerup) {
+            clawsPowerup.update();
+            if (clawsPowerup.checkCollision(player)) {
+                hasClaws = true;
+                audio.playPowerup?.() || audio.playBloop?.();
+                particles.push(...Particle.spawnBubbleParticles(clawsPowerup.x, clawsPowerup.y));
+                scorePopups.push({ x: clawsPowerup.x, y: clawsPowerup.y, text: "CLAWS!", alpha: 2.0, startY: clawsPowerup.y });
+                screenShake = 4;
+                clawsPowerup = null;
+            }
+        }
     } else {
         // Clear falling pickups when leaving Level 1
         fallingPickups = [];
         fallingPickupTimer = 0;
+        clawsPowerup = null;
     }
     // Level up check
     checkLevelUp();
@@ -1057,6 +1087,7 @@ function render() {
     bubbles.forEach(b => b.render(ctx, player.x, player.y));
     // Falling pickups
     fallingPickups.forEach(fp => fp.render(ctx));
+    if (clawsPowerup) clawsPowerup.render(ctx);
     cages.forEach(c => c.render(ctx));
     hooks.forEach(h => h.render(ctx));
 
@@ -1086,6 +1117,35 @@ function render() {
         }
     } else {
         player.render(ctx, invincible, invincibleTimer, currentLevel);
+    }
+    
+    // Claws visual overlay
+    if (hasClaws) {
+        const t = performance.now() * 0.003;
+        ctx.save();
+        ctx.translate(player.x, player.y);
+        ctx.globalAlpha = 0.8 + Math.sin(t) * 0.2;
+        for (const mirror of [-1, 1]) {
+            ctx.save();
+            ctx.scale(mirror, 1);
+            ctx.strokeStyle = '#FFD040';
+            ctx.lineWidth = 2.5;
+            ctx.lineCap = 'round';
+            ctx.beginPath();
+            ctx.moveTo(player.size * 0.6, -player.size * 0.1);
+            ctx.quadraticCurveTo(player.size * 0.9, -player.size * 0.3, player.size * 1.0, -player.size * 0.5);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(player.size * 1.0, -player.size * 0.5);
+            ctx.quadraticCurveTo(player.size * 1.2, -player.size * 0.7, player.size * 1.05, -player.size * 0.8);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(player.size * 1.0, -player.size * 0.5);
+            ctx.quadraticCurveTo(player.size * 1.25, -player.size * 0.35, player.size * 1.1, -player.size * 0.2);
+            ctx.stroke();
+            ctx.restore();
+        }
+        ctx.restore();
     }
     
     // Particles (on top of everything)

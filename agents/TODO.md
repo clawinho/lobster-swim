@@ -11,7 +11,7 @@ Priority order — top item is next up.
 ### Level 1 Bubble Reduction + Falling Pickups (HIGH PRIORITY — Jeroen directive)
 - [x] Reduce bubble spawns significantly in Level 1 — each one should feel like a reward, not a carpet
 - [x] Add falling pickups that drop from top of screen and land on ocean floor
-- [ ] CLAWS pickup — visual upgrade + defensive ability
+- [x] CLAWS pickup — visual upgrade + defensive ability
 - [ ] SWIM pickup — collecting this transitions player to Level 2
 
 ### Level 2 Grace Period (HIGH PRIORITY — Jeroen directive)
@@ -37,6 +37,15 @@ Priority order — top item is next up.
 ## Phase 2+ Backlog (March–April 2026)
 
 Parked until Phase 1 ships. Do not start these yet.
+
+### Director Ideas (triaged 2026-02-18)
+- [ ] Boil Meter mechanic for Stage 3 Kitchen — water temp rising, screen color shift, ice cube pickups
+- [ ] Molting mechanic — risk/reward shell-shedding at score thresholds (growth requires vulnerability)
+- [ ] Death ghost system — ghost lobsters appear at previous death locations (Dark Souls style)
+- [ ] Spectator ghost mode — 10-second post-death observation before retry
+- [ ] Konami code Easter egg — lobster facts mode on title screen
+- [ ] Metadata Easter eggs — HTML comments, console.log lore, hidden API headers
+- [ ] New Game Plus — remixed stages with carried-over score
 
 ### Research: Diverse Game Styles (Jeroen directive)
 - [ ] Research how to refactor game for diverse gameplay styles in stages 2-4
