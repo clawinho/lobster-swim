@@ -9,8 +9,8 @@ Updated: 2026-02-18
 Priority order — top item is next up.
 
 ### Level 1 Bubble Reduction + Falling Pickups (HIGH PRIORITY — Jeroen directive)
-- [ ] Reduce bubble spawns significantly in Level 1 — each one should feel like a reward, not a carpet
-- [ ] Add falling pickups that drop from top of screen and land on ocean floor
+- [x] Reduce bubble spawns significantly in Level 1 — each one should feel like a reward, not a carpet
+- [x] Add falling pickups that drop from top of screen and land on ocean floor
 - [ ] CLAWS pickup — visual upgrade + defensive ability
 - [ ] SWIM pickup — collecting this transitions player to Level 2
 
