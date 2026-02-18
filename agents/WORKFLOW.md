@@ -50,6 +50,7 @@ Execute in order. Never skip a step. Each step that mentions reading a file — 
   - Cross-reference git log against TODO.md statuses:
     - `[ ]` items where work was clearly done → change to `[~]` (awaiting review)
     - `[~]` items → leave as-is (only human approval changes these to `[x]`)
+    - `[-]` items → leave as-is (paused, skip unless human changes status)
     - `[x]` items (human-approved) → move to "Approved (Archive)" section at bottom of TODO.md
   - **Never write `[x]` — only a human marks items approved**
   - Remove stale items
@@ -67,7 +68,8 @@ Execute the highest priority work, then resolve any blockers it created. Repeat 
 - Read `agents/TODO.md` — pick work using this priority:
   1. `[~]` items first — these represent incomplete work needing another pass. Read git log to see what was already done, then refine/improve it.
   2. If no `[~]` items, pick the highest-priority `[ ]` item.
-  3. Skip `[x]` items entirely.
+  3. Skip `[-]` items entirely (paused — not ready for more work).
+  4. Skip `[x]` items entirely.
 - If a `[~]` item has been reworked 3+ runs without human feedback, skip it and log a blocker in BLOCKERS.md ("Awaiting human review on [item]"). This prevents endless polishing.
 - Pick the best-matching role from `agents/roles/`
 - Read that role's .md file fully before writing any code
