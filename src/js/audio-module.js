@@ -303,4 +303,73 @@ export class Audio {
             osc.stop(this.ctx.currentTime + i * 0.15 + 0.2);
         });
     }
+
+    /**
+     * THX/Kubrick-style deep drone soundscape for Birth level intro.
+     * Low rumbling that swells and decays over ~4 seconds.
+     * Returns duration in seconds.
+     */
+    playBirthIntro() {
+        if (!this.sfxEnabled) return 4;
+        this.init();
+        const ctx = this.ctx;
+        const now = ctx.currentTime;
+        const duration = 4.0;
+
+        // Master gain envelope: swell up then decay
+        const master = ctx.createGain();
+        master.gain.setValueAtTime(0.0, now);
+        master.gain.linearRampToValueAtTime(0.35, now + 1.8);
+        master.gain.linearRampToValueAtTime(0.4, now + 2.5);
+        master.gain.exponentialRampToValueAtTime(0.001, now + duration);
+        master.connect(ctx.destination);
+
+        // Deep bass drone — multiple detuned oscillators for richness
+        const bassFreqs = [32, 33, 40, 48, 64];
+        bassFreqs.forEach((freq, i) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = i < 2 ? "sawtooth" : "sine";
+            osc.frequency.setValueAtTime(freq, now);
+            // Slowly converge frequencies for THX-like effect
+            osc.frequency.linearRampToValueAtTime(freq * 0.85 + 10, now + 2.0);
+            osc.frequency.linearRampToValueAtTime(freq, now + 3.0);
+            gain.gain.setValueAtTime(i < 2 ? 0.15 : 0.2, now);
+            osc.connect(gain).connect(master);
+            osc.start(now);
+            osc.stop(now + duration + 0.5);
+        });
+
+        // Sub-harmonic rumble
+        const sub = ctx.createOscillator();
+        sub.type = "sine";
+        sub.frequency.setValueAtTime(22, now);
+        sub.frequency.linearRampToValueAtTime(28, now + 2);
+        sub.frequency.linearRampToValueAtTime(20, now + duration);
+        const subGain = ctx.createGain();
+        subGain.gain.setValueAtTime(0.3, now);
+        sub.connect(subGain).connect(master);
+        sub.start(now);
+        sub.stop(now + duration + 0.5);
+
+        // Filtered noise for texture
+        const bufferSize = ctx.sampleRate * (duration + 1);
+        const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+        const data = noiseBuffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+        const noise = ctx.createBufferSource();
+        noise.buffer = noiseBuffer;
+        const noiseFilter = ctx.createBiquadFilter();
+        noiseFilter.type = "lowpass";
+        noiseFilter.frequency.setValueAtTime(80, now);
+        noiseFilter.frequency.linearRampToValueAtTime(200, now + 2);
+        noiseFilter.frequency.linearRampToValueAtTime(60, now + duration);
+        const noiseGain = ctx.createGain();
+        noiseGain.gain.setValueAtTime(0.08, now);
+        noise.connect(noiseFilter).connect(noiseGain).connect(master);
+        noise.start(now);
+        noise.stop(now + duration + 0.5);
+
+        return duration;
+    }
 }

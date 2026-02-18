@@ -96,6 +96,7 @@ let fallingPickups = [], fallingPickupTimer = 0;
 let nutrients = [], nutrientTimer = 0;
 let eggPredators = [];
 let growthMeter = 0; // 0-500 for birth level
+let birthIntroActive = false, birthIntroTimer = 0, birthIntroDuration = 240; // ~4 sec at 60fps
 let clawsPowerup = null, hasClaws = false, clawsSpawned = false;
 let swimPowerup = null, swimSpawned = false;
 const STARFISH_MULTIPLIER_DURATION = 480; // 8 seconds at 60fps
@@ -272,6 +273,10 @@ async function startGame() {
     lives = 3;
     gameOver = false;
     gameStarted = true;
+    birthIntroActive = true;
+    birthIntroTimer = 0;
+    birthIntroDuration = 240;
+    audio.playBirthIntro();
     currentLevel = 1;
     invincible = true;
     invincibleTimer = INVINCIBLE_DURATION;
@@ -1596,6 +1601,63 @@ function render() {
         ctx.restore();
     }
 
+    // Birth level intro title
+    if (birthIntroActive) {
+        birthIntroTimer++;
+        const progress = birthIntroTimer / birthIntroDuration; // 0 to 1
+
+        // Full dark overlay that fades as intro ends
+        const overlayAlpha = progress < 0.7 ? 0.85 : 0.85 * (1 - (progress - 0.7) / 0.3);
+        ctx.fillStyle = `rgba(1, 6, 16, ${overlayAlpha})`;
+        ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+
+        // Title text — fades in, holds, then fades out
+        let titleAlpha;
+        if (progress < 0.15) titleAlpha = progress / 0.15; // fade in
+        else if (progress < 0.6) titleAlpha = 1.0; // hold
+        else titleAlpha = 1 - (progress - 0.6) / 0.4; // fade out
+        titleAlpha = Math.max(0, Math.min(1, titleAlpha));
+
+        ctx.save();
+        ctx.globalAlpha = titleAlpha;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+
+        // Glow layers for epic feel
+        const pulse = 1 + Math.sin(birthIntroTimer * 0.05) * 0.03;
+        const fontSize = 72 * pulse;
+
+        // Outer glow
+        ctx.shadowColor = "rgba(100, 180, 255, 0.8)";
+        ctx.shadowBlur = 40 + Math.sin(birthIntroTimer * 0.08) * 10;
+        ctx.font = `bold ${fontSize}px monospace`;
+        ctx.fillStyle = "rgba(150, 200, 255, 0.3)";
+        ctx.fillText("BIRTH", CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2 - 10);
+
+        // Core text
+        ctx.shadowBlur = 20;
+        ctx.shadowColor = "rgba(180, 220, 255, 0.9)";
+        ctx.fillStyle = "#e0eeff";
+        ctx.fillText("BIRTH", CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2 - 10);
+
+        // Subtitle — delayed fade in
+        if (progress > 0.25) {
+            const subAlpha = Math.min(1, (progress - 0.25) / 0.2) * titleAlpha;
+            ctx.globalAlpha = subAlpha;
+            ctx.font = "18px monospace";
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = "rgba(100, 160, 220, 0.6)";
+            ctx.fillStyle = "rgba(180, 210, 240, 0.8)";
+            ctx.fillText("One egg among thousands", CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2 + 35);
+        }
+
+        ctx.restore();
+
+        // End intro
+        if (birthIntroTimer >= birthIntroDuration) {
+            birthIntroActive = false;
+        }
+    }
     ctx.restore();
 }
 
@@ -1611,7 +1673,7 @@ function renderBackground() {
 function gameLoop() {
     if (!gameStarted) return;
 
-    if (!paused) update();
+    if (!paused && !birthIntroActive) update();
     render();
 
     // Continue loop during death animation or normal play

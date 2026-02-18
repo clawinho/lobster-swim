@@ -19,6 +19,20 @@ Priority order — top item is next up.
 - [x] Shift all current levels up by 1 (Ocean=L2, Sea=L3, Beach=L4)
 - [x] Birth level visual polish — egg glow effects, better clutch backdrop
 - [x] Birth level difficulty tuning — predator spawn rates, nutrient density
+- [x] **Birth "BIRTH" title intro** — big bold title that fades out epically at game start, paired with deep THX/Kubrick-style synthesized soundscape (procedural Web Audio: low drone that swells and decays)
+- [ ] **Birth level intimacy** — eggs packed tighter, camera zoomed in closer so eggs dominate screen, claustrophobic feel
+- [ ] **Heartbeat sync mechanic** — rhythmic/synchronic heartbeat tapping as primary interaction to break free from egg colony, then catch food to grow
+- [ ] **Birth-to-Ocean hatching cutscene** — egg crack animation, baby lobster emerges/climbs out before Ocean begins (not just abrupt transition)
+
+### Asset Library Fixes (HIGH PRIORITY — Jeroen directives)
+- [ ] **[Senior Engine Dev]** Fix entity assets not visible in asset library — newly created entities don't show up
+- [ ] **[Senior Engine Dev]** Asset library uses hardcoded imports (no Vite on VPS) — make entity discovery dynamic OR add hardcoded imports for all recent entities
+- [ ] **[UI/UX Dev]** Version tabs overflow with 6+ versions — center active tab, scroll overflow
+- [ ] **[Senior Engine Dev]** Ocean environment not showing in asset library — likely missing import
+
+### Art Direction (MEDIUM PRIORITY — Jeroen directives)
+- [ ] **[Art Director]** Combine lobster 'a' and 'b' renderer versions into single renderer with parameter/checkbox controls — no more lettered version splits
+- [ ] **[Art Director]** Uplift Ocean level visuals using Birth level quality as reference (deep dark blues, subtle glows, particle specks vs current toyish look)
 
 ### Beach Boss Encounter
 - [ ] Final boss encounter happens ON the beach — no water, fully on land
