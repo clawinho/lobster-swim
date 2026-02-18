@@ -1,6 +1,6 @@
 # BLOCKERS
 
-Updated: 2026-02-17
+Updated: 2026-02-18
 
 ---
 
@@ -8,9 +8,9 @@ Updated: 2026-02-17
 
 Use this format so entries stay consistent across roles:
 
-```
+\`\`\`
 - [ ] **[Role Name]** Short description of what's blocked → _Waiting on: <what needs to happen / who needs to act>_
-```
+\`\`\`
 
 When the blocker is resolved, remove it (don't check the box — just delete the line).
 
@@ -36,6 +36,7 @@ When the blocker is resolved, remove it (don't check the box — just delete the
 
 ## Producer
 
+- [ ] **[Producer]** Birth level [~] items reworked 3+ runs without human feedback — skipping further iteration → _Waiting on: Human playtesting and feedback on Birth level before agents iterate further_
 
 ## QA / Playtester
 

@@ -8,6 +8,12 @@ Updated: 2026-02-18
 
 Priority order — top item is next up.
 
+### Asset Library Fixes (HIGH PRIORITY — Jeroen directives)
+- [~] **[Senior Engine Dev]** Fix entity assets not visible in asset library — added 6 missing hardcoded imports
+- [~] **[Senior Engine Dev]** Asset library uses hardcoded imports (no Vite on VPS) — added all recent entity imports
+- [ ] **[UI/UX Dev]** Version tabs overflow with 6+ versions — center active tab, scroll overflow
+- [~] **[Senior Engine Dev]** Ocean environment not showing in asset library — import exists, needs browser verification
+
 ### Birth Level Polish (HIGH PRIORITY)
 - [~] Design Birth level: lobster egg among thousands under mother's tail, sibling eggs same size as hero egg
 - [~] Birth Egg Gameplay, less moving around, more rythm building with tapping, tapping scales up and down the egg and bumps siblings
@@ -17,19 +23,12 @@ Priority order — top item is next up.
 - [-] Predator threat system (small fish eating eggs, visible hunger paths)
 - [-] Growth meter UI — embryonic development stages leading to hatch
 - [~] Hatch transition to Level 1 (Ocean) — egg cracks open, baby lobster emerges
-- [x] Shift all current levels up by 1 (Ocean=L2, Sea=L3, Beach=L4)
 - [-] Birth level visual polish — egg glow effects, better clutch backdrop
 - [-] Birth level difficulty tuning — predator spawn rates, nutrient density
 - [-] **Birth "BIRTH" title intro** — big bold title that fades out epically at game start, paired with deep THX/Kubrick-style synthesized soundscape (procedural Web Audio: low drone that swells and decays)
 - [-] **Birth level intimacy** — eggs packed tighter, camera zoomed in closer so eggs dominate screen, claustrophobic feel
 - [-] **Heartbeat sync mechanic** — rhythmic/synchronic heartbeat tapping as primary interaction to break free from egg colony, then catch food to grow
 - [-] **Birth-to-Ocean hatching cutscene** — egg crack animation, baby lobster emerges/climbs out before Ocean begins (not just abrupt transition)
-
-### Asset Library Fixes (HIGH PRIORITY — Jeroen directives)
-- [ ] **[Senior Engine Dev]** Fix entity assets not visible in asset library — newly created entities don't show up
-- [ ] **[Senior Engine Dev]** Asset library uses hardcoded imports (no Vite on VPS) — make entity discovery dynamic OR add hardcoded imports for all recent entities
-- [ ] **[UI/UX Dev]** Version tabs overflow with 6+ versions — center active tab, scroll overflow
-- [ ] **[Senior Engine Dev]** Ocean environment not showing in asset library — likely missing import
 
 ### Art Direction (MEDIUM PRIORITY — Jeroen directives)
 - [ ] **[Art Director]** Combine lobster 'a' and 'b' renderer versions into single renderer with parameter/checkbox controls — no more lettered version splits
@@ -47,6 +46,12 @@ Priority order — top item is next up.
 ### 80s/90s Game References (LOW PRIORITY — Jeroen directive)
 - [ ] Research and plan 80s/90s iconic game references for Stage 1 levels
 - [ ] Level 1 Asteroids feel, Level 3 platformer feel
+
+---
+
+## Approved (Archive)
+
+- [x] Shift all current levels up by 1 (Ocean=L2, Sea=L3, Beach=L4)
 
 ---
 
