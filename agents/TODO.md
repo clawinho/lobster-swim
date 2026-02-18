@@ -33,9 +33,9 @@ Priority order — top item is next up.
 
 ### Progressive Lobster Abilities (HIGH PRIORITY — Jeroen directive)
 - [x] Level 1: Baby lobster, left/right only on ocean floor (Asteroids-style)
-- [ ] Level 2: Swimming lobster, full movement
+- [x] Level 2: Swimming lobster, full movement (v005 renderer — baby→adult visual transition)
 - [ ] Level 3: Can jump above water and walk on land
-- [ ] Lobster sprite should change between levels (QA: swimming sprite on Beach looks wrong)
+- [x] Lobster sprite changes between levels (v005 stage-aware renderer)
 
 ### Lobster Art (MEDIUM PRIORITY — Jeroen directive)
 - [ ] Design legs for the hero lobster

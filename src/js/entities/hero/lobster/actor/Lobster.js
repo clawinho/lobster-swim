@@ -1,9 +1,10 @@
 /**
  * Lobster.js - Player entity
  * The main character with animated claws, tail physics, and invincibility effects
+ * Supports stage-aware rendering (baby in Level 1, adult in Level 2+)
  */
 
-import { render as renderLobster } from '../render/Lobster.v004.js';
+import { render as renderLobster } from '../render/Lobster.v005.js';
 
 export class Lobster {
     static TAIL_SEGMENTS = 3;
@@ -112,10 +113,10 @@ export class Lobster {
         }
     }
 
-    render(ctx, invincible = false, invincibleTimer = 0) {
+    render(ctx, invincible = false, invincibleTimer = 0, stage = 2) {
         this.updateAngle();
         this.updateTail();
-        renderLobster(ctx, this.x, this.y, this.size, this.angle, this.tailSegments, invincible, invincibleTimer);
+        renderLobster(ctx, this.x, this.y, this.size, this.angle, this.tailSegments, invincible, invincibleTimer, stage);
     }
 
     getBounds() {

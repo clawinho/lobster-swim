@@ -909,7 +909,7 @@ function render() {
         ctx.translate(player.x, player.y);
         ctx.rotate(deathRotation);
         ctx.translate(-player.x, -player.y);
-        player.render(ctx, false, 0);
+        player.render(ctx, false, 0, currentLevel);
         ctx.restore();
         
         // Red flash overlay
@@ -918,7 +918,7 @@ function render() {
             ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
         }
     } else {
-        player.render(ctx, invincible, invincibleTimer);
+        player.render(ctx, invincible, invincibleTimer, currentLevel);
     }
     
     // Particles (on top of everything)
