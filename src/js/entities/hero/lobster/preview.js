@@ -9,13 +9,13 @@ import { render as egg001 } from './render/LobsterEgg.v001.js';
 export const manifest = {
     id: 'lobster',
     name: 'Lobster',
-    description: 'Player character with tail physics. v006 adds walking legs to baby and adult forms.',
+    description: 'Player character with tail physics. Use Stage slider to switch baby/adult forms.',
     category: 'hero',
     tags: [],
     configKey: 'player',
 };
 
-export const defaults = { size: 30, stage: 1 };
+export const defaults = { size: 30, stage: 1, eggGrowth: 0.5 };
 
 function fakeTail(x, y, size) {
     const segs = [];
@@ -49,49 +49,23 @@ export const versions = [
         },
     },
     {
-        meta: { version: '005a', name: 'v005 Baby (Level 1)', current: false },
+        meta: { version: '005', name: 'Baby/Adult (Stage)', current: false },
         preview: (ctx, w, h, frame, state) => {
             const x = w / 2, y = h / 2;
-            v005(ctx, x, y, state.size, 0, fakeTail(x, y, state.size), false, 0, 1);
+            v005(ctx, x, y, state.size, 0, fakeTail(x, y, state.size), false, 0, state.stage);
         },
     },
     {
-        meta: { version: '005b', name: 'v005 Adult (Level 2+)', current: false },
+        meta: { version: '006', name: 'With Legs (Stage)', current: true },
         preview: (ctx, w, h, frame, state) => {
             const x = w / 2, y = h / 2;
-            v005(ctx, x, y, state.size, 0, fakeTail(x, y, state.size), false, 0, 2);
+            v006(ctx, x, y, state.size, 0, fakeTail(x, y, state.size), false, 0, state.stage);
         },
     },
     {
-        meta: { version: '006a', name: 'Baby with Legs (L1)', current: true },
+        meta: { version: 'egg', name: 'Egg (Growth)', current: true },
         preview: (ctx, w, h, frame, state) => {
-            const x = w / 2, y = h / 2;
-            v006(ctx, x, y, state.size, 0, fakeTail(x, y, state.size), false, 0, 1);
-        },
-    },
-    {
-        meta: { version: '006b', name: 'Adult with Legs (L2+)', current: true },
-        preview: (ctx, w, h, frame, state) => {
-            const x = w / 2, y = h / 2;
-            v006(ctx, x, y, state.size, 0, fakeTail(x, y, state.size), false, 0, 2);
-        },
-    },
-    {
-        meta: { version: 'egg-early', name: 'Egg (Early)', current: true },
-        preview: (ctx, w, h, frame, state) => {
-            egg001(ctx, w / 2, h / 2, state.size * 0.6, frame, 0.15);
-        },
-    },
-    {
-        meta: { version: 'egg-mid', name: 'Egg (Mid Growth)', current: true },
-        preview: (ctx, w, h, frame, state) => {
-            egg001(ctx, w / 2, h / 2, state.size * 0.6, frame, 0.5);
-        },
-    },
-    {
-        meta: { version: 'egg-late', name: 'Egg (Ready to Hatch)', current: true },
-        preview: (ctx, w, h, frame, state) => {
-            egg001(ctx, w / 2, h / 2, state.size * 0.6, frame, 0.9);
+            egg001(ctx, w / 2, h / 2, state.size * 0.6, frame, state.eggGrowth);
         },
     },
 ];
@@ -99,4 +73,5 @@ export const versions = [
 export const renderControls = [
     { key: 'size', type: 'range', min: 10, max: 60, value: 30, label: 'Size' },
     { key: 'stage', type: 'range', min: 1, max: 3, value: 1, label: 'Stage (1=Baby, 2+=Adult)' },
+    { key: 'eggGrowth', type: 'range', min: 0, max: 1, value: 0.5, step: 0.01, label: 'Egg Growth' },
 ];

@@ -31,7 +31,7 @@ Priority order — top item is next up.
 - [-] **Birth-to-Ocean hatching cutscene** — egg crack animation, baby lobster emerges/climbs out before Ocean begins (not just abrupt transition)
 
 ### Art Direction (MEDIUM PRIORITY — Jeroen directives)
-- [ ] **[Art Director]** Combine lobster 'a' and 'b' renderer versions into single renderer with parameter/checkbox controls — no more lettered version splits
+- [~] **[Art Director]** Combine lobster 'a' and 'b' renderer versions into single renderer with parameter/checkbox controls — no more lettered version splits
 - [ ] **[Art Director]** Uplift Ocean level visuals using Birth level quality as reference (deep dark blues, subtle glows, particle specks vs current toyish look)
 
 ### Beach Boss Encounter
