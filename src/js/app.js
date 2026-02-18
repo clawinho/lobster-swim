@@ -19,6 +19,17 @@ const INVINCIBLE_DURATION = 90; // ~1.5s at 60fps — enough to recover, not exp
 const LEVEL_ENTITIES = [new Ocean(), new Sea(), new Beach()];
 const LEVELS = Object.fromEntries(LEVEL_ENTITIES.map((lvl, i) => [i + 1, lvl.constructor.config]));
 
+// Bubble spawn zone: constrain to near ocean floor in floor-mode levels
+function getBubbleSpawnZone() {
+    const levelConfig = LEVELS[currentLevel];
+    if (levelConfig && levelConfig.movementMode === 'floor' && levelConfig.floorY) {
+        // Spawn bubbles near the floor so baby lobster can reach them
+        // Range: from 100px above floor to the floor itself
+        return { yMin: levelConfig.floorY - 100, yMax: levelConfig.floorY + 20 };
+    }
+    return null; // Full canvas for swimming levels
+}
+
 
 const DIFFICULTY = {
     THRESHOLDS: [100, 250, 500, 1000],
@@ -281,7 +292,7 @@ async function startGame() {
     // Create entities
     player = new Lobster(400, LEVELS[1].floorY || 300);
     velocityY = 0; isOnGround = true; isInWater = true;
-    bubbles = Bubble.create(10, CANVAS_WIDTH, CANVAS_HEIGHT);
+    bubbles = Bubble.create(10, CANVAS_WIDTH, CANVAS_HEIGHT, getBubbleSpawnZone());
     cages = Cage.create(0, CANVAS_WIDTH, CANVAS_HEIGHT);
     hooks = Hook.create(CANVAS_WIDTH, LEVELS[1].enemies.hooks || 0);
     nets = [];
@@ -698,7 +709,7 @@ function update() {
                 });
             }
             
-            bubble.respawn(CANVAS_WIDTH, CANVAS_HEIGHT);
+            bubble.respawn(CANVAS_WIDTH, CANVAS_HEIGHT, getBubbleSpawnZone());
             updateScore();
             
             // Difficulty scaling (re-check after score changed)

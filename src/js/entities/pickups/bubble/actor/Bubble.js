@@ -17,19 +17,23 @@ export class Bubble {
         this.phase = Math.random() * Math.PI * 2;
     }
 
-    static create(count = 8, canvasWidth = 800, canvasHeight = 600) {
+    static create(count = 8, canvasWidth = 800, canvasHeight = 600, spawnZone = null) {
         const bubbles = [];
+        const yMin = spawnZone ? spawnZone.yMin : 25;
+        const yMax = spawnZone ? spawnZone.yMax : (canvasHeight - 25);
         for (let i = 0; i < count; i++) {
             const x = Math.random() * (canvasWidth - 50) + 25;
-            const y = Math.random() * (canvasHeight - 50) + 25;
+            const y = Math.random() * (yMax - yMin) + yMin;
             bubbles.push(new Bubble(x, y, 18));
         }
         return bubbles;
     }
 
-    respawn(canvasWidth = 800, canvasHeight = 600) {
+    respawn(canvasWidth = 800, canvasHeight = 600, spawnZone = null) {
         this.x = Math.random() * (canvasWidth - 50) + 25;
-        this.y = Math.random() * (canvasHeight - 50) + 25;
+        const yMin = spawnZone ? spawnZone.yMin : 25;
+        const yMax = spawnZone ? spawnZone.yMax : (canvasHeight - 25);
+        this.y = Math.random() * (yMax - yMin) + yMin;
         this.phase = Math.random() * Math.PI * 2;
     }
 

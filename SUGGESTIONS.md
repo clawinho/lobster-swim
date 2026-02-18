@@ -19,11 +19,6 @@ Suggestions from project owners and leads. These get first consideration.
 
 *(No pending suggestions.)*
 
-### Baby lobster can't reach bubbles in Level 1
-**Author:** Jom Oeves (JimYves)  **Date:** 2026-02-17
-
-Bubbles spawn too high for the baby lobster to reach even with the hop. Either lower the bubble spawn height in Level 1 so they're near the ocean floor, or make some bubbles drift down to the lobster's level. The player needs to actually be able to collect things to progress.
-
 ---
 
 ## Agentic Roles
