@@ -16,8 +16,8 @@ Priority order — top item is next up.
 - [ ] Lobster POV: still submerged but near shore
 
 ### High Score Celebration (HIGH PRIORITY — cso directive)
-- [ ] Add celebration moment when player gets a new high score (confetti, score highlight, brief fanfare)
-- [ ] Brief delay before transitioning back — let player feel the achievement
+- [x] Add celebration moment when player gets a new high score (confetti, score highlight, brief fanfare)
+- [x] Brief delay before transitioning back — let player feel the achievement
 
 ### Progressive Lobster Abilities (HIGH PRIORITY — Jeroen directive)
 - [ ] Level 1: Baby lobster, left/right only on ocean floor (Asteroids-style)
