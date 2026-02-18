@@ -10,8 +10,8 @@
         header { text-align: center; padding: 30px 0; border-bottom: 1px solid #ff450044; margin-bottom: 30px; }
         header h1 { color: #ff4500; font-size: 2.5em; margin-bottom: 10px; }
         header p { color: #666; font-size: 0.9em; }
-        .version-tabs { display: flex; gap: 0; border-bottom: 1px solid #ff450033; }
-        .version-tab { padding: 8px 14px; font-size: 0.75em; color: #666; cursor: pointer; border: 1px solid transparent; border-bottom: none; background: #000810; margin-bottom: -1px; border-radius: 4px 4px 0 0; }
+        .version-tabs { display: flex; gap: 0; border-bottom: 1px solid #ff450033; overflow-x: auto; overflow-y: hidden; scrollbar-width: thin; scrollbar-color: #ff450044 transparent; -webkit-overflow-scrolling: touch; }
+        .version-tab { padding: 8px 14px; flex-shrink: 0; white-space: nowrap; font-size: 0.75em; color: #666; cursor: pointer; border: 1px solid transparent; border-bottom: none; background: #000810; margin-bottom: -1px; border-radius: 4px 4px 0 0; }
         .version-tab:hover { color: #ff4500; background: #ff450011; }
         .version-tab.active { color: #ff4500; background: #001020; border-color: #ff450033; border-bottom-color: #001020; }
         .version-tab .star { color: #ffd700; margin-left: 4px; }

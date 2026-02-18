@@ -207,10 +207,17 @@ function createCard(entity) {
             entity.selectedVersion = i;
             tabs.querySelectorAll('.version-tab').forEach(t => t.classList.remove('active'));
             tab.classList.add('active');
+            tab.scrollIntoView({ inline: "center", block: "nearest", behavior: "smooth" });
         });
         tabs.appendChild(tab);
     });
     card.appendChild(tabs);
+
+    // Scroll active version tab into view (handles 6+ versions overflow)
+    requestAnimationFrame(() => {
+        const activeTab = tabs.querySelector(".version-tab.active");
+        if (activeTab) activeTab.scrollIntoView({ inline: "center", block: "nearest", behavior: "instant" });
+    });
 
     // Canvas preview
     const preview = document.createElement('div');
