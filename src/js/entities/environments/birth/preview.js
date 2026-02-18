@@ -1,4 +1,5 @@
 import { render as v001 } from './render/Birth.v001.js';
+import { render as v002 } from './render/Birth.v002.js';
 
 export const manifest = {
     id: 'birth',
@@ -13,8 +14,12 @@ export const defaults = { frame: 0, growthProgress: 0 };
 
 export const versions = [
     {
-        meta: { version: '001', name: 'Egg Clutch', current: true },
+        meta: { version: '001', name: 'Egg Clutch', current: false },
         preview: (ctx, w, h, frame, state) => v001(ctx, w, h, 0, frame, state.growthProgress),
+    },
+    {
+        meta: { version: '002', name: 'Polished Clutch', current: true },
+        preview: (ctx, w, h, frame, state) => v002(ctx, w, h, 0, frame, state.growthProgress),
     },
 ];
 

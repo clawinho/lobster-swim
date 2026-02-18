@@ -2,7 +2,7 @@
  * Birth.v001.js - Birth level background renderer
  * Lobster egg clutch under mother's tail — dark, intimate, bioluminescent
  * @version 001
- * @current true
+ * @current false
  */
 
 const PARTICLE_COUNT = 40;
@@ -160,6 +160,6 @@ export function render(ctx, w, h, scrollX, frame = 0, growthProgress = 0) {
 export const meta = {
     version: '001',
     name: 'Birth — Egg Clutch',
-    current: true,
+    current: false,
     features: ['mother-tail-silhouette', 'egg-cluster', 'bioluminescent-particles', 'vignette', 'growth-glow'],
 };

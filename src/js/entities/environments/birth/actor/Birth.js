@@ -3,7 +3,7 @@
  * Lobster egg among thousands under mother's tail.
  * Unique mechanics: pulse-based movement, growth meter, nutrient absorption.
  */
-import { render as renderBirthBg } from '../render/Birth.v001.js';
+import { render as renderBirthBg } from '../render/Birth.v002.js';
 
 export class Birth {
     static config = {

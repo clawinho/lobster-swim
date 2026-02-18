@@ -17,8 +17,8 @@ Priority order — top item is next up.
 - [x] Growth meter UI — embryonic development stages leading to hatch
 - [x] Hatch transition to Level 1 (Ocean) — egg cracks open, baby lobster emerges
 - [x] Shift all current levels up by 1 (Ocean=L2, Sea=L3, Beach=L4)
-- [ ] Birth level visual polish — egg glow effects, better clutch backdrop
-- [ ] Birth level difficulty tuning — predator spawn rates, nutrient density
+- [x] Birth level visual polish — egg glow effects, better clutch backdrop
+- [x] Birth level difficulty tuning — predator spawn rates, nutrient density
 
 ### Beach Boss Encounter
 - [ ] Final boss encounter happens ON the beach — no water, fully on land
