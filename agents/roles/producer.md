@@ -32,12 +32,14 @@ Your responsibilities:
   - SUGGESTIONS.md — central inbox for ideas and suggestions (see triage workflow below)
 - Own TODO.md as the team's single task list:
   - Start every session by reviewing TODO.md against recent git log — update statuses, remove stale ones
-  - TODO.md uses three statuses:
+  - TODO.md uses four statuses:
     - `[ ]` — Not started (set by Producer on creation)
-    - `[~]` — Awaiting review (set by agent after doing work)
+    - `[~]` — Awaiting review (set by agent after doing work — top priority for rework)
+    - `[-]` — Paused (work done for now, not approved — agents skip these)
     - `[x]` — Approved (**human only** — agents NEVER write `[x]`)
   - After executing work on an item, mark it `[~]` — NEVER `[x]`
   - On each session, scan for `[~]` items first — they are top priority (incomplete work needing another pass)
+  - Skip `[-]` items entirely — only a human or Producer unpauses by changing back to `[ ]` or `[~]`
   - When a human marks `[x]`, move the item to the "Approved (Archive)" section on next triage
   - Prioritize items by milestone phase: what ships Stage 1 polish comes before Stage 2 prototyping
   - When any role produces work that implies follow-up tasks, add them to the appropriate section
